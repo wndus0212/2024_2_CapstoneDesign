@@ -14,7 +14,7 @@
 <script>
 import TopNav from '../components/Top/Top.vue'
 import MainContainer from '@/components/MainContainer.vue';
-import RealTimeChartWidget from '@/components/HomePage/RealTimeChartWidget.vue';
+import RealTimeChartWidget from '@/components/HomePage/RealTimeChartWidget/RealTimeChartWidget.vue';
 import ETFWidget from '@/components/HomePage/ETFWidget.vue';
 import InterestedStockWidget from '@/components/HomePage/InterestedStockWidget.vue';
 import MyPortfolioWidget from '@/components/HomePage/MyPortfolioWidget.vue';
