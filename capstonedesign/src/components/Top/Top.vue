@@ -1,23 +1,25 @@
 <template>
+    
     <nav class="TopNav">
+      <ProjectLogo/>
       <ul>
         <li>
-            <TopNavButton>
+            <TopNavButton @click="goToHome">
                 <p>홈</p>
             </TopNavButton>
         </li>
         <li>
-            <TopNavButton>
+            <TopNavButton @click="goToDetail">
                 <p>종목별</p>
             </TopNavButton>
         </li>
         <li>
-            <TopNavButton>
+            <TopNavButton @click="goToContents">
                 <p>경제콘텐츠</p>
             </TopNavButton>
         </li>
         <li>
-            <TopNavButton>
+            <TopNavButton @click="goToMyPage">
                 <p>마이페이지</p>
             </TopNavButton>
         </li>
@@ -27,10 +29,27 @@
   
   <script>
   import TopNavButton from './TopNavButton.vue'
+  import ProjectLogo from './logo.vue';
+
   export default {
     name: 'TopNav',
     components: {
         TopNavButton,
+        ProjectLogo
+    },
+    methods:{
+      goToHome() {
+        this.$router.push('/');
+      },
+      goToDetail() {
+        this.$router.push('/Detail');
+      },
+      goToContents() {
+        this.$router.push('/Contents');
+      },
+      goToMyPage() {
+        this.$router.push('/Mypage');
+      },
     }
   };
   </script>
@@ -40,6 +59,8 @@
     background-color: lightblue;
     padding: 0px 20px;
     margin: 0px;
+    display: flex;
+    gap:  20px;
   }
   .TopNav ul {
     list-style: none;

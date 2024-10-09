@@ -3,7 +3,7 @@
     <div>
       <containerBox>
         <p>
-          hello
+          MyPage
         </p>
       </containerBox>
       <containerBox>
@@ -20,10 +20,10 @@
   </template>
   
   <script>
-  import TopNav from './components/Top.vue'
-  import containerBox from './components/Box.vue'
+  import TopNav from '../components/Top/Top.vue'
+  import containerBox from '../components/Box.vue'
   export default {
-    name: 'App',
+    name: 'MyPage',
     components: {
       TopNav,
       containerBox
