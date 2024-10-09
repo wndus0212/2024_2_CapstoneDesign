@@ -2,8 +2,8 @@
   <TopNav/>
   <MainContainer>
     <RealTimeChartWidget/>
-    <TreeMapWidget/>
-    <SectionChartWidget/>
+    <TreeMapWidget class="small-widget"/>
+    <SectionChartWidget class="small-widget"/>
     <StockRankingWidget/>
     <InterestedStockWidget/>
     <ETFWidget/>
@@ -39,5 +39,7 @@ export default {
 </script>
 
 <style>
-
+  .small-widget{
+    width: 18%;
+  }
 </style>
