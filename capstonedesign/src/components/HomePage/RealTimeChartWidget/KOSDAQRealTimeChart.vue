@@ -44,7 +44,7 @@ export default {
           width: 1,
         },
         title: {
-          text: 'KOSPI',
+          text: 'KOSDAQ',
           align: 'left',
           offsetY: 10,
           style:{

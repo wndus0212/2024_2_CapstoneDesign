@@ -20,7 +20,7 @@ import InterestedStockWidget from '@/components/HomePage/InterestedStockWidget.v
 import MyPortfolioWidget from '@/components/HomePage/MyPortfolioWidget.vue';
 import SectionChartWidget from '@/components/HomePage/SectionChartWidget.vue';
 import StockRankingWidget from '@/components/HomePage/StockRankingWidget.vue';
-import TreeMapWidget from '@/components/HomePage/TreeMapWidget.vue';
+import TreeMapWidget from '@/components/HomePage/TreeMapWidget/TreeMapWidget.vue';
 
 export default {
   name: 'HomePage',

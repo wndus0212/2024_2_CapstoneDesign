@@ -16,7 +16,9 @@
       </div>
       <div style="display: flex;">
         <KOSPIChart/>
-
+        <KOSDAQRealTimeChart/>
+        <NASDAQRealTimeChart/>
+        <DAWRealTimeChart/>
       </div>
       
     </containerBox>
@@ -25,7 +27,9 @@
 import containerBox from '@/components/Box.vue'
 import BoxTitle from '@/components/BoxTitle.vue';
 import KOSPIChart from './KOSPIRealTimeChart.vue';
-
+import KOSDAQRealTimeChart from './KOSDAQRealTimeChart.vue';
+import NASDAQRealTimeChart from './NASDAQRealTimeChart.vue';
+import DAWRealTimeChart from './DAWRealTimeChart.vue';
 import SmallButton from '@/components/SmallButton.vue';
 
 export default {
@@ -34,7 +38,9 @@ export default {
         containerBox,
         BoxTitle,
         KOSPIChart,
-
+        KOSDAQRealTimeChart,
+        NASDAQRealTimeChart,
+        DAWRealTimeChart,
         SmallButton
     }
 }
