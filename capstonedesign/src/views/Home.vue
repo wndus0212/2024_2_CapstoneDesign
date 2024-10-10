@@ -2,8 +2,11 @@
   <TopNav/>
   <MainContainer>
     <RealTimeChartWidget/>
-    <TreeMapWidget class="small-widget"/>
-    <SectionChartWidget class="small-widget"/>
+    <div style="display: flex;">
+      <TreeMapWidget class="small-widget"/>
+      <SectionChartWidget class="small-widget"/>
+    </div>
+    
     
   </MainContainer>
   <MainContainer>

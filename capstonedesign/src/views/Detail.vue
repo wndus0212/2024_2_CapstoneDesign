@@ -55,24 +55,7 @@
       </div>
     </div>
     <ScrollContainer>
-      <table>
-        <tr>
-          <th scope="col">종목</th>
-          <th scope="col"></th>
-          <th scope="col">현재가</th>
-          <th scope="col">거래량</th>
-          <th scope="col">시가총액</th>
-          <th scope="col"></th>
-        </tr>
-        <tr>
-          <td>삼성전자</td>
-          <td></td>
-          <td>60600</td>
-          <td>23,107,725</td>
-          <td>361조 7688억</td>
-          <td></td>
-        </tr>
-      </table>
+      <StockTable></StockTable>
     </ScrollContainer>
     
   </template>
@@ -83,6 +66,7 @@
   import SmallButton from '@/components/SmallButton.vue';
   import ButtonContainer from '@/components/ButtonContainer.vue';
   import ScrollContainer from '@/components/ScrollContainer.vue';
+  import StockTable from '@/components/StockTable.vue'; 
 
   export default {
     name: 'DetailPage',
@@ -91,7 +75,8 @@
       SearchBar,
       SmallButton,
       ButtonContainer,
-      ScrollContainer
+      ScrollContainer,
+      StockTable
     }
   }
   </script>
