@@ -1,47 +1,35 @@
 <template>
     <containerBox>
       <BoxTitle>
-        실시간 차트
+        ETF
       </BoxTitle>
       <ButtonContainer>
         <SmallButton>
-          종합주가지수
+          시장 현황
         </SmallButton>
         <SmallButton>
-          원자재
+          순자산
         </SmallButton>
         <SmallButton>
-          채권
+          거래량
+        </SmallButton>
+        <SmallButton>
+          수익률
         </SmallButton>
       </ButtonContainer>
-      <div style="display: flex; gap: 6px">
-        <KOSPIChart/>
-        <KOSDAQRealTimeChart/>
-        <NASDAQRealTimeChart/>
-        <DAWRealTimeChart/>
-      </div>
-      
     </containerBox>
 </template>
 <script>
 import containerBox from '@/components/Box.vue'
 import BoxTitle from '@/components/BoxTitle.vue';
-import KOSPIChart from './KOSPIRealTimeChart.vue';
-import KOSDAQRealTimeChart from './KOSDAQRealTimeChart.vue';
-import NASDAQRealTimeChart from './NASDAQRealTimeChart.vue';
-import DAWRealTimeChart from './DAWRealTimeChart.vue';
 import SmallButton from '@/components/SmallButton.vue';
 import ButtonContainer from '@/components/ButtonContainer.vue';
 
 export default {
-    name:'RealTimeChartWidget',
+    name:'ETFWidget',
     components:{
         containerBox,
         BoxTitle,
-        KOSPIChart,
-        KOSDAQRealTimeChart,
-        NASDAQRealTimeChart,
-        DAWRealTimeChart,
         SmallButton,
         ButtonContainer
     }

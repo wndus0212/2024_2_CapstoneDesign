@@ -12,7 +12,8 @@ export default {
 </script>
 <style>
     .box{
-        width: 40%;
+        width: 500px;
+        min-width: 229px;
         border: 1px solid black;
         border-radius: 5px;
         padding: 10px;

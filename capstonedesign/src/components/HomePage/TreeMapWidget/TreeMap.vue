@@ -1,5 +1,5 @@
 <template>
-      <apexchart type="treemap" :options="chartOptions" :series="series" :width="200" :height="200"/>
+      <apexchart type="treemap" :options="chartOptions" :series="series" :width="230" :height="230"/>
   </template>
   
   <script>
