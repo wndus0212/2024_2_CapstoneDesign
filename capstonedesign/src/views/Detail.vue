@@ -54,10 +54,7 @@
         </ButtonContainer>
       </div>
     </div>
-    <ScrollContainer>
-      <StockTable></StockTable>
-    </ScrollContainer>
-    
+    <StockTable></StockTable>
   </template>
   
   <script>
@@ -65,7 +62,6 @@
   import SearchBar from '@/components/DetailPage/Search.vue';  
   import SmallButton from '@/components/SmallButton.vue';
   import ButtonContainer from '@/components/ButtonContainer.vue';
-  import ScrollContainer from '@/components/ScrollContainer.vue';
   import StockTable from '@/components/StockTable.vue'; 
 
   export default {
@@ -75,7 +71,7 @@
       SearchBar,
       SmallButton,
       ButtonContainer,
-      ScrollContainer,
+      
       StockTable
     }
   }
