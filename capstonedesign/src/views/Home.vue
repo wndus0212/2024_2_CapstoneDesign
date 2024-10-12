@@ -49,6 +49,7 @@ export default {
 
 <style>
   .small-widget{
-    width: 203px;
+    width: 330px;
+    height: 350px;
   }
 </style>

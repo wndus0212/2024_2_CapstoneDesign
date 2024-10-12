@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex; gap: 5px; margin: 10px 0px;">
+    <div style="display: flex; gap: 5px; margin: 10px 0px; margin-bottom: 20px;">
         <slot></slot>
     </div>
 </template>

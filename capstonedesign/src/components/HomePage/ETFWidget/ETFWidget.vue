@@ -4,18 +4,10 @@
         ETF
       </BoxTitle>
       <ButtonContainer>
-        <SmallButton>
-          시장 현황
-        </SmallButton>
-        <SmallButton>
-          순자산
-        </SmallButton>
-        <SmallButton>
-          거래량
-        </SmallButton>
-        <SmallButton>
-          수익률
-        </SmallButton>
+        <SmallButton text="시장 현황"/>
+        <SmallButton text="순자산"/>
+        <SmallButton text="거래량"/>
+        <SmallButton text="수익률"/>
       </ButtonContainer>
     </containerBox>
 </template>

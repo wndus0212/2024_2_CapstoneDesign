@@ -1,56 +1,33 @@
 <template>
     <TopNav/>
-
+  <PageTitle>전체 종목 보기</PageTitle>
     <SearchBar/>
-    <div style="margin-left: 10px;">
+    <div style="margin-left: 50px; min-width: 700px;">
       <ButtonContainer>
-        <SmallButton>
-          국내
-        </SmallButton>
-        <SmallButton>
-          해외
-        </SmallButton>
+        <SmallButton text="국내"/>
+        <SmallButton text="해외"/>
       </ButtonContainer>
       <ButtonContainer>
-        <SmallButton>
-          전체
-        </SmallButton>
-        <SmallButton>
-          성장 기대주
-        </SmallButton>
-        <SmallButton>
-          안정 성장주
-        </SmallButton>
-        <SmallButton>
-          고수익 저평가
-        </SmallButton>
-        <SmallButton>
-          저평가 성장주
-        </SmallButton>
+        <SmallButton text="전체"/>
+        <SmallButton text="성장 기대주"/>
+        <SmallButton text="안정 성장주"/>
+        <SmallButton text="고수익 저평가"/>
+        <SmallButton text="저평가 성장주"/>
       </ButtonContainer>
-      <div style="display: flex; justify-content: space-between; margin-right: 10px;">
+      <div style="display: flex; justify-content: space-between; margin-right: 50px;">
         <ButtonContainer>
           <select>
             <option value="1">조건 추가</option>
           </select>
-          <SmallButton>
-            카테고리
-          </SmallButton>
-          <SmallButton>
-            시가총액
-          </SmallButton>
+          <SmallButton text="카테고리"/>
+          <SmallButton text="시가총액"/>
         </ButtonContainer>
 
         <ButtonContainer>
-          <SmallButton>
-            관련 핫토픽
-          </SmallButton>
-          <SmallButton>
-            전문가 의견
-          </SmallButton>
-          <SmallButton>
-            비슷한 종목
-          </SmallButton>
+          <SmallButton text="관련 핫토픽"/>
+          <SmallButton text="전문가 의견"/>
+          <SmallButton text="비슷한 종목"/>
+
         </ButtonContainer>
       </div>
     </div>
@@ -63,7 +40,7 @@
   import SmallButton from '@/components/SmallButton.vue';
   import ButtonContainer from '@/components/ButtonContainer.vue';
   import StockTable from '@/components/StockTable.vue'; 
-
+  import PageTitle from '@/components/PageTitle.vue';
   export default {
     name: 'DetailPage',
     components: {
@@ -72,7 +49,8 @@
       SmallButton,
       ButtonContainer,
       
-      StockTable
+      StockTable,
+      PageTitle
     }
   }
   </script>

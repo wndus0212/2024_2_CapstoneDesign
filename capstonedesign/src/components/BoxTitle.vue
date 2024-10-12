@@ -10,6 +10,6 @@ export default {
 </script>
 <style>
     .boxTitle{
-        font-size: 20px;
+        font-size: 24px;
     }
 </style>

@@ -1,21 +1,27 @@
 <template>
-    <div>
       <button class="SmallButton">
-        <slot></slot>
+        {{ text }}
       </button>  
-    </div>
 </template>
 <script>
 export default {
-    name: 'SmallButton'
+    name: 'SmallButton',
+    props:{
+      text:{
+        type: String,
+        required:true
+      }
+    }
 }
 </script>
-<style>
+<style scoped>
     .SmallButton{
       border: 1px solid black;
       border-radius: 3px;
       background: white;
       margin-top: 8px;
+      height: 30px;
+      font-size: 20px;
     }
 
     .SmallButton:hover{

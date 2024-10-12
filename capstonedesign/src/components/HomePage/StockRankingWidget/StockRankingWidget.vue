@@ -4,18 +4,10 @@
         주식 순위
       </BoxTitle>
       <ButtonContainer>
-        <SmallButton>
-          많이 상승한 순위
-        </SmallButton>
-        <SmallButton>
-          많이 하락한 순위
-        </SmallButton>
-        <SmallButton>
-          거래량 많은 순위
-        </SmallButton>
-        <SmallButton>
-          인기 많은 순위
-        </SmallButton>
+        <SmallButton text="많이 상승한 순위"/>
+        <SmallButton text="많이 하락한 순위"/>
+        <SmallButton text="거래량 많은 순위"/>
+        <SmallButton text="인기 많은 순위"/>
       </ButtonContainer>
 
     </containerBox>

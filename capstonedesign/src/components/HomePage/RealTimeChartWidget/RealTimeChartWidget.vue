@@ -4,17 +4,11 @@
         실시간 차트
       </BoxTitle>
       <ButtonContainer>
-        <SmallButton>
-          종합주가지수
-        </SmallButton>
-        <SmallButton>
-          원자재
-        </SmallButton>
-        <SmallButton>
-          채권
-        </SmallButton>
+        <SmallButton text="종합주가지수"/>
+        <SmallButton text="원자재"/>
+        <SmallButton text="채권"/>
       </ButtonContainer>
-      <div style="display: flex; gap: 6px">
+      <div style="display: flex; justify-content: space-between;">
         <KOSPIChart/>
         <KOSDAQRealTimeChart/>
         <NASDAQRealTimeChart/>
