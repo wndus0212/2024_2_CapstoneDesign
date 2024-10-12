@@ -14,5 +14,6 @@ export default {
         font-weight: 600;
         display: flex;
         padding: 50px;
+        margin-left: 50px;
     }
 </style>
