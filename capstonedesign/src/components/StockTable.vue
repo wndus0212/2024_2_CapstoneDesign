@@ -13,15 +13,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>삼성전자</td>
-                            <td></td>
-                            <td>60600</td>
-                            <td>23,107,725</td>
-                            <td>361조 7688억</td>
-                        </tr>
-                        <!-- 추가 데이터 -->
-                        <tr v-for="i in 20" :key="i">
+                        <tr v-for="i in 20" :key="i" @click="navigateTo('StockDetail')">
                             <td>삼성전자</td>
                             <td></td>
                             <td>60600</td>
@@ -36,7 +28,16 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+
+  },
+  methods: {
+    navigateTo(route) {
+      this.$router.push(route);  // 해당 경로로 페이지 이동
+    }
+  }
+};
 </script>
 
 <style>
@@ -62,6 +63,7 @@ export default {};
     width: 100%;
     border-collapse: collapse;
     font-size: 20px;
+    border: none
 }
 
 .StockTable th {
@@ -74,15 +76,18 @@ export default {};
     top: 0;
     z-index: 10;
     background-color: white; /* 헤더 배경색 */
+    border: none
 }
 
 .StockTable tbody tr {
     height: 100px;
+    border: none
 }
 
 .StockTable td, .StockTable th {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    border: none
 }
 </style>

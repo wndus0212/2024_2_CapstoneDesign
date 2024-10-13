@@ -1,20 +1,20 @@
 <template >
     <div class="newsWrapper">
-        <NewsComponent/>
-        <NewsComponent/>
-        <NewsComponent/>
-        <NewsComponent/>
-        <NewsComponent/>
-        <NewsComponent/>
+        <InfoComponent/>
+        <InfoComponent/>
+        <InfoComponent/>
+        <InfoComponent/>
+        <InfoComponent/>
+        <InfoComponent/>
     </div>
     <SmallButton text="더보기"/>
 </template>
 <script>
-import NewsComponent from './NewsComponent.vue';
+import InfoComponent from './InfoComponent.vue';
 import SmallButton from '../SmallButton.vue';
 export default {
     components:{
-        NewsComponent,
+        InfoComponent,
         SmallButton
     }
 }

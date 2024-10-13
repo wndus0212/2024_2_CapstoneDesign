@@ -9,7 +9,7 @@ export default {
     
 }
 </script>
-<style>
+<style scoped>
     .subTitle{
         font-size: 28px;
         font-weight: 600;
