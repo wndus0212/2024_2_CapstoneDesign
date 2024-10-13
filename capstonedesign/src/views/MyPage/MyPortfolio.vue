@@ -38,9 +38,9 @@
         <SmallButton text="수정"/>
         <box class="AIFeedBack"></box>
 
-        <div>
+        <SubTitle>
             백테스트
-        </div>
+        </SubTitle>
         <div style="display: flex; gap: 20px;">
             <div>
                 <div>시작 날짜</div>
@@ -54,6 +54,10 @@
         </div>
         <PortfolioBackTestChart/>
         
+
+        <SubTitle>
+            몬테카를로 분석
+        </SubTitle>
         <PortfolioMontecarlo/>
         
     </div>
@@ -66,6 +70,7 @@ import SmallButton from '@/components/SmallButton.vue';
 import Box from '@/components/Box.vue';
 import PortfolioBackTestChart from '@/components/MyPage/PortfolioBackTestChart.vue';
 import PortfolioMontecarlo from '@/components/MyPage/PortfolioMontecarlo.vue';
+import SubTitle from '@/components/SubTitle.vue';
 
 export default {
     components:{
@@ -74,7 +79,8 @@ export default {
         SmallButton,
         Box,
         PortfolioBackTestChart,
-        PortfolioMontecarlo
+        PortfolioMontecarlo,
+        SubTitle
     }
 }
 </script>
