@@ -61,6 +61,11 @@
     margin: 0px;
     display: flex;
     gap:  20px;
+    height: 80px;
+    position: fixed; 
+    top: 0; 
+    width: 100%; 
+    z-index: 1000; 
   }
   .TopNav ul {
     list-style: none;

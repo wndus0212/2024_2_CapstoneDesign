@@ -1,32 +1,27 @@
 <template>
   <TopNav/>
+  <div style="height: 120px;"></div>
   <MainContainer>
-    <RealTimeChartWidget/>
-    <div style="display: flex;">
-      <TreeMapWidget class="small-widget"/>
-      <SectionChartWidget class="small-widget"/>
-    </div>
-    
-    
-  </MainContainer>
-  <MainContainer>
-    <StockRankingWidget/>
-    <InterestedStockWidget/>
-    
-  </MainContainer>
-  <MainContainer>
-    <ETFWidget/>
     <MyPortfolioWidget/>
+
+    <div>
+      <div style="display: flex;">
+        <TreeMapWidget class="small-widget"/>
+        <SectionChartWidget class="small-widget"/>
+      </div>
+      <RealTimeChartWidget/>
+      <StockRankingWidget/>    
+    </div>
   </MainContainer>
+  
+  
 </template>
 
 <script>
 import TopNav from '../components/Top/Top.vue'
 import MainContainer from '@/components/MainContainer.vue';
 import RealTimeChartWidget from '@/components/HomePage/RealTimeChartWidget/RealTimeChartWidget.vue';
-import ETFWidget from '@/components/HomePage/ETFWidget/ETFWidget.vue';
-import InterestedStockWidget from '@/components/HomePage/InterestedStockWidget/InterestedStockWidget.vue';
-import MyPortfolioWidget from '@/components/HomePage/MyPortfolioWidget.vue';
+import MyPortfolioWidget from '@/components/HomePage/MyPortfolioWidget/MyPortfolioWidget.vue';
 import SectionChartWidget from '@/components/HomePage/SectionChartWidget/SectionChartWidget.vue';
 import StockRankingWidget from '@/components/HomePage/StockRankingWidget/StockRankingWidget.vue';
 import TreeMapWidget from '@/components/HomePage/TreeMapWidget/TreeMapWidget.vue';
@@ -37,8 +32,6 @@ export default {
     TopNav,
     MainContainer,
     RealTimeChartWidget,
-    ETFWidget,
-    InterestedStockWidget,
     MyPortfolioWidget,
     SectionChartWidget,
     StockRankingWidget,

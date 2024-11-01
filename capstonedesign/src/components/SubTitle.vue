@@ -15,5 +15,6 @@ export default {
         font-weight: 600;
         margin-top: 50px;
         margin-bottom: 30px;
+        text-wrap: nowrap;
     }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex; justify-content: center;">
-        <div class="scrollContainer">
+        <div class="FinancialScrollContainer">
             <div class="table-wrapper">
                 <table class="FinancialStatement">
                     <tbody>
@@ -52,7 +52,7 @@ export default {
 </script>
 
 <style>
-.scrollContainer {
+.FinancialScrollContainer {
     padding: 20px;
     border: 1px solid black;
     min-width: 500px;

@@ -50,7 +50,7 @@ export default {
     margin: 0px 50px;
     height: 700px;
     display: flex;
-    
+    min-width: 800px;
 }
 
 .table-wrapper {

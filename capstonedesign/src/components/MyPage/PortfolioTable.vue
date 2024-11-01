@@ -1,5 +1,5 @@
 <template>
-    <div class="scrollContainer">
+    <div class="portfolioScrollContainer">
         <div class="table-wrapper">
             <table class="PortfolioTable">
                 <tbody>
@@ -20,7 +20,7 @@ export default {};
 </script>
 
 <style scoped>
-.scrollContainer {
+.portfolioScrollContainer {
     padding: 20px;
     border: 1px solid black;
     min-width: 500px;

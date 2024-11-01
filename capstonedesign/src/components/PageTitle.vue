@@ -15,5 +15,6 @@ export default {
         display: flex;
         padding: 50px;
         margin-left: 50px;
+        text-wrap: nowrap;
     }
 </style>

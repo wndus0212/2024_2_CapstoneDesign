@@ -1,5 +1,6 @@
 <template>
     <TopNav/>
+    <div style="height: 120px;"></div>
     <MainContainer>
       <div style="text-align: left;">
         <SubTitle>실시간 뉴스</SubTitle>

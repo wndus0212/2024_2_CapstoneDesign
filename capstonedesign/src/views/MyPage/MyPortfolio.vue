@@ -35,7 +35,11 @@
         <div style="display: flex;">
             <PortfolioPieChart/>
         </div>
-        <SmallButton text="수정"/>
+        <SmallButton text="수정" @click="openModal"/>
+        <EditPortfolio v-if="showModal" @close="closeModal">
+            <h2>모달 창</h2>
+            <p>이곳에 원하는 내용을 입력하세요.</p>
+        </EditPortfolio>
         <box class="AIFeedBack"></box>
 
         <SubTitle>
@@ -71,7 +75,7 @@ import Box from '@/components/Box.vue';
 import PortfolioBackTestChart from '@/components/MyPage/PortfolioBackTestChart.vue';
 import PortfolioMontecarlo from '@/components/MyPage/PortfolioMontecarlo.vue';
 import SubTitle from '@/components/SubTitle.vue';
-
+import EditPortfolio from '@/components/MyPage/EditPortfolio.vue';
 export default {
     components:{
         PortfolioChart,
@@ -80,7 +84,21 @@ export default {
         Box,
         PortfolioBackTestChart,
         PortfolioMontecarlo,
-        SubTitle
+        SubTitle,
+        EditPortfolio
+    },
+    data() {
+        return {
+            showModal: false // 모달 창 표시 여부
+        };
+    },
+    methods:{
+        openModal() {
+            this.showModal = true;
+        },
+        closeModal() {
+            this.showModal = false;
+        }
     }
 }
 </script>

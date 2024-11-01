@@ -1,10 +1,10 @@
 <template>
-    <div class="scrollContainer">
+    <div class="ConsensusScrollContainer">
         <div class="table-wrapper">
             <BoxTitle>
                 전문가 의견
             </BoxTitle>
-            <table class="StockTable">
+            <table class="consensus">
                 <thead>
                     <tr>
                         <th scope="col">의견</th>
@@ -37,7 +37,7 @@ export default {
 </script>
 
 <style>
-.scrollContainer {
+.ConsensusScrollContainer {
     padding: 20px;
     border: 1px solid black;
     min-width: 500px;
@@ -55,19 +55,19 @@ export default {
     width: 100%;
 }
 
-.StockTable {
+.consensus {
     width: 100%;
     border-collapse: collapse;
     font-size: 20px;
     border: none
 }
 
-.StockTable th {
+.consensus th {
     width: 100px;
     background-color: #f1f1f1;
 }
 
-.StockTable thead th {
+.consensus thead th {
     position: sticky; /* 헤더 고정 */
     top: 0;
     z-index: 10;
@@ -75,12 +75,12 @@ export default {
     border: none
 }
 
-.StockTable tbody tr {
+.consensus tbody tr {
     height: 80px;
     border: none
 }
 
-.StockTable td, .StockTable th {
+.consensus td, .consensus th {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;

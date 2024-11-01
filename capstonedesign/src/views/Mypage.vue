@@ -1,5 +1,6 @@
 <template>
     <TopNav/>
+    <div style="height: 120px;"></div>
     <PageTitle>마이페이지</PageTitle>
     <div style="display: flex; min-width: 1000px; margin-right: 250px;">
       <SideMenu/>

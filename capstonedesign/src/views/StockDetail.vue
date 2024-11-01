@@ -1,5 +1,6 @@
 <template>
     <Top/>
+    <div style="height: 120px;"></div>
     <PageTitle>
         삼성전자
     </PageTitle>
