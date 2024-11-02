@@ -30,27 +30,24 @@ export default {
     components:{
         BoxTitle
     },
-  data() {
-
-  },
 };
 </script>
 
-<style>
+<style scoped>
 .ConsensusScrollContainer {
     padding: 20px;
     border: 1px solid black;
     min-width: 500px;
-    width: 680px !important;
+    max-width: 680px; /* 최대 너비로 조정 */
     border-radius: 10px;
-    height: 400px !important;
+    height: 400px; /* 높이 조정 */
     display: flex;
     text-align: left;
-    margin: 10px !important
+    margin: 10px;
 }
 
 .table-wrapper {
-    max-height: 650px; 
+    max-height: 350px; /* 스크롤되는 높이 설정 */
     overflow-y: auto;
     width: 100%;
 }
@@ -59,7 +56,6 @@ export default {
     width: 100%;
     border-collapse: collapse;
     font-size: 20px;
-    border: none
 }
 
 .consensus th {
@@ -68,22 +64,19 @@ export default {
 }
 
 .consensus thead th {
-    position: sticky; /* 헤더 고정 */
+    position: sticky;
     top: 0;
     z-index: 10;
-    background-color: white; /* 헤더 배경색 */
-    border: none
+    background-color: white;
 }
 
 .consensus tbody tr {
     height: 80px;
-    border: none
 }
 
 .consensus td, .consensus th {
-    border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
-    border: none
+    border-bottom: 1px solid #ddd; /* 하단 테두리 추가 */
 }
 </style>

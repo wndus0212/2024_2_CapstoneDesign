@@ -1,11 +1,11 @@
 <template>
-    <div>
+    <div style="width: 100%; display: flex; justify-content: center;">
       <apexchart 
         type="donut" 
         :options="chartOptions" 
         :series="series" 
-        :width="450"
-        :height="400"
+        :width="250"
+        :height="300"
       />
     </div>
   </template>
@@ -24,7 +24,7 @@
         chartOptions: { // chartOptions 정의
           chart: {
             type: 'donut', // Donut 차트 타입 설정
-            width: 380
+            width: 300
           },
           labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'], // labels 정의
           responsive: [{
@@ -39,7 +39,7 @@
             }
           }],
           legend: {
-            position: 'top' // 범례 위치 설정
+            show: false
           }
         }
       };
@@ -48,6 +48,5 @@
   </script>
   
   <style scoped>
-  /* 필요에 따라 스타일 추가 */
   </style>
   

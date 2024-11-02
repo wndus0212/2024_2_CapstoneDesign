@@ -4,8 +4,6 @@
         </SmallButton>
         <SmallButton @click="navigateTo('/MyPage/AddPortfolio')" class="menuButton" text="포트폴리오 관리">
         </SmallButton>
-        <SmallButton @click="navigateTo('/MyPage/MyInterestedStock')" class="menuButton" text="관심 종목">
-        </SmallButton>
     </div>
 </template>
 <script>
@@ -17,7 +15,6 @@ export default {
     methods:{
         navigateTo(route) {
             this.$router.push(route); // Vue Router를 사용해 라우트 변경
-            
         }
             
     }

@@ -1,7 +1,6 @@
 <template>
     
     <nav class="TopNav">
-      <ProjectLogo/>
       <ul>
         <li>
             <TopNavButton @click="goToHome">
@@ -11,11 +10,6 @@
         <li>
             <TopNavButton @click="goToDetail">
                 <p>종목별</p>
-            </TopNavButton>
-        </li>
-        <li>
-            <TopNavButton @click="goToContents">
-                <p>경제콘텐츠</p>
             </TopNavButton>
         </li>
         <li>
@@ -29,13 +23,11 @@
   
   <script>
   import TopNavButton from './TopNavButton.vue'
-  import ProjectLogo from './logo.vue';
 
   export default {
     name: 'TopNav',
     components: {
         TopNavButton,
-        ProjectLogo
     },
     methods:{
       goToHome() {
@@ -43,9 +35,6 @@
       },
       goToDetail() {
         this.$router.push('/Detail');
-      },
-      goToContents() {
-        this.$router.push('/Contents');
       },
       goToMyPage() {
         this.$router.push('/Mypage');
@@ -56,21 +45,23 @@
   
   <style scoped>
   .TopNav {
-    background-color: lightblue;
     padding: 0px 20px;
     margin: 0px;
     display: flex;
     gap:  20px;
-    height: 80px;
+    height: 100px;
     position: fixed; 
     top: 0; 
     width: 100%; 
     z-index: 1000; 
+    border-bottom: 1px solid lightgray;
+    background-color: white;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   }
   .TopNav ul {
     list-style: none;
     display: flex;
-    gap: 1em;
+    gap: 40px;
     margin: 0;
     padding: 0;
   }

@@ -62,7 +62,6 @@ import MainContainer from '@/components/MainContainer.vue';
 import StockChart from '@/components/StockDetail/StockChart.vue';
 import StockChartBelow from '@/components/StockDetail/StockChartBelow.vue';
 import Box from '@/components/Box.vue';
-import EconomyNews from '@/components/ContentsPage/EconomyNews.vue';
 import ConsensusTable from '@/components/StockDetail/ConsensusTable.vue';
 import SubTitle from '@/components/SubTitle.vue';
 import ButtonContainer from '@/components/ButtonContainer.vue';
@@ -75,7 +74,6 @@ export default {
         PageTitle,
         MainContainer,
         StockChart,
-        EconomyNews,
         Box,
         ConsensusTable,
         StockChartBelow,

@@ -1,8 +1,11 @@
 <template>
     <TopNav/>
-    <div style="height: 100px;"></div>
-  <PageTitle>전체 종목 보기</PageTitle>
-    <SearchBar/>
+    <div style="height: 120px;"></div>
+    <PageTitle>전체 종목 보기</PageTitle>
+    <div style="display: flex; justify-content: center;">
+      <SearchBar/>
+    </div>
+    
     <div style="margin-left: 100px; min-width: 700px;">
       <ButtonContainer>
         <SmallButton text="국내"/>

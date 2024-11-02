@@ -59,7 +59,7 @@ export default {
     width: 1200px;
     border-radius: 10px;
     margin: 0px 50px;
-    height: 700px;
+    height: 500px;
     display: flex;
     
 }
@@ -68,6 +68,9 @@ export default {
     max-height: 700px; /* 스크롤되는 높이 설정 */
     overflow-y: auto; /* 수직 스크롤 */
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .FinancialStatement {
@@ -82,16 +85,9 @@ export default {
     background-color: #f1f1f1;
 }
 
-.FinancialStatement thead th {
-    position: sticky; /* 헤더 고정 */
-    top: 0;
-    z-index: 10;
-    background-color: white; /* 헤더 배경색 */
-    border: none
-}
-
 .FinancialStatement tbody tr {
-    height: 95px;
+    font-size: 30px;
+    height: 100px;
     border: 1px solid lightgray;
 }
 
