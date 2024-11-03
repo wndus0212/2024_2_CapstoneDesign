@@ -19,6 +19,6 @@ export default {
         font-size: 24px;
     }
     .TopNavButton:hover{
-        border-bottom: 3px solid blue;
+        border-bottom: 3px solid rgb(37, 200, 255);
     }
 </style>

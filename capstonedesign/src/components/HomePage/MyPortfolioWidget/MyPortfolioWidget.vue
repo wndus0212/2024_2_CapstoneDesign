@@ -4,9 +4,7 @@
         내 포트폴리오
       </BoxTitle>
 
-      <select style="margin: 10px 0px; height: 35px; width: 180px; font-size: 20px;">
-        <option>포트폴리오 1</option>
-      </select>
+      <SelectBox :options="selectOption" v-model="selectedOption"/>
 
       <div style="display: flex;">
         <div>
@@ -35,6 +33,7 @@ import containerBox from '@/components/Box.vue'
 import BoxTitle from '@/components/BoxTitle.vue';
 import PortfolioPieChartSmall from './PortfolioPieChartSmall.vue';
 import PortfolioChartSmall from './PortfolioChartSmall.vue';
+import SelectBox from '@/components/SelectBox.vue';
 
 export default {
     name:'MyPortfolioWidget',
@@ -43,7 +42,17 @@ export default {
         BoxTitle,
         PortfolioPieChartSmall,
         PortfolioChartSmall,
-    }
+        SelectBox
+    },
+    data() {
+        return {
+            showModal: false,
+            selectOption:[
+                {label: '포트폴리오 1', value: '1'}
+            ],
+            selectedOption: ''
+        };
+    },
 }
 </script>
 <style>

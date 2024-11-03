@@ -12,7 +12,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="i in 20" :key="i" @click="navigateTo('StockDetail')">
+                        <tr>
+                            <td>삼성전자</td>
+                            <td>60600</td>
+                            <td>23,107,725</td>
+                            <td>361조 7688억</td>
+                        </tr>
+                        <tr>
+                            <td>삼성전자</td>
+                            <td>60600</td>
+                            <td>23,107,725</td>
+                            <td>361조 7688억</td>
+                        </tr>
+                        <tr>
                             <td>삼성전자</td>
                             <td>60600</td>
                             <td>23,107,725</td>
@@ -27,29 +39,15 @@
 
 <script>
 export default {
-  props: {
-    width: {
-      type: String,
-      default: '1200px'
-    },
-    height: {
-      type: String,
-      default: '700px'
-    }
-  },
-  methods: {
-    navigateTo(route) {
-      this.$router.push(route);  // 해당 경로로 페이지 이동
-    }
-  }
 };
 </script>
 
 <style scoped>
 .scrollContainer {
+    width: 600px;
+    height: 700px;
     padding: 20px;
     min-width: 500px;
-    width: 100%;
     border-radius: 10px;
     margin: 0px 50px;
     height: 100%;

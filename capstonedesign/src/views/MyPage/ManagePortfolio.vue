@@ -1,6 +1,7 @@
 <template>
     <div class="innerPageWrapper">
-        <SubTitle>
+        <Box width="1000px">
+            <SubTitle>
             내 포트폴리오 목록
         </SubTitle>
         <div style="margin-right: 120px; display: flex; justify-content: space-between; width:87%">
@@ -16,7 +17,7 @@
             
         </div>
         
-        <PortfolioTable style="margin-left: auto;"/>
+        <PortfolioTable/>
         <SmallButton text="삭제"/>
         
         <SubTitle>
@@ -24,6 +25,8 @@
         </SubTitle>
 
         <CreatePortfolio/>
+        </Box>
+        
     </div>
 </template>
 <script>
@@ -31,13 +34,15 @@ import PortfolioTable from '@/components/MyPage/PortfolioTable.vue';
 import SmallButton from '@/components/SmallButton.vue';
 import SubTitle from '@/components/SubTitle.vue';
 import CreatePortfolio from '@/components/MyPage/CreatePortfolio.vue';
+import Box from '@/components/Box.vue';
 
 export default {
     components:{
         PortfolioTable,
         SmallButton,
         SubTitle,
-        CreatePortfolio
+        CreatePortfolio,
+        Box
     }
 }
 </script>

@@ -53,12 +53,11 @@ export default {
 
 <style>
 .FinancialScrollContainer {
-    padding: 20px;
-    border: 1px solid black;
+
     min-width: 500px;
     width: 1200px;
     border-radius: 10px;
-    margin: 0px 50px;
+
     height: 500px;
     display: flex;
     

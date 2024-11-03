@@ -6,8 +6,8 @@
 
     <div>
       <div style="display: flex;">
-        <TreeMapWidget class="small-widget"/>
-        <SectionChartWidget class="small-widget"/>
+        <TreeMapWidget width="330px" height="350px"/>
+        <SectionChartWidget width="330px" height="350px"/>
       </div>
       <RealTimeChartWidget/>
       <StockRankingWidget/>    

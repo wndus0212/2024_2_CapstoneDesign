@@ -36,7 +36,8 @@ export default {
 <style scoped>
 .ConsensusScrollContainer {
     padding: 20px;
-    border: 1px solid black;
+    background-color: white;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     min-width: 500px;
     max-width: 680px; /* 최대 너비로 조정 */
     border-radius: 10px;

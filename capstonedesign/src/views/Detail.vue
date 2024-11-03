@@ -19,9 +19,7 @@
         <SmallButton text="저평가 성장주"/>
       </ButtonContainer>
       <ButtonContainer>
-        <select>
-          <option value="1">조건 추가</option>
-        </select>
+        <SelectBox :options="selectOption" v-model="selectedOption" width="200px"/>
         <SmallButton text="시가총액"/>
       </ButtonContainer>
     </div>
@@ -35,6 +33,8 @@
   import ButtonContainer from '@/components/ButtonContainer.vue';
   import StockTable from '@/components/StockTable.vue'; 
   import PageTitle from '@/components/PageTitle.vue';
+  import SelectBox from '@/components/SelectBox.vue';
+
   export default {
     name: 'DetailPage',
     components: {
@@ -43,8 +43,18 @@
       SmallButton,
       ButtonContainer,
       StockTable,
-      PageTitle
-    }
+      PageTitle,
+      SelectBox
+    },
+    data() {
+        return {
+            showModal: false,
+            selectOption:[
+                {label: '오름차순', value: '1'}
+            ],
+            selectedOption: ''
+        };
+    },
   }
   </script>
   

@@ -1,7 +1,19 @@
 <template>
-    <div style="display: flex; justify-content: center;">
-        <div class="scrollContainer" :style="{ width: width, height: height}">
+
+    <div style="display: flex; justify-content: center; margin-top: 60px;">
+        
+        <div class="scrollContainer">
             <div class="table-wrapper">
+                <div style="display: flex; justify-content: space-between;">
+                    <SmallSearch/>
+                    <ButtonContainer>
+                        <SmallButton text="많이 상승한 순위"/>
+                        <SmallButton text="많이 하락한 순위"/>
+                        <SmallButton text="거래량 많은 순위"/>
+                        <SmallButton text="인기 많은 순위"/>
+                    </ButtonContainer>
+                </div>
+                
                 <table class="StockTable">
                     <thead>
                         <tr>
@@ -12,7 +24,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="i in 20" :key="i" @click="navigateTo('StockDetail')">
+                        <tr>
+                            <td>삼성전자</td>
+                            <td>60600</td>
+                            <td>23,107,725</td>
+                            <td>361조 7688억</td>
+                        </tr>
+                        <tr>
+                            <td>삼성전자</td>
+                            <td>60600</td>
+                            <td>23,107,725</td>
+                            <td>361조 7688억</td>
+                        </tr>
+                        <tr>
                             <td>삼성전자</td>
                             <td>60600</td>
                             <td>23,107,725</td>
@@ -23,33 +47,29 @@
             </div>
         </div>
     </div>
+
 </template>
 
 <script>
+import SmallSearch from './SmallSearch.vue';
+import ButtonContainer from '@/components/ButtonContainer.vue';
+import SmallButton from '@/components/SmallButton.vue';
+
 export default {
-  props: {
-    width: {
-      type: String,
-      default: '1200px'
-    },
-    height: {
-      type: String,
-      default: '700px'
+    components:{
+        SmallSearch,
+        ButtonContainer,
+        SmallButton
     }
-  },
-  methods: {
-    navigateTo(route) {
-      this.$router.push(route);  // 해당 경로로 페이지 이동
-    }
-  }
 };
 </script>
 
 <style scoped>
 .scrollContainer {
+    width: 1050px;
+    height: 700px;
     padding: 20px;
     min-width: 500px;
-    width: 100%;
     border-radius: 10px;
     margin: 0px 50px;
     height: 100%;
