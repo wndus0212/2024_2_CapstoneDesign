@@ -14,7 +14,7 @@
     </div>
   </MainContainer>
   <div>
-    <h2>주식 데이터</h2>
+    <h2>주식 데이터 테스트</h2>
     <ul>
       <li v-for="stock in stocks" :key="stock.id">
         날짜: {{ stock.stck_bsop_date }}, 시가: {{ stock.stck_oprc }}, 고가: {{ stock.stck_hgpr }},
