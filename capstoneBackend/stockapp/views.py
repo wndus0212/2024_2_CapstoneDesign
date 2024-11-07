@@ -12,7 +12,14 @@ def stock_data(request):
 
 def stock_rank(request):
     access_token = get_access_token()  # 토큰 발급
-    daily_data = get_stock_capitalization_rank(access_token)  # 주식 데이터 가져오기
+    rank_data = get_stock_capitalization_rank(access_token)  # 주식 데이터 가져오기
 
     # 주식 데이터를 JsonResponse로 반환
-    return JsonResponse(daily_data)
+    return JsonResponse(rank_data)
+
+def stock_itemchartprice(request):
+    access_token = get_access_token()  # 토큰 발급
+    itemchartprice_data = get_stock_capitalization_rank(access_token)  # 주식 데이터 가져오기
+
+    # 주식 데이터를 JsonResponse로 반환
+    return JsonResponse(itemchartprice_data)

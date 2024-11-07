@@ -126,9 +126,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",  # Vue 앱이 실행 중인 도메인
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
 CACHES = {
     'default': {

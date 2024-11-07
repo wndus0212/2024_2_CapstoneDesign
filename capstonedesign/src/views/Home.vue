@@ -17,8 +17,8 @@
     <h2>주식 데이터 테스트</h2>
     <ul>
       <li v-for="stock in stocks" :key="stock.id">
-        날짜: {{ stock.stck_bsop_date }}, 시가: {{ stock.stck_oprc }}, 고가: {{ stock.stck_hgpr }},
-        저가: {{ stock.stck_lwpr }}, 종가: {{ stock.stck_clpr }}, 거래량: {{ stock.acml_vol }}
+        {{  stock.hts_kor_isnm }}
+        날짜: {{ stock.stck_bsop_date }}, 시가: {{ stock.stck_prpr }}
       </li>
     </ul>
   </div>
@@ -57,7 +57,7 @@ export default {
   methods: {
     fetchStockData() {
       axios
-        .get("http://127.0.0.1:8000/stock/data/")  // Django에서 제공하는 API 호출
+        .get("http://127.0.0.1:8000/stock/itemchartprice/")  // Django에서 제공하는 API 호출
         .then(response => {
           this.stocks = response.data.output;  // 받아온 데이터를 stockData에 저장
         })

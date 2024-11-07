@@ -75,3 +75,27 @@ def get_stock_capitalization_rank(access_token):
     }
     response = requests.get(url, headers=headers, params=params)
     return response.json()
+
+
+# 주식 시가총액 순위 데이터 요청
+def get_inquire_dail_itemchartprice(access_token):
+    url = f"/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "content-type": "application/json",
+        "appKey": client_id,
+        "appSecret": client_key,
+        "tr_id": "FHPST01740000",
+        "custtype": "P"
+    }
+    params = {
+        "FID_COND_MRKT_DIV_CODE": "J",       # 코스피 시장 선택
+        "FID_INPUT_ISCD": "005935",    # 고유 조건 분류 코드
+        "FID_DIV_CLS_CODE": "0",             # 전체 주식
+        "FID_INPUT_DATE_1": "20220501",            # 전체 종목
+        "FID_INPUT_DATE_2": "20240501",            # 전체 대상
+        "FID_PERIOD_DIV_CODE": "D",       # 전체 제외 없음
+        "FID_ORG_ADJ_PRC": "0",             # 전체 가격
+    }
+    response = requests.get(url, headers=headers, params=params)
+    return response.json()
