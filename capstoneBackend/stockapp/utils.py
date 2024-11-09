@@ -104,7 +104,6 @@ def get_stock_history(Id, start, end, period, interval):
                 print(f"No data found for stock {name}")
                 return None
             
-            print(df)
             return df
         else:
             df = ticker.history(period=period, interval=interval, auto_adjust=False)  # 최근 5일 데이터 가져오기
@@ -112,33 +111,6 @@ def get_stock_history(Id, start, end, period, interval):
                 print(f"No data found for stock {name}")
                 return None
             
-            print(df)
-            return df
-
-        
-    except Exception as e:
-        print(f"Error fetching data for {name}: {e}")
-        return None
-
-def get_stock_history_purchase_amount(Id, start, end, period, interval):
-    name = f"{Id}.KS"
-    ticker = yf.Ticker(name)
-    try:
-        if period==0:
-            df = ticker.history(start=start, end=end, interval=interval, auto_adjust=False)  # 최근 5일 데이터 가져오기
-            if df.empty:
-                print(f"No data found for stock {name}")
-                return None
-            
-            print(df)
-            return df
-        else:
-            df = ticker.history(period=period, interval=interval, auto_adjust=False)  # 최근 5일 데이터 가져오기
-            if df.empty:
-                print(f"No data found for stock {name}")
-                return None
-            
-            print(df)
             return df
 
         

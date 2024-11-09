@@ -49,10 +49,16 @@
     data() {
         return {
             showModal: false,
-            selectOption:[
-                {label: '오름차순', value: '1'}
+            selectOption: [
+              { label: '오름차순', value: '1' },
+              { label: '내림차순', value: '2' }
             ],
-            selectedOption: ''
+            selectOption2: [
+              { label: '국내', value: 'KOR' },
+              { label: '미국', value: '' }
+            ],
+            selectedOption1: '', // 첫 번째 Select의 선택된 값
+            selectedOption2: ''  // 두 번째 Select의 선택된 값
         };
     },
   }
