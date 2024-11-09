@@ -2,6 +2,7 @@
 
 import requests
 from django.core.cache import cache
+import yfinance as yf
 
 # API 키와 Secret 키 입력
 client_id = "PSekA1zSBGgE4mJCmCgT06UTivilW4ZmLCim"
@@ -76,26 +77,71 @@ def get_stock_capitalization_rank(access_token):
     response = requests.get(url, headers=headers, params=params)
     return response.json()
 
-
-# 주식 시가총액 순위 데이터 요청
-def get_inquire_dail_itemchartprice(access_token):
-    url = f"/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice"
+def get_stock_detail_info_kor(access_token, Id):
+    url = f"https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/search-info"
     headers = {
         "Authorization": f"Bearer {access_token}",
         "content-type": "application/json",
         "appKey": client_id,
         "appSecret": client_key,
-        "tr_id": "FHPST01740000",
+        "tr_id": "CTPF1604R",
         "custtype": "P"
     }
     params = {
-        "FID_COND_MRKT_DIV_CODE": "J",       # 코스피 시장 선택
-        "FID_INPUT_ISCD": "005935",    # 고유 조건 분류 코드
-        "FID_DIV_CLS_CODE": "0",             # 전체 주식
-        "FID_INPUT_DATE_1": "20220501",            # 전체 종목
-        "FID_INPUT_DATE_2": "20240501",            # 전체 대상
-        "FID_PERIOD_DIV_CODE": "D",       # 전체 제외 없음
-        "FID_ORG_ADJ_PRC": "0",             # 전체 가격
+        "PDNO":Id,
+        "PRDT_TYPE_CD":"300"
     }
     response = requests.get(url, headers=headers, params=params)
     return response.json()
+
+def get_stock_history(Id, start, end, period, interval):
+    name = f"{Id}.KS"
+    ticker = yf.Ticker(name)
+    try:
+        if period==0:
+            df = ticker.history(start=start, end=end, interval=interval, auto_adjust=False)  # 최근 5일 데이터 가져오기
+            if df.empty:
+                print(f"No data found for stock {name}")
+                return None
+            
+            print(df)
+            return df
+        else:
+            df = ticker.history(period=period, interval=interval, auto_adjust=False)  # 최근 5일 데이터 가져오기
+            if df.empty:
+                print(f"No data found for stock {name}")
+                return None
+            
+            print(df)
+            return df
+
+        
+    except Exception as e:
+        print(f"Error fetching data for {name}: {e}")
+        return None
+
+def get_stock_history_purchase_amount(Id, start, end, period, interval):
+    name = f"{Id}.KS"
+    ticker = yf.Ticker(name)
+    try:
+        if period==0:
+            df = ticker.history(start=start, end=end, interval=interval, auto_adjust=False)  # 최근 5일 데이터 가져오기
+            if df.empty:
+                print(f"No data found for stock {name}")
+                return None
+            
+            print(df)
+            return df
+        else:
+            df = ticker.history(period=period, interval=interval, auto_adjust=False)  # 최근 5일 데이터 가져오기
+            if df.empty:
+                print(f"No data found for stock {name}")
+                return None
+            
+            print(df)
+            return df
+
+        
+    except Exception as e:
+        print(f"Error fetching data for {name}: {e}")
+        return None

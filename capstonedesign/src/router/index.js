@@ -9,7 +9,7 @@ import StockDetail from '@/views/StockDetail.vue';
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
   { path: '/Detail', name: 'Detail', component: DetailPage},
-  { path: '/StockDetail', name: 'StockDetail', component: StockDetail},
+  { path: '/detail/:stockCode', name: 'StockDetail', component: StockDetail, props: true},
   { path: '/Mypage', name: 'MyPage', component: MyPage,
     redirect: '/Mypage/MyPortfolio',
     children:[

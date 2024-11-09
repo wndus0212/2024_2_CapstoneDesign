@@ -58,7 +58,9 @@ export default {
         });
     },
     navigateTo(stockCode) {
-      this.$router.push(`/detail/${stockCode}`);  // 해당 경로로 페이지 이동
+      this.$router.push({
+        path: `/detail/${stockCode}`,  // path에 stockCode를 포함한 URL 설정
+      });
     }
   },
   mounted() {
