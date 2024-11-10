@@ -2,7 +2,10 @@
 
 import requests
 from django.core.cache import cache
+from django.http import JsonResponse
 import yfinance as yf
+import FinanceDataReader as fdr
+import json
 
 # API 키와 Secret 키 입력
 client_id = "PSekA1zSBGgE4mJCmCgT06UTivilW4ZmLCim"
@@ -52,30 +55,18 @@ def get_stock_daily_candles(access_token, symbol, timeframe='D'):
     response = requests.get(url, headers=headers, params=params)
     return response.json()
 
-# 주식 시가총액 순위 데이터 요청
-def get_stock_capitalization_rank(access_token):
-    url = f"https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/ranking/market-cap"
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "content-type": "application/json",
-        "appKey": client_id,
-        "appSecret": client_key,
-        "tr_id": "FHPST01740000",
-        "custtype": "P"
-    }
-    params = {
-        "FID_INPUT_PRICE_2": "",             # 전체 조회
-        "FID_COND_MRKT_DIV_CODE": "J",       # 코스피 시장 선택
-        "FID_COND_SCR_DIV_CODE": "20174",    # 고유 조건 분류 코드
-        "FID_DIV_CLS_CODE": "0",             # 전체 주식
-        "FID_INPUT_ISCD": "0000",            # 전체 종목
-        "FID_TRGT_CLS_CODE": "0",            # 전체 대상
-        "FID_TRGT_EXLS_CLS_CODE": "0",       # 전체 제외 없음
-        "FID_INPUT_PRICE_1": "",             # 전체 가격
-        "FID_VOL_CNT": ""                    # 전체 거래량
-    }
-    response = requests.get(url, headers=headers, params=params)
-    return response.json()
+# 주식 리스트 데이터 요청
+def get_stock_list(market):
+    try:
+        stocks=fdr.StockListing('KRX')
+        stocks_json = stocks.to_json(orient='records', force_ascii=False)
+        stocks_list = json.loads(stocks_json)
+        # safe=False 추가하여 리스트 형태로 반환 허용
+        return JsonResponse(stocks_list, safe=False)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
 
 def get_stock_detail_info_kor(access_token, Id):
     url = f"https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/search-info"

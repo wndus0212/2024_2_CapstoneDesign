@@ -108,7 +108,7 @@ export default {
         };
     },
     mounted() {
-        console.log(this.stockCode);
+        console.log("코드:",this.Code);
         this.fetchStockDetails();
         this.fetchStockHistory();
     },
@@ -120,7 +120,7 @@ export default {
                     this.stock = response.data['output'];
                     console.log(this.stock)
                 })
-                .catch(error => console.error("종목 정보를 가져오는 데 실패했습니다:", error));
+                .catch(error => console.error("종목 정보를 가져오는 데 실패했습니다:", error,this.Code));
         },
         fetchStockHistory() {
             // 선택한 기간과 간격을 URL 파라미터로 전달

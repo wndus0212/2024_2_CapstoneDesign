@@ -1,6 +1,6 @@
 <template>
     <div class="select-box" :style="{ width: width, height: height }">
-        <select :value="value" @change="updateValue($event.target.value)">
+        <select :value="value || options[0]?.value" @change="updateValue($event.target.value)">
             <option v-for="(option, index) in options" :key="index" :value="option.value">
                 {{ option.label }}
             </option>
