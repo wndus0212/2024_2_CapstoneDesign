@@ -37,7 +37,12 @@ props: {
   height: {
     type: String,
     default: '700px'
-  }
+  },
+  selectedOption1: String,
+  selectedOption2: String,
+  selectedOption3: String,
+  selectedOption4: String,
+  selectedOption5: String
 },
 data() {
   return {
@@ -46,15 +51,28 @@ data() {
 },
 methods: {
   fetchStockRank() {
-    axios
-      .get("http://127.0.0.1:8000/stock/list/KRX/")  // Django에서 제공하는 API 호출
-      .then(response => {
-        this.stocks = response.data;  // 받아온 데이터를 stockData에 저장
-        this.sortStocksByMarketCap();  // 시가총액 기준으로 정렬
-      })
-      .catch(error => {
-        console.error("데이터를 불러오는데 실패했습니다:", error);
-      });
+    if(this.selectedOption1=="KOR"){
+      axios
+        .get("http://127.0.0.1:8000/stock/list/KRX/")  // Django에서 제공하는 API 호출
+        .then(response => {
+          this.stocks = response.data;  // 받아온 데이터를 stockData에 저장
+          this.sortStocksByMarketCap();  // 시가총액 기준으로 정렬
+        })
+        .catch(error => {
+          console.error("데이터를 불러오는데 실패했습니다:", error);
+        });
+    }else{
+      axios
+        .get("http://127.0.0.1:8000/stock/list/NASDAQ/")  // Django에서 제공하는 API 호출
+        .then(response => {
+          this.stocks = response.data;  // 받아온 데이터를 stockData에 저장
+          this.sortStocksByMarketCap();  // 시가총액 기준으로 정렬
+        })
+        .catch(error => {
+          console.error("데이터를 불러오는데 실패했습니다:", error);
+        });
+    }
+    
   },
   sortStocksByMarketCap() {
     this.stocks.sort((a, b) => {

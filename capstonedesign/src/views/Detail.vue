@@ -11,15 +11,20 @@
       <ButtonContainer>
         <SelectBox :options="selectOption1" v-model="selectedOption1" width="200px"/>
         <SelectBox :options="selectOption2" v-model="selectedOption2" width="200px"/>
-        <SelectBox :options="filteredSelectOption3" v-model="selectedOption3" width="200px"/>
+        <SelectBox v-if="selectedOption2 !== 'ETF'" :options="filteredSelectOption3" v-model="selectedOption3" width="200px"/>
       </ButtonContainer>
       <ButtonContainer>
+        <SelectBox :options="selectOption5" v-model="selectedOption5" width="200px"/>
         <SelectBox :options="selectOption4" v-model="selectedOption4" width="200px"/>
         <SmallButton text="시가총액"/>
       </ButtonContainer>
     </div>
 
-    <StockTable></StockTable>
+    <StockTable :selectedOption1="selectedOption1"
+      :selectedOption2="selectedOption2"
+      :selectedOption3="selectedOption3"
+      :selectedOption4="selectedOption4"
+      :selectedOption5="selectedOption5"></StockTable>
   </div>
 </template>
 
@@ -69,21 +74,30 @@ export default {
       selectOption4: [
         { label: '시가총액', value: '1' },
       ],
+      selectOption5: [
+        { label: '전체', value: '1' },
+      ],
       selectedOption1: 'KOR',
       selectedOption2: 'Stock',
       selectedOption3: 'KRX', // 이 값은 첫 번째 값에 맞게 초기화
-      selectedOption4: '1'
+      selectedOption4: '1',
+      selectedOption5: '1'
     };
   },
   computed: {
     // selectedOption1에 따라 selectOption3를 필터링
     filteredSelectOption3() {
+      console.log(this.selectOption3[this.selectedOption1])
       return this.selectOption3[this.selectedOption1] || [];
+      
     }
   },
   watch: {
     // selectedOption1이 변경되면 selectedOption3도 초기화
     selectedOption1(newValue) {
+      console.log(newValue)
+      console.log(this.selectOption3[newValue][0].value, this.selectOption3[this.selectedOption1]);
+      
       this.selectedOption3 = this.selectOption3[newValue][0].value;
     }
   }

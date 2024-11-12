@@ -1,6 +1,6 @@
 <template>
-    <div class="select-box" :style="{ width: width, height: height }">
-        <select :value="value || options[0]?.value" @change="updateValue($event.target.value)">
+    <div class="select-box" :style="{ width: width }">
+        <select :value="modelValue || options[0]?.value" @change="updateValue($event.target.value)">
             <option v-for="(option, index) in options" :key="index" :value="option.value">
                 {{ option.label }}
             </option>
@@ -16,7 +16,7 @@ export default {
             type: Array,
             required: true
         },
-        value: {
+        modelValue: {
             type: String,
             default: ''
         },
@@ -27,7 +27,8 @@ export default {
     },
     methods: {
         updateValue(selectedValue) {
-            this.$emit('input', selectedValue);
+            // 모델 값 업데이트 이벤트 호출
+            this.$emit('update:modelValue', selectedValue);
         }
     }
 }

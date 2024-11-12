@@ -67,6 +67,16 @@ def get_stock_list(market):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
+def get_stock_list_global(market):
+    try:
+        stocks=fdr.StockListing('KRX')
+        stocks_json = stocks.to_json(orient='records', force_ascii=False)
+        stocks_list = json.loads(stocks_json)
+        # safe=False 추가하여 리스트 형태로 반환 허용
+        return JsonResponse(stocks_list, safe=False)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 def get_stock_detail_info_kor(access_token, Id):
     url = f"https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/search-info"
