@@ -68,7 +68,8 @@ export default {
         GLB: [
           { label: '전체', value: 'GLB' },
           { label: 'NYSE', value: 'NYSE' },
-          { label: 'NASDAQ', value: 'NASDAQ' }
+          { label: 'NASDAQ', value: 'NASDAQ' },
+          { label: 'S&P500', value: 'SP500' }
         ]
       },
       selectOption4: [

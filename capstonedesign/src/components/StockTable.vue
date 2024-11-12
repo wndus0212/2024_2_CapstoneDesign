@@ -1,27 +1,28 @@
 <template>
   <div style="display: flex;">
-      <div class="scrollContainer" :style="{ width: width, height: height,}">
-          <div class="table-wrapper">
-            <table class="StockTable">
-                <thead>
-                    <tr>
-                        <th scope="col">종목</th>
-                        <th scope="col">현재가</th>
-                        <th scope="col">거래량</th>
-                        <th scope="col">시가총액(억)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="stock in stocks" :key="stock.Code" @click="navigateTo(stock.Code)">
-                        <td>{{ stock.Name }}</td>
-                        <td>{{ stock.Close }}</td>
-                        <td>{{ stock.Volume }}</td>
-                        <td>{{ stock.Marcap/100000000 }}</td>
-                    </tr>
-                </tbody>
-            </table>
-          </div>
+    <div class="scrollContainer" :style="{ width: width, height: height }">
+      <div v-if="loading" class="loading">로딩 중...</div>
+      <div v-else class="table-wrapper">
+        <table class="StockTable">
+          <thead>
+            <tr>
+              <th scope="col">종목</th>
+              <th scope="col">현재가</th>
+              <th scope="col">거래량</th>
+              <th scope="col">시가총액(억)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="stock in stocks" :key="stock.Code" @click="navigateTo(stock.Code)">
+              <td>{{ stock.Name }}</td>
+              <td>{{ stock.Close }}</td>
+              <td>{{ stock.Volume }}</td>
+              <td>{{ (stock.Marcap / 100000000).toFixed(2) }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </div>
   </div>
 </template>
 
@@ -29,68 +30,86 @@
 import axios from 'axios';
 
 export default {
-props: {
-  width: {
-    type: String,
-    default: '1200px'
+  props: {
+    width: {
+      type: String,
+      default: '1200px'
+    },
+    height: {
+      type: String,
+      default: '700px'
+    },
+    selectedOption1: String,
+    selectedOption2: String,
+    selectedOption3: String,
+    selectedOption4: String,
+    selectedOption5: String
   },
-  height: {
-    type: String,
-    default: '700px'
+  data() {
+    return {
+      stocks: [], // API에서 받은 데이터를 저장할 변수
+      loading: true, // 로딩 상태 추가
+    };
   },
-  selectedOption1: String,
-  selectedOption2: String,
-  selectedOption3: String,
-  selectedOption4: String,
-  selectedOption5: String
-},
-data() {
-  return {
-    stocks: [],  // API에서 받은 데이터를 저장할 변수
-  };
-},
-methods: {
-  fetchStockRank() {
-    if(this.selectedOption1=="KOR"){
-      axios
-        .get("http://127.0.0.1:8000/stock/list/KRX/")  // Django에서 제공하는 API 호출
-        .then(response => {
-          this.stocks = response.data;  // 받아온 데이터를 stockData에 저장
-          this.sortStocksByMarketCap();  // 시가총액 기준으로 정렬
-        })
-        .catch(error => {
-          console.error("데이터를 불러오는데 실패했습니다:", error);
-        });
-    }else{
-      axios
-        .get("http://127.0.0.1:8000/stock/list/NASDAQ/")  // Django에서 제공하는 API 호출
-        .then(response => {
-          this.stocks = response.data;  // 받아온 데이터를 stockData에 저장
-          this.sortStocksByMarketCap();  // 시가총액 기준으로 정렬
-        })
-        .catch(error => {
-          console.error("데이터를 불러오는데 실패했습니다:", error);
-        });
+  watch: {
+    selectedOption1() {
+      this.fetchStockRank();
+    },
+    selectedOption2() {
+      this.fetchStockRank();
+    },
+    selectedOption3() {
+      this.fetchStockRank();
     }
+  },
+  methods: {
+    fetchStockRank() {
+      this.loading = true; // 로딩 시작
+      let market='';
+      if(this.selectedOption1=='KOR'){
+        market="list/"
+      }else{
+        market="list_global/"
+      }
+
+      if(this.selectedOption2=='Stock'){
+        market=market+this.selectedOption3
+        console.log(market);
+      }else{
+        if(this.selectedOption1=='KOR'){
+          market=market+"KOR_ETF";
+        }else{
+          market=market+"GLB_ETF";
+        }
+      }
     
-  },
-  sortStocksByMarketCap() {
-    this.stocks.sort((a, b) => {
-        const marcapA = parseFloat(a.Marcap);  // 시가총액 값 숫자로 변환
-        const marcapB = parseFloat(b.Marcap);  // 시가총액 값 숫자로 변환
-        return marcapB - marcapA;  // 내림차순 정렬
+      const url = `http://127.0.0.1:8000/stock/${market}`;
+      console.log(url);
+      axios
+        .get(url)
+        .then(response => {
+          this.stocks = response.data;
+          this.sortStocksByMarketCap();
+        })
+        .catch(error => {
+          console.error("데이터를 불러오는데 실패했습니다:", error);
+        })
+        .finally(() => {
+          this.loading = false; // 로딩 종료
+        });
+    },
+    sortStocksByMarketCap() {
+      this.stocks.sort((a, b) => parseFloat(b.Marcap) - parseFloat(a.Marcap));
+    },
+    navigateTo(stockCode) {
+      this.$router.push({
+        path: `/detail/${stockCode}`,
       });
+    }
   },
-  navigateTo(stockCode) {
-    this.$router.push({
-      path: `/detail/${stockCode}`,  // path에 stockCode를 포함한 URL 설정
-    });
-    console.log(stockCode);
+  mounted() {
+    this.fetchStockRank(); // 컴포넌트가 마운트될 때 데이터 요청
   }
-},
-mounted() {
-  this.fetchStockRank();  // 컴포넌트가 마운트될 때 데이터 요청
-}
 };
 </script>
 
@@ -112,8 +131,15 @@ mounted() {
   overflow-y: auto;
   width: 100%;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   justify-content: start; 
+}
+
+.loading {
+  font-size: 24px;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
 }
 
 .StockTable {

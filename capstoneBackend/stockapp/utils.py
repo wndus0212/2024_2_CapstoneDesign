@@ -6,6 +6,7 @@ from django.http import JsonResponse
 import yfinance as yf
 import FinanceDataReader as fdr
 import json
+import pandas as pd
 
 # API 키와 Secret 키 입력
 client_id = "PSekA1zSBGgE4mJCmCgT06UTivilW4ZmLCim"
@@ -58,7 +59,7 @@ def get_stock_daily_candles(access_token, symbol, timeframe='D'):
 # 주식 리스트 데이터 요청
 def get_stock_list(market):
     try:
-        stocks=fdr.StockListing('KRX')
+        stocks=fdr.StockListing(market).head(50)
         stocks_json = stocks.to_json(orient='records', force_ascii=False)
         stocks_list = json.loads(stocks_json)
         # safe=False 추가하여 리스트 형태로 반환 허용
@@ -69,8 +70,43 @@ def get_stock_list(market):
     
 def get_stock_list_global(market):
     try:
-        stocks=fdr.StockListing('KRX')
-        stocks_json = stocks.to_json(orient='records', force_ascii=False)
+        stocks=[]
+        if market=='SP500':
+            stocks = fdr.StockListing("S&P500").head(50)
+        else:
+            stocks = fdr.StockListing(market).head(50)
+
+        # 심볼, 이름과 주가, 시가총액을 위한 리스트 초기화
+        symbols = stocks['Symbol'].tolist()
+        names = stocks['Name'].tolist()
+
+        # 주가와 시가총액 데이터를 저장할 빈 리스트
+        prices = []
+        market_caps = []
+        volume = []
+
+        # 각 종목의 주가와 시가총액 가져오기
+        for symbol in symbols:
+            # Yahoo Finance에서 해당 종목의 데이터 가져오기
+            stock_data = yf.Ticker(symbol)  # 종목 심볼 뒤에 '.VN'을 붙여서 Yahoo Finance에서 조회
+            stock_info = stock_data.info
+            
+            # 주가와 시가총액을 가져와서 리스트에 추가
+            prices.append(stock_info.get('currentPrice', None))  # 주가
+            market_caps.append(stock_info.get('marketCap', None))  # 시가총액
+            volume.append(stock_info.get('volume'))
+        # 데이터프레임 생성
+        data = {
+            'Symbol': symbols,
+            'Name': names,
+            'Price': prices,
+            'Market Cap': market_caps,
+            'Volume' : volume
+        }
+
+        df = pd.DataFrame(data)
+
+        stocks_json = df.to_json(orient='records', force_ascii=False)
         stocks_list = json.loads(stocks_json)
         # safe=False 추가하여 리스트 형태로 반환 허용
         return JsonResponse(stocks_list, safe=False)
@@ -78,6 +114,7 @@ def get_stock_list_global(market):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+#주식 자세한 정보 가져오기
 def get_stock_detail_info_kor(access_token, Id):
     url = f"https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/search-info"
     headers = {
