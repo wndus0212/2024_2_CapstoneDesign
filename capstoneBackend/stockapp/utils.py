@@ -57,26 +57,7 @@ def get_stock_daily_candles(access_token, symbol, timeframe='D'):
     response = requests.get(url, headers=headers, params=params)
     return response.json()
 
-def get_stock_data(symbol):
-    try:
-        stock_data = yf.Ticker(symbol)
-        stock_info = stock_data.info
-        price = stock_info.get('currentPrice', None)
-        market_cap = stock_info.get('marketCap', None)
-        vol = stock_info.get('volume', None)
-        return price, market_cap, vol
-    except Exception as e:
-        print(f"Error fetching data for {symbol}: {e}")
-        return None, None, None
     
-# 주식 리스트 데이터 요청
-import json
-import FinanceDataReader as fdr
-import yfinance as yf
-import pandas as pd
-from concurrent.futures import ThreadPoolExecutor
-from django.http import JsonResponse
-
 def get_stock_data(symbol):
     try:
         stock_data = yf.Ticker(symbol)
@@ -135,12 +116,14 @@ def get_stock_list(market, sort):
 
 def get_stock_list_global(market, sort):
     try:
+        print("{market}")
         # 글로벌 시장의 종목 리스트를 가져오기
         if market == 'GLB':
             sp500_stocks = fdr.StockListing("S&P500").head(50)
             nyse_stocks = fdr.StockListing("NYSE").head(50)
             nasdaq_stocks = fdr.StockListing("NASDAQ").head(50)
             stocks = pd.concat([sp500_stocks, nyse_stocks, nasdaq_stocks], ignore_index=True)
+            print(stocks)
         elif market == 'SP500':
             stocks = fdr.StockListing("S&P500").head(50)
         else:
