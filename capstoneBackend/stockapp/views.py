@@ -16,7 +16,7 @@ def stock_list(request, market, sort):
     return list
 
 def stock_list_global(request, market, sort):
-    list = get_stock_list(market=market, sort=sort)  # 주식 데이터 가져오기
+    list = get_stock_list_global(market=market, sort=sort)  # 주식 데이터 가져오기
     # 주식 데이터를 JsonResponse로 반환 (safe=False 추가)
     return list
 

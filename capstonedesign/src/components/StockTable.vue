@@ -60,6 +60,9 @@ export default {
     },
     selectedOption3() {
       this.fetchStockRank();
+    },
+    selectedOption4() {
+      this.fetchStockRank();
     }
   },
   methods: {
@@ -77,14 +80,7 @@ export default {
         market=market+this.selectedOption3
         console.log(market);
 
-        if(this.selectedOption4=='1'){
-          sort='market_caps'
-        }else if(this.selectedOption4=='2'){
-          sort='prices'
-        }else{
-          sort='volume'
-        }
-
+        sort=this.selectedOption4
       }else{
         if(this.selectedOption1=='KOR'){
           market=market+"KOR_ETF";
@@ -92,6 +88,8 @@ export default {
           market=market+"GLB_ETF";
         }
       }
+
+      sort=this.selectedOption4
     
       const url = `http://127.0.0.1:8000/stock/${market}/${sort}/`;
       console.log(url);

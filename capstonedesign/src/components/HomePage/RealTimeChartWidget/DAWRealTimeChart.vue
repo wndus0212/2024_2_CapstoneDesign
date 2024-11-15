@@ -11,61 +11,84 @@
 </template>
 
 <script>
-import VueApexCharts from 'vue3-apexcharts'
+import VueApexCharts from 'vue3-apexcharts';
+
 export default {
-  conponents:{
-    apexchart:VueApexCharts
+  components: {
+    apexchart: VueApexCharts
   },
-  data: function() {
+  props: {
+    history: {
+      type: Array,
+      required: true
+    }
+  },
+  data() {
     return {
-      series: [{
-        name: "Desktops",
-        data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-      }],
+      series: [],
       chartOptions: {
         chart: {
+          height: 150,
+          width: 230,
           type: 'line',
-          zoom: {
-            enabled: false
-          },
-          toolbar: {
-            show: false,
-           
-          },
-          sparkline: {
-            enabled: true
-          },
-          parentHeightOffset: 0,
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          width: 1,
-        },
-        title: {
-          text: 'DAW',
-          align: 'left',
-          offsetY: 10,
-          style:{
-            fontSize: '10px',
-          }
-        },
-        yaxis:{
-          labels:{
-            style:{
-              fontSize:'8px'
-            }
-          }
         },
         xaxis: {
-          categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-          labels:{
-            show:false
+          type: 'datetime'
+        },
+        yaxis: [
+          {
+            // 첫 번째 y축: 시가/고가/저가/종가
+            title: {
+              text: '주가'
+            },
           },
+          {
+            // 두 번째 y축: 거래량
+            opposite: true,  // 반대쪽에 위치
+            title: {
+              text: '구매량'
+            },
+            labels: {
+              formatter: (value) => value.toFixed(0) // 거래량 레이블 포맷
+            }
+          }
+        ],
+        tooltip: {
+          shared: false
+        },
+        legend: {
+          show: true,
+          position: 'bottom'
         }
       }
     };
+  },
+  watch: {
+    history: {
+      handler(newHistory) {
+        const historyArray = newHistory && Array.isArray(newHistory) ? newHistory : [];
+        const totalItems = historyArray.length;
+        
+        if (historyArray.length > 0) {
+          this.series = [
+            {
+              name: 'line',
+              type: 'line',
+              data: historyArray.map((entry, index) => ({
+                x: new Date(new Date().setDate(new Date().getDate() - totalItems + index)),
+                y: [entry.Open, entry.High, entry.Low, entry.Close], // 시가, 고가, 저가, 종가
+              }))
+            },
+
+          ];
+          console.log(this.series);
+        } else {
+          console.error("Error: history 데이터의 output이 비어있거나 존재하지 않습니다.", newHistory);
+          this.series = [];
+        }
+      },
+      immediate: true
+    }
   }
 };
 </script>

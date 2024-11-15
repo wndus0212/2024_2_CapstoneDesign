@@ -1,43 +1,52 @@
-import FinanceDataReader as fdr
+
+import requests
+from django.core.cache import cache
+from django.http import JsonResponse
 import yfinance as yf
+import FinanceDataReader as fdr
+import json
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 
-# KRX 종목 리스트 가져오기
-stocks = fdr.StockListing("KRX").head(50)
-symbols = [
-    f"{code}.{'KS' if Market == 'KOSPI' else 'KQ'}"
-    for code, Market in zip(stocks['Code'], stocks['Market'])
-]
-names = stocks['Name'].tolist()
+client_id = "PSekA1zSBGgE4mJCmCgT06UTivilW4ZmLCim"
+client_key = "PfTX7zfZ26lV2OtzRGXYcB1g5/zSiq6FSwtfunbFqkLiM+Y4ljrd6NOiAurW2IvC4q5Xbmtx3FPOnUEfnn91lZ/+o9FL20G90440ALEZ2ozKUfw/RbREh8OXwg0G8LvCfm22OaIzVJBJeMi8kZNBhs+tw4CipqsuV+v6EWgi1Lv6gyDyUEE="
 
-# 주식 데이터 가져오기 함수
-def get_stock_data(symbol):
-    try:
-        stock_data = yf.Ticker(symbol)
-        stock_info = stock_data.info
-        price = stock_info.get('currentPrice', None)
-        market_cap = float(stock_info.get('marketCap', 0)) if stock_info.get('marketCap') else None
-        volume = stock_info.get('volume', None)
-        return price, market_cap, volume
-    except Exception as e:
-        print(f"Error fetching data for {symbol}: {e}")
-        return None, None, None
+# 토큰 발급
+def get_access_token():
 
-# 병렬로 데이터 가져오기
-with ThreadPoolExecutor(max_workers=10) as executor:
-    results = list(executor.map(get_stock_data, symbols))
+    # 토큰 발급 API 호출
+    url = "https://openapi.koreainvestment.com:9443/oauth2/tokenP"
+    headers = {
+        "content-type": "application/json"
+    }
+    payload = {
+        "grant_type": "client_credentials",
+        "appkey": client_id,
+        "appsecret": client_key
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    
+    # 토큰을 발급받았으면 캐시에 저장 (24시간 동안 유효)
+    access_token = response.json().get("access_token")
+    return access_token
 
-# 결과 처리
-prices, market_caps, volume = zip(*results)
-data = {
-    'symbols': symbols,
-    'names': names,
-    'prices': prices,
-    'market_caps': market_caps,
-    'volume': volume
-}
-df = pd.DataFrame(data)
-df_sorted = df.sort_values(by='market_caps', ascending=False).head(50)
+# 주식 일봉 데이터 요청
+def get_inquire_search(access_token):
+    url = f"https://openapi.koreainvestment.com:9443/uapi/overseas-price/v1/quotations/inquire-search"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "content-type": "application/json",
+        "appKey": client_id,
+        "appSecret": client_key,
+        "tr_id": "HHDFS76410000"  # 일봉 조회 API TR_ID
+    }
+    params = {
+        "AUTH": "",
+        "EXCD": "NAS",  # 코스피(J) / 코스닥(K) 선택
+    }
+    response = requests.get(url, headers=headers, params=params)
+    return response.json()
 
-print(df_sorted)
+eccess_token=get_access_token()
+print(eccess_token)
+print(get_inquire_search(eccess_token))

@@ -12,12 +12,13 @@
         <KOSPIChart/>
         <KOSDAQRealTimeChart/>
         <NASDAQRealTimeChart/>
-        <DAWRealTimeChart/>
+        <DAWRealTimeChart history="history"/>
       </div>
       
     </containerBox>
 </template>
 <script>
+import axios from 'axios';
 import containerBox from '@/components/Box.vue'
 import BoxTitle from '@/components/BoxTitle.vue';
 import KOSPIChart from './KOSPIRealTimeChart.vue';
@@ -38,7 +39,38 @@ export default {
         DAWRealTimeChart,
         SmallButton,
         ButtonContainer
-    }
+  },
+  data() {
+    return {
+      stock: '',
+      history: '',
+      selectedPeriod: '1mo', // 기본값
+      selectedInterval: '1d' // 기본값
+    };
+  },
+  mounted() {
+      console.log("코드:",this.Code);
+      this.fetchStockDetails();
+      this.fetchStockHistory();
+  },
+  methods: {
+      fetchStockHistory() {
+          // 선택한 기간과 간격을 URL 파라미터로 전달
+          axios
+              .get(`http://127.0.0.1:8000/stock/history/^KS11/`, {
+                  params: {
+                      start: '',
+                      end: '',
+                      period: this.selectedPeriod,
+                      interval: this.selectedInterval
+                  }
+              })
+              .then(response => {
+                  this.history = response.data['output'];
+              })
+              .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
+      }
+  }
 }
 </script>
 <style>

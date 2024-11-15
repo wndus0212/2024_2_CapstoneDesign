@@ -116,15 +116,8 @@ def get_stock_list(market, sort):
 
 def get_stock_list_global(market, sort):
     try:
-        print("{market}")
         # 글로벌 시장의 종목 리스트를 가져오기
-        if market == 'GLB':
-            sp500_stocks = fdr.StockListing("S&P500").head(50)
-            nyse_stocks = fdr.StockListing("NYSE").head(50)
-            nasdaq_stocks = fdr.StockListing("NASDAQ").head(50)
-            stocks = pd.concat([sp500_stocks, nyse_stocks, nasdaq_stocks], ignore_index=True)
-            print(stocks)
-        elif market == 'SP500':
+        if market == 'SP500':
             stocks = fdr.StockListing("S&P500").head(50)
         else:
             stocks = fdr.StockListing(market).head(50)

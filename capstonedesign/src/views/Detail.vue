@@ -69,16 +69,15 @@ export default {
           { label: 'KONEX', value: 'KONEX' }
         ],
         GLB: [
-          { label: '전체', value: 'GLB' },
           { label: 'NYSE', value: 'NYSE' },
           { label: 'NASDAQ', value: 'NASDAQ' },
           { label: 'S&P500', value: 'SP500' }
         ]
       },
       selectOption4: [
-        { label: '시가총액', value: '1' },
-        { label: '주가', value: '2'},
-        {label: '거래량', value: '3'}
+        { label: '시가총액', value: 'market_caps' },
+        { label: '주가', value: 'prices'},
+        {label: '거래량', value: 'volume'}
       ],
       selectOption5: [
         { label: '전체', value: '1' },
@@ -86,7 +85,7 @@ export default {
       selectedOption1: 'KOR',
       selectedOption2: 'Stock',
       selectedOption3: 'KRX', // 이 값은 첫 번째 값에 맞게 초기화
-      selectedOption4: '1',
+      selectedOption4: 'market_caps',
       selectedOption5: '1'
     };
   },
