@@ -10,13 +10,13 @@ def stock_data(request):
     # 주식 데이터를 JsonResponse로 반환
     return JsonResponse(daily_data)
 
-def stock_list(request, market):
-    list = get_stock_list(market=market)  # 주식 데이터 가져오기
+def stock_list(request, market, sort):
+    list = get_stock_list(market=market, sort=sort)  # 주식 데이터 가져오기
     # 주식 데이터를 JsonResponse로 반환 (safe=False 추가)
     return list
 
-def stock_list_global(request, market):
-    list = get_stock_list(market=market)  # 주식 데이터 가져오기
+def stock_list_global(request, market, sort):
+    list = get_stock_list(market=market, sort=sort)  # 주식 데이터 가져오기
     # 주식 데이터를 JsonResponse로 반환 (safe=False 추가)
     return list
 

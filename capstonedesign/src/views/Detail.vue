@@ -19,12 +19,15 @@
         <SmallButton text="시가총액"/>
       </ButtonContainer>
     </div>
-
-    <StockTable :selectedOption1="selectedOption1"
-      :selectedOption2="selectedOption2"
-      :selectedOption3="selectedOption3"
-      :selectedOption4="selectedOption4"
-      :selectedOption5="selectedOption5"></StockTable>
+    <div style="display: flex; justify-content: center;">
+      <StockTable :selectedOption1="selectedOption1"
+        :selectedOption2="selectedOption2"
+        :selectedOption3="selectedOption3"
+        :selectedOption4="selectedOption4"
+        :selectedOption5="selectedOption5">
+      </StockTable>
+    </div>
+    
   </div>
 </template>
 
@@ -74,6 +77,8 @@ export default {
       },
       selectOption4: [
         { label: '시가총액', value: '1' },
+        { label: '주가', value: '2'},
+        {label: '거래량', value: '3'}
       ],
       selectOption5: [
         { label: '전체', value: '1' },

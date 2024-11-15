@@ -14,10 +14,10 @@
           </thead>
           <tbody>
             <tr v-for="stock in stocks" :key="stock.Code" @click="navigateTo(stock.Code)">
-              <td>{{ stock.Name }}</td>
-              <td>{{ stock.Close }}</td>
-              <td>{{ stock.Volume }}</td>
-              <td>{{ (stock.Marcap / 100000000).toFixed(2) }}</td>
+              <td>{{ stock.names }}</td>
+              <td>{{ stock.prices }}</td>
+              <td>{{ stock.volume }}</td>
+              <td>{{ (stock.market_caps / 100000000).toFixed(2) }}</td>
             </tr>
           </tbody>
         </table>
@@ -66,6 +66,7 @@ export default {
     fetchStockRank() {
       this.loading = true; // 로딩 시작
       let market='';
+      let sort='';
       if(this.selectedOption1=='KOR'){
         market="list/"
       }else{
@@ -75,6 +76,15 @@ export default {
       if(this.selectedOption2=='Stock'){
         market=market+this.selectedOption3
         console.log(market);
+
+        if(this.selectedOption4=='1'){
+          sort='market_caps'
+        }else if(this.selectedOption4=='2'){
+          sort='prices'
+        }else{
+          sort='volume'
+        }
+
       }else{
         if(this.selectedOption1=='KOR'){
           market=market+"KOR_ETF";
@@ -83,7 +93,7 @@ export default {
         }
       }
     
-      const url = `http://127.0.0.1:8000/stock/${market}`;
+      const url = `http://127.0.0.1:8000/stock/${market}/${sort}/`;
       console.log(url);
       axios
         .get(url)
