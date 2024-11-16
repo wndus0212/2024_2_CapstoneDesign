@@ -210,6 +210,7 @@ def get_stock_history(Id, start, end, period, interval):
 
 def get_stock_index(Id):
     try:
+        
         df = fdr.DataReader(Id)
         if df.empty:
             print(f"No data found for stock {Id}")

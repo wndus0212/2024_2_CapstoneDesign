@@ -9,10 +9,10 @@
         <SmallButton text="채권"/>
       </ButtonContainer>
       <div style="display: flex; justify-content: space-between;">
-        <KOSPIChart/>
-        <KOSDAQRealTimeChart/>
-        <NASDAQRealTimeChart/>
-        <DAWRealTimeChart history="history"/>
+        <KOSPIChart history="KOSPI"/>
+        <KOSDAQRealTimeChart history="KOSDAQ"/>
+        <NASDAQRealTimeChart history="NASDAQ"/>
+        <DAWRealTimeChart history="DIJ"/>
       </div>
       
     </containerBox>
@@ -29,16 +29,16 @@ import SmallButton from '@/components/SmallButton.vue';
 import ButtonContainer from '@/components/ButtonContainer.vue';
 
 export default {
-    name:'RealTimeChartWidget',
-    components:{
-        containerBox,
-        BoxTitle,
-        KOSPIChart,
-        KOSDAQRealTimeChart,
-        NASDAQRealTimeChart,
-        DAWRealTimeChart,
-        SmallButton,
-        ButtonContainer
+  name:'RealTimeChartWidget',
+  components:{
+      containerBox,
+      BoxTitle,
+      KOSPIChart,
+      KOSDAQRealTimeChart,
+      NASDAQRealTimeChart,
+      DAWRealTimeChart,
+      SmallButton,
+      ButtonContainer
   },
   data() {
     return {
@@ -58,14 +58,42 @@ export default {
       fetchStockIndexHistory() {
           // 선택한 기간과 간격을 URL 파라미터로 전달
           axios
-              .get(`http://127.0.0.1:8000/stock/stock_index/DJI/`, {
-              })
-              .then(response => {
-                  this.history = response.data['output'];
-              })
-              .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
+            .get(`http://127.0.0.1:8000/stock/stock_index/DJI/`)
+            .then(response => {
+              this.DIJ = response.data['output'];
+            })
+            .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
+
+          axios
+            .get(`http://127.0.0.1:8000/stock/stock_index/KQ11/`)
+            .then(response => {
+              this.KOSDAQ = response.data['output'];
+            })
+            .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
+
+          axios
+            .get(`http://127.0.0.1:8000/stock/stock_index/KS11/`)
+            .then(response => {
+              this.KOSPI = response.data['output'];
+            })
+            .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
+
+          axios
+            .get(`http://127.0.0.1:8000/stock/stock_index/IXIC/`)
+            .then(response => {
+              this.NASDAQ = response.data['output'];
+            })
+            .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
+
+          axios
+            .get(`http://127.0.0.1:8000/stock/stock_index/SP&500/`)
+            .then(response => {
+              this.SP500 = response.data['output'];
+            })
+            .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
       }
   }
+  
 }
 </script>
 <style>

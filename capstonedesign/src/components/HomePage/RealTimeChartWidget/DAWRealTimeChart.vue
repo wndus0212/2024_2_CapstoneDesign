@@ -35,24 +35,7 @@ export default {
         xaxis: {
           type: 'datetime'
         },
-        yaxis: [
-          {
-            // 첫 번째 y축: 시가/고가/저가/종가
-            title: {
-              text: '주가'
-            },
-          },
-          {
-            // 두 번째 y축: 거래량
-            opposite: true,  // 반대쪽에 위치
-            title: {
-              text: '구매량'
-            },
-            labels: {
-              formatter: (value) => value.toFixed(0) // 거래량 레이블 포맷
-            }
-          }
-        ],
+
         tooltip: {
           shared: false
         },
@@ -70,6 +53,7 @@ export default {
         const totalItems = historyArray.length;
         
         if (historyArray.length > 0) {
+          console.log("차트: ",historyArray)
           this.series = [
             {
               name: 'line',
