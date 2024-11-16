@@ -31,16 +31,40 @@ export default {
           height: 150,
           width: 230,
           type: 'line',
+          sparkline: {
+            enabled: true
+          },
+          toolbar: {
+            show: false,
+          },
         },
         xaxis: {
-          type: 'datetime'
+            labels: {
+                show: false  // x축 레이블 숨기기
+            },
+            axisBorder: {
+                show: false  // x축 경계선 숨기기
+            },
+            axisTicks: {
+                show: false  // x축 눈금 숨기기
+            }
         },
-
+        yaxis: {
+            labels: {
+                show: false  // y축 레이블 숨기기
+            },
+            axisBorder: {
+                show: false  // y축 경계선 숨기기
+            },
+            axisTicks: {
+                show: false  // y축 눈금 숨기기
+            }
+        },
         tooltip: {
-          shared: false
+            enabled: false  // 툴팁 숨기기
         },
         legend: {
-          show: true,
+          show: false,
           position: 'bottom'
         }
       }
@@ -60,13 +84,14 @@ export default {
               type: 'line',
               data: historyArray.map((entry, index) => ({
                 x: new Date(new Date().setDate(new Date().getDate() - totalItems + index)),
-                y: [entry.Open, entry.High, entry.Low, entry.Close], // 시가, 고가, 저가, 종가
+                y: entry.Close,
               }))
             },
 
           ];
-          console.log(this.series);
+          console.log('series',this.series);
         } else {
+          console.log(newHistory)
           console.error("Error: history 데이터의 output이 비어있거나 존재하지 않습니다.", newHistory);
           this.series = [];
         }

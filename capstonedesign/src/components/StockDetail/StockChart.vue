@@ -68,8 +68,9 @@ export default {
       handler(newHistory) {
         const historyArray = newHistory && Array.isArray(newHistory) ? newHistory : [];
         const totalItems = historyArray.length;
-        
+        console.log("Received history data:", newHistory);
         if (historyArray.length > 0) {
+          
           this.series = [
             {
               name: 'candlestick',
@@ -88,7 +89,7 @@ export default {
               }))
             }
           ];
-          console.log(this.series);
+          console.log("series",this.series)
         } else {
           console.error("Error: history 데이터의 output이 비어있거나 존재하지 않습니다.", newHistory);
           this.series = [];

@@ -36,6 +36,7 @@
               enabled: true
             },
             parentHeightOffset: 0,
+            
           },
           dataLabels: {
             enabled: false

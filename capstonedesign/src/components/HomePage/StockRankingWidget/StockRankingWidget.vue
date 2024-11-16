@@ -9,7 +9,7 @@
         <SmallButton text="거래량 많은 순위"/>
         <SmallButton text="인기 많은 순위"/>
       </ButtonContainer>
-      <StockTable width="1000px" height="500px"/>
+      <StockRankingTable width="1000px" height="500px"/>
     </containerBox>
 </template>
 <script>
@@ -17,7 +17,7 @@ import containerBox from '@/components/Box.vue'
 import BoxTitle from '@/components/BoxTitle.vue';
 import SmallButton from '@/components/SmallButton.vue';
 import ButtonContainer from '@/components/ButtonContainer.vue';
-import StockTable from '@/components/StockDetail/StockTable.vue';
+import StockRankingTable from './StockRankingTable.vue';
 
 export default {
     name:'StockRankingWidget',
@@ -26,7 +26,7 @@ export default {
         BoxTitle,
         SmallButton,
         ButtonContainer,
-        StockTable
+        StockRankingTable
     }
 }
 </script>

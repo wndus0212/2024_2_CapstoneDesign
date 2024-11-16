@@ -56,3 +56,10 @@ def stock_index(request, Id):
     data_json = data.to_dict(orient="records")  # 행별로 JSON 객체를 생성
     
     return JsonResponse({"output": data_json})
+
+def sector_weight(request):
+    data = get_sector_weight()  # 주식 데이터 가져오기
+    if data is None:
+        return JsonResponse({"error": "No data found for the specified stock"}, status=404)
+    
+    return JsonResponse({"output": data})

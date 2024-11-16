@@ -9,4 +9,5 @@ urlpatterns = [
     path('detail/<str:stock_id>/', views.stock_detail, name='stock_detail'),
     path('history/<str:stock_id>/', views.stock_history, name='stock_history'),
     path('stock_index/<str:Id>/', views.stock_index, name='stock_index'),
+    path('sector_weight/', views.sector_weight, name='sector_weight'),
 ]

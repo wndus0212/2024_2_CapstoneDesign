@@ -276,27 +276,28 @@ def get_stock_detail_info(access_token, Id):
 
         # JsonResponse로 반환
         return JsonResponse(json.loads(stocks_json), safe=False)
-    
 
-
-def get_stock_history(Id, start, end, period, interval):
+def get_stock_history(Id, start=None, end=None, period=0, interval='1d'):
     ticker = yf.Ticker(Id)
     try:
-        if period==0:
-            df = ticker.history(start=start, end=end, interval=interval, auto_adjust=False)  
-            if df.empty:
-                print(f"No data found for stock {Id}")
-                return None
-            
-            return df
+        if period == 0:
+            # 특정 기간의 데이터를 가져오기
+            df = ticker.history(start=start, end=end, interval=interval, auto_adjust=False)
         else:
-            df = ticker.history(period=period, interval=interval, auto_adjust=False)  
-            if df.empty:
-                print(f"No data found for stock {Id}")
-                return None
-            
-            return df
-
+            # 최근 기간 데이터를 가져오기
+            df = ticker.history(period=period, interval=interval, auto_adjust=False)
+        
+        if df.empty:
+            print(f"No data found for stock {Id}")
+            return None
+        
+        # 필요한 컬럼만 선택
+        selected_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        if all(col in df.columns for col in selected_columns):
+            return df[selected_columns]
+        else:
+            print(f"Some required columns are missing in the data for stock {Id}.")
+            return None
         
     except Exception as e:
         print(f"Error fetching data for {Id}: {e}")
@@ -304,8 +305,10 @@ def get_stock_history(Id, start, end, period, interval):
 
 def get_stock_index(Id):
     try:
-        
-        df = fdr.DataReader(Id)
+        if Id=='SP500':
+            df=fdr.DataReader('S&P500','2024')
+        else:
+            df = fdr.DataReader(Id,'2024')
         if df.empty:
             print(f"No data found for stock {Id}")
             return None
@@ -315,3 +318,34 @@ def get_stock_index(Id):
     except Exception as e:
         print(f"Error fetching data for {Id}: {e}")
         return None
+
+def get_sector_weight():
+    sectors=['technology',
+            'financial-services',
+            'consumer-cyclical',
+            'healthcare',
+            'communication-services',
+            'industrials',
+            'consumer-defensive',
+            'energy',
+            'real-estate',
+            'basic-materials',
+            'utilities']
+
+    market_weight=[]
+
+    for sector in sectors:
+        market_weight.append(yf.Sector(sector).overview['market_weight'])
+
+    data = {
+        market_weight:'sectors',
+        market_weight:'market_weight'
+    }
+
+    df = pd.DataFrame(data)
+
+    # 결과를 JSON 형태로 변환
+    stocks_json = df.to_json(orient='records', force_ascii=False)
+
+    # JsonResponse로 반환
+    return JsonResponse(json.loads(stocks_json), safe=False)

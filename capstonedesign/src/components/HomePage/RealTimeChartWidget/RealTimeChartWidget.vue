@@ -9,10 +9,10 @@
         <SmallButton text="채권"/>
       </ButtonContainer>
       <div style="display: flex; justify-content: space-between;">
-        <KOSPIChart history="KOSPI"/>
-        <KOSDAQRealTimeChart history="KOSDAQ"/>
-        <NASDAQRealTimeChart history="NASDAQ"/>
-        <DAWRealTimeChart history="DIJ"/>
+        <DAWRealTimeChart :history="KOSPI"/>
+        <DAWRealTimeChart :history="KOSDAQ"/>
+        <DAWRealTimeChart :history="NASDAQ"/>
+        <DAWRealTimeChart :history="DIJ"/>
       </div>
       
     </containerBox>
@@ -21,10 +21,7 @@
 import axios from 'axios';
 import containerBox from '@/components/Box.vue'
 import BoxTitle from '@/components/BoxTitle.vue';
-import KOSPIChart from './KOSPIRealTimeChart.vue';
-import KOSDAQRealTimeChart from './KOSDAQRealTimeChart.vue';
-import NASDAQRealTimeChart from './NASDAQRealTimeChart.vue';
-import DAWRealTimeChart from './DAWRealTimeChart.vue';
+import DAWRealTimeChart from './RealTimeChart.vue';
 import SmallButton from '@/components/SmallButton.vue';
 import ButtonContainer from '@/components/ButtonContainer.vue';
 
@@ -33,9 +30,6 @@ export default {
   components:{
       containerBox,
       BoxTitle,
-      KOSPIChart,
-      KOSDAQRealTimeChart,
-      NASDAQRealTimeChart,
       DAWRealTimeChart,
       SmallButton,
       ButtonContainer
@@ -61,6 +55,7 @@ export default {
             .get(`http://127.0.0.1:8000/stock/stock_index/DJI/`)
             .then(response => {
               this.DIJ = response.data['output'];
+              console.log('dig log: ',this.DIJ)
             })
             .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
 
@@ -86,7 +81,7 @@ export default {
             .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
 
           axios
-            .get(`http://127.0.0.1:8000/stock/stock_index/SP&500/`)
+            .get(`http://127.0.0.1:8000/stock/stock_index/SP500/`)
             .then(response => {
               this.SP500 = response.data['output'];
             })
