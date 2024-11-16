@@ -36,7 +36,7 @@ import TopNav from '../components/Top/Top.vue'
 import SearchBar from '@/components/DetailPage/Search.vue';
 import SmallButton from '@/components/SmallButton.vue';
 import ButtonContainer from '@/components/ButtonContainer.vue';
-import StockTable from '@/components/StockTable.vue';
+import StockTable from '@/components/StockDetail/StockTable.vue';
 import PageTitle from '@/components/PageTitle.vue';
 import SelectBox from '@/components/SelectBox.vue';
 

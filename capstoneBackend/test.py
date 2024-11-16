@@ -8,5 +8,5 @@ import json
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 
-data=yf.Ticker('005935.KS')
-print(data.info)
+etfs = yf.Ticker('QQQ')
+print(etfs.info)

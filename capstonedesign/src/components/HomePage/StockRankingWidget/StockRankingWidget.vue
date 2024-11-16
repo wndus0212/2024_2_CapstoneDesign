@@ -17,7 +17,7 @@ import containerBox from '@/components/Box.vue'
 import BoxTitle from '@/components/BoxTitle.vue';
 import SmallButton from '@/components/SmallButton.vue';
 import ButtonContainer from '@/components/ButtonContainer.vue';
-import StockTable from '@/components/StockTable.vue';
+import StockTable from '@/components/StockDetail/StockTable.vue';
 
 export default {
     name:'StockRankingWidget',

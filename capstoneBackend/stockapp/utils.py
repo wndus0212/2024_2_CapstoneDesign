@@ -8,6 +8,10 @@ import FinanceDataReader as fdr
 import json
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(BASE_DIR, 'etf_data', 'Top_100_ETF_list.csv')
 
 # API 키와 Secret 키 입력
 client_id = "PSekA1zSBGgE4mJCmCgT06UTivilW4ZmLCim"
@@ -70,6 +74,18 @@ def get_stock_data(symbol):
         print(f"Error fetching data for {symbol}: {e}")
         return None, None, None
 
+def get_etf_data(symbol):
+    try:
+        stock_data = yf.Ticker(symbol)
+        stock_info = stock_data.info
+        price = stock_info.get('previousClose', None)
+        market_cap = stock_info.get('totalAssets', None)
+        vol = stock_info.get('volume', None)
+        return price, market_cap, vol
+    except Exception as e:
+        print(f"Error fetching data for {symbol}: {e}")
+        return None, None, None
+
 def get_stock_list(market, sort):
     try:
         # KRX 종목 리스트 가져오기
@@ -81,16 +97,19 @@ def get_stock_list(market, sort):
             for code, Market in zip(stocks['Code'], stocks['Market'])
         ]
         names = stocks['Name'].tolist()
+        prices = stocks['Close'].tolist()
+        market_caps = stocks['Marcap'].tolist()
+        volume = stocks['Volume'].tolist()
 
-        # 병렬로 데이터 가져오기
-        with ThreadPoolExecutor(max_workers=10) as executor:
-            results = list(executor.map(get_stock_data, symbols))
 
-        # 결과 처리
-        prices, market_caps, volume = zip(*results)
-        prices = [price if price is not None else 0 for price in prices]
-        market_caps = [market_cap if market_cap is not None else 0 for market_cap in market_caps]
-        volume = [vol if vol is not None else 0 for vol in volume]
+        # 데이터프레임 생성
+        data = {
+            'symbols': symbols,
+            'names': names,
+            'prices': prices,
+            'market_caps': market_caps,
+            'volume': volume
+        }
 
         # 데이터프레임 생성
         data = {
@@ -156,6 +175,81 @@ def get_stock_list_global(market, sort):
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+def get_etf_list(sort):
+    try:
+        # KRX 종목 리스트 가져오기
+        stocks = fdr.StockListing('ETF/KR').head(50)
+
+        # 심볼에 '.KS' 또는 '.KQ' 추가
+        symbols = stocks['Symbol']+'.KS'
+        names = stocks['Name'].tolist()
+        prices = stocks['Price'].tolist()
+        market_caps = stocks['MarCap'].tolist()
+        volume = stocks['Volume'].tolist()
+
+        # 데이터프레임 생성
+        data = {
+            'symbols': symbols,
+            'names': names,
+            'prices': prices,
+            'market_caps': market_caps,
+            'volume': volume
+        }
+
+        # 데이터프레임 생성 후 정렬
+        df = pd.DataFrame(data)
+        df_sorted = df.sort_values(by=sort, ascending=False).head(50)
+
+        # 결과를 JSON 형태로 변환
+        stocks_json = df_sorted.to_json(orient='records', force_ascii=False)
+
+        # JsonResponse로 반환
+        return JsonResponse(json.loads(stocks_json), safe=False)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+def get_etf_list_global(sort):
+    try:
+        # KRX 종목 리스트 가져오기
+        stocks = pd.read_csv(file_path)
+        print(file_path)
+        symbols = stocks['symbols']
+        names = stocks['names'].tolist()
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            results = list(executor.map(get_etf_data, symbols))
+
+        # 결과 처리
+        prices, market_caps, volume = zip(*results)
+
+        prices = [price if price is not None else 0 for price in prices]
+        market_caps = [market_cap if market_cap is not None else 0 for market_cap in market_caps]
+        volume = [vol if vol is not None else 0 for vol in volume]
+
+        # 데이터프레임 생성
+        data = {
+            'symbols': symbols,
+            'names': names,
+            'prices': prices,
+            'market_caps': market_caps,
+            'volume': volume
+        }
+
+        # 데이터프레임 생성 후 정렬
+        df = pd.DataFrame(data)
+        df_sorted = df.sort_values(by=sort, ascending=False).head(50)
+
+        # 결과를 JSON 형태로 변환
+        stocks_json = df_sorted.to_json(orient='records', force_ascii=False)
+
+        # JsonResponse로 반환
+        return JsonResponse(json.loads(stocks_json), safe=False)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
 
 def get_stock_detail_info(access_token, Id):
     if Id.endswith(".KS") or Id.endswith(".KQ"):

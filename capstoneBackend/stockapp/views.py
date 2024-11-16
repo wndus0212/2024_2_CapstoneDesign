@@ -11,14 +11,20 @@ def stock_data(request):
     return JsonResponse(daily_data)
 
 def stock_list(request, market, sort):
-    list = get_stock_list(market=market, sort=sort)  # 주식 데이터 가져오기
-    # 주식 데이터를 JsonResponse로 반환 (safe=False 추가)
-    return list
-
+    if market=='KOR_ETF':
+        list = get_etf_list(sort=sort)  # 주식 데이터 가져오기
+        return list
+    else:
+        list = get_stock_list(market=market, sort=sort)  # 주식 데이터 가져오기
+        return list
+    
 def stock_list_global(request, market, sort):
-    list = get_stock_list_global(market=market, sort=sort)  # 주식 데이터 가져오기
-    # 주식 데이터를 JsonResponse로 반환 (safe=False 추가)
-    return list
+    if market=='GLB_ETF':
+        list = get_etf_list_global(sort=sort)  # 주식 데이터 가져오기
+        return list
+    else:
+        list = get_stock_list_global(market=market, sort=sort)  # 주식 데이터 가져오기
+        return list
 
 def stock_detail(request, stock_id):
     print(f"Requested stock_id: {stock_id}")

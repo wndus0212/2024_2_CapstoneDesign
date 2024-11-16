@@ -79,8 +79,6 @@ export default {
       if(this.selectedOption2=='Stock'){
         market=market+this.selectedOption3
         console.log(market);
-
-        sort=this.selectedOption4
       }else{
         if(this.selectedOption1=='KOR'){
           market=market+"KOR_ETF";
