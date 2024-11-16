@@ -13,7 +13,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="stock in stocks" :key="stock.Code" @click="navigateTo(stock.Code)">
+            <tr v-for="stock in stocks" :key="stock.symbols" @click="navigateTo(stock.symbols, stock.names)">
               <td>{{ stock.names }}</td>
               <td>{{ stock.prices }}</td>
               <td>{{ stock.volume }}</td>
@@ -109,10 +109,14 @@ export default {
     sortStocksByMarketCap() {
       this.stocks.sort((a, b) => parseFloat(b.Marcap) - parseFloat(a.Marcap));
     },
-    navigateTo(stockCode) {
+    navigateTo(stockCode, stockName) {
       this.$router.push({
         path: `/detail/${stockCode}`,
+        query: {
+          name: stockName,
+        }
       });
+      console.log("Stock Name:", stockName);
     }
   },
   mounted() {

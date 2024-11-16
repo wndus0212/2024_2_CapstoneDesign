@@ -42,28 +42,23 @@ export default {
   },
   data() {
     return {
-      stock: '',
-      history: '',
-      selectedPeriod: '1mo', // 기본값
-      selectedInterval: '1d' // 기본값
+      DIJ: '',
+      KOSPI:'',
+      KOSDAQ:'',
+      NASDAQ:'',
+      SP500:'',
+
     };
   },
   mounted() {
       console.log("코드:",this.Code);
-      this.fetchStockDetails();
-      this.fetchStockHistory();
+      this.fetchStockIndexHistory();
   },
   methods: {
-      fetchStockHistory() {
+      fetchStockIndexHistory() {
           // 선택한 기간과 간격을 URL 파라미터로 전달
           axios
-              .get(`http://127.0.0.1:8000/stock/history/^KS11/`, {
-                  params: {
-                      start: '',
-                      end: '',
-                      period: this.selectedPeriod,
-                      interval: this.selectedInterval
-                  }
+              .get(`http://127.0.0.1:8000/stock/stock_index/DJI/`, {
               })
               .then(response => {
                   this.history = response.data['output'];

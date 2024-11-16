@@ -2,7 +2,7 @@
     <Top/>
     <div style="height: 120px;"></div>
     <PageTitle>
-        {{ stock.prdt_abrv_name }}
+        {{ this.stockName }}
     </PageTitle>
     <MainContainer>
         <div>
@@ -101,6 +101,7 @@ export default {
     },
     data() {
         return {
+            stockName:'',
             stock: '',
             history: '',
             selectedPeriod: '1mo', // 기본값
@@ -108,8 +109,9 @@ export default {
         };
     },
     mounted() {
-        console.log("코드:",this.Code);
-        this.fetchStockDetails();
+        
+        this.stockName = this.$route.query.name;
+        console.log(this.stockName);
         this.fetchStockHistory();
     },
     methods: {

@@ -157,26 +157,66 @@ def get_stock_list_global(market, sort):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+def get_stock_detail_info(access_token, Id):
+    if Id.endswith(".KS") or Id.endswith(".KQ"):
+        id=Id[:6]
+        url = f"https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/search-info"
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "content-type": "application/json",
+            "appKey": client_id,
+            "appSecret": client_key,
+            "tr_id": "CTPF1604R",
+            "custtype": "P"
+        }
+        params = {
+            "PDNO":id,
+            "PRDT_TYPE_CD":"300"
+        }
+        response = requests.get(url, headers=headers, params=params)
+        return response.json()
+    else:
+        stock=yf.Ticker(Id)
+        # 결과를 JSON 형태로 변환
+        stocks_json = stock.to_json(orient='records', force_ascii=False)
+
+        # JsonResponse로 반환
+        return JsonResponse(json.loads(stocks_json), safe=False)
+    
+
+
 def get_stock_history(Id, start, end, period, interval):
-    name = f"{Id}.KS"
-    ticker = yf.Ticker(name)
+    ticker = yf.Ticker(Id)
     try:
         if period==0:
             df = ticker.history(start=start, end=end, interval=interval, auto_adjust=False)  
             if df.empty:
-                print(f"No data found for stock {name}")
+                print(f"No data found for stock {Id}")
                 return None
             
             return df
         else:
             df = ticker.history(period=period, interval=interval, auto_adjust=False)  
             if df.empty:
-                print(f"No data found for stock {name}")
+                print(f"No data found for stock {Id}")
                 return None
             
             return df
 
         
     except Exception as e:
-        print(f"Error fetching data for {name}: {e}")
+        print(f"Error fetching data for {Id}: {e}")
+        return None
+
+def get_stock_index(Id):
+    try:
+        df = fdr.DataReader(Id)
+        if df.empty:
+            print(f"No data found for stock {Id}")
+            return None
+        
+        return df
+        
+    except Exception as e:
+        print(f"Error fetching data for {Id}: {e}")
         return None

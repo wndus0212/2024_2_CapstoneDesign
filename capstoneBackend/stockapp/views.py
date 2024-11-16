@@ -23,7 +23,7 @@ def stock_list_global(request, market, sort):
 def stock_detail(request, stock_id):
     print(f"Requested stock_id: {stock_id}")
     access_token = get_access_token()  # 토큰 발급
-    data = get_stock_detail_info_kor(access_token, stock_id)  # 주식 데이터 가져오기
+    data = get_stock_detail_info(access_token, id)  # 주식 데이터 가져오기
     return JsonResponse(data)
 
 def stock_history(request, stock_id):
@@ -33,6 +33,16 @@ def stock_history(request, stock_id):
     interval = request.GET.get('interval')
     
     data = get_stock_history(Id=stock_id, start=start, end=end, period=period, interval=interval)  # 주식 데이터 가져오기
+    if data is None:
+        return JsonResponse({"error": "No data found for the specified stock"}, status=404)
+    
+    # 데이터프레임을 JSON 형식으로 변환
+    data_json = data.to_dict(orient="records")  # 행별로 JSON 객체를 생성
+    
+    return JsonResponse({"output": data_json})
+
+def stock_index(request, Id):
+    data = get_stock_index(Id=Id)  # 주식 데이터 가져오기
     if data is None:
         return JsonResponse({"error": "No data found for the specified stock"}, status=404)
     

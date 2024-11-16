@@ -13,20 +13,11 @@
       <StockRankingWidget/>    
     </div>
   </MainContainer>
-  <div>
-    <h2>주식 데이터 테스트</h2>
-    <ul>
-      <li v-for="stock in stocks" :key="stock.id">
-        {{  stock.hts_kor_isnm }}
-        날짜: {{ stock.stck_bsop_date }}, 시가: {{ stock.stck_prpr }}
-      </li>
-    </ul>
-  </div>
+
   
 </template>
 
 <script>
-import axios from 'axios'
 import TopNav from '../components/Top/Top.vue'
 import MainContainer from '@/components/MainContainer.vue';
 import RealTimeChartWidget from '@/components/HomePage/RealTimeChartWidget/RealTimeChartWidget.vue';
@@ -48,23 +39,13 @@ export default {
   },
   data() {
     return {
-      stocks: [],  // API에서 받은 데이터를 저장할 변수
+
     };
   },
   created() {
-    this.fetchStockData();  // 컴포넌트가 생성될 때 데이터 호출
   },
   methods: {
-    fetchStockData() {
-      axios
-        .get("http://127.0.0.1:8000/stock/itemchartprice/")  // Django에서 제공하는 API 호출
-        .then(response => {
-          this.stocks = response.data.output;  // 받아온 데이터를 stockData에 저장
-        })
-        .catch(error => {
-          console.error("데이터를 불러오는데 실패했습니다:", error);
-        });
-    },
+
   },
 }
 </script>
