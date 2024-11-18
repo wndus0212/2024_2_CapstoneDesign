@@ -306,7 +306,7 @@ def get_stock_history(Id, start=None, end=None, period=0, interval='1d'):
 def get_stock_index(Id):
     try:
         if Id=='SP500':
-            df=fdr.DataReader('S&P500','2024')
+            df=fdr.DataReader('S&P500','2024-06')
         else:
             df = fdr.DataReader(Id,'2024')
         if df.empty:
@@ -320,32 +320,47 @@ def get_stock_index(Id):
         return None
 
 def get_sector_weight():
-    sectors=['technology',
-            'financial-services',
-            'consumer-cyclical',
-            'healthcare',
-            'communication-services',
-            'industrials',
-            'consumer-defensive',
-            'energy',
-            'real-estate',
-            'basic-materials',
-            'utilities']
-
-    market_weight=[]
+    sectors = ['technology', 'financial-services', 'consumer-cyclical', 'healthcare', 
+               'communication-services', 'industrials', 'consumer-defensive', 
+               'energy', 'real-estate', 'basic-materials', 'utilities']
+    
+    market_weight = []
 
     for sector in sectors:
-        market_weight.append(yf.Sector(sector).overview['market_weight'])
+        # 섹터 데이터 가져오기
+        try:
+            sector_data = yf.Sector(sector).overview
+            if sector_data is not None:
+                weight = sector_data.get('market_weight', 0)  # 값이 없으면 0으로 처리
+                market_weight.append(weight)
+            else:
+                print(f"No data for sector: {sector}")  # 디버깅 출력
+                market_weight.append(0)  # 기본값 0 추가
+        except Exception as e:
+            print(f"Error fetching data for sector {sector}: {e}")
+            market_weight.append(0)  # 오류 발생 시 기본값 0 추가
 
-    data = {
-        market_weight:'sectors',
-        market_weight:'market_weight'
-    }
+    # 데이터프레임 생성
+    df = pd.DataFrame({
+        'sector': sectors,
+        'market_weight': market_weight
+    })
 
-    df = pd.DataFrame(data)
+    return df.to_dict(orient='records')
 
-    # 결과를 JSON 형태로 변환
-    stocks_json = df.to_json(orient='records', force_ascii=False)
+def get_financial_statement(Id, Option):
+    stock = yf.Ticker(Id)
+    
+    if Option=='1':
+        financial_state=stock.income_stmt
+    elif Option=='2':
+        financial_state=stock.balance_sheet
+    else:
+        financial_state=stock.cashflow
+    
+    if financial_state is not None:
+        financial_state = financial_state.T  # 전치하여 년도를 행으로 변환
+    
+    return financial_state
 
-    # JsonResponse로 반환
-    return JsonResponse(json.loads(stocks_json), safe=False)
+    

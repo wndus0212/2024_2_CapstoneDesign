@@ -49,22 +49,30 @@
     <!-- 재무제표 요약 섹션 -->
     <MainContainer>
         <div style="display: flex;flex-wrap: wrap; justify-content: center;">
-            <Box>
+            <Box width="1500px">
                 <div>
                     <SubTitle style="margin: 10px;">
                         재무제표 요약
                     </SubTitle>
-                    <ButtonContainer>
-                        <SmallButton text="손익계산서" />
-                        <SmallButton text="대차대조표" />
-                        <SmallButton text="현금흐름표" />
-                    </ButtonContainer>
                 </div>
-                <FinancialStatementChart />
-            </Box>
-            
-            <Box>
-                <FinancialStatementTable />
+                <div>
+                    손익 계산서
+                </div>
+                <div style="display: flex; justify-content: space-evenly;">
+                    <IncomeStatement :data="income_stmt"/>
+                </div>
+                <div>
+                    대차대조표
+                </div>
+                <div style="display: flex; justify-content: space-evenly;">
+                    <BalanceSheet :data="balance_sheet"/>
+                </div>
+                <div>
+                    현금 흐름표
+                </div>
+                <div style="display: flex; justify-content: space-evenly;">
+                    <CashFlow :data="cashflow"/>
+                </div>
             </Box>
         </div>
     </MainContainer>
@@ -79,10 +87,9 @@ import StockChartBelow from "@/components/StockDetail/StockChartBelow.vue";
 import Box from "@/components/Box.vue";
 import ConsensusTable from "@/components/StockDetail/ConsensusTable.vue";
 import SubTitle from "@/components/SubTitle.vue";
-import ButtonContainer from "@/components/ButtonContainer.vue";
-import SmallButton from "@/components/SmallButton.vue";
-import FinancialStatementChart from "@/components/StockDetail/FinancialStatementChart.vue";
-import FinancialStatementTable from "@/components/StockDetail/FinancialStatementTable.vue";
+import IncomeStatement from "@/components/StockDetail/IncomeStatement.vue";
+import BalanceSheet from "@/components/StockDetail/BalanceSheet.vue";
+import CashFlow from "@/components/StockDetail/CashFlow.vue";
 
 export default {
     components: {
@@ -94,10 +101,9 @@ export default {
         ConsensusTable,
         StockChartBelow,
         SubTitle,
-        ButtonContainer,
-        SmallButton,
-        FinancialStatementChart,
-        FinancialStatementTable,
+        IncomeStatement,
+        BalanceSheet,
+        CashFlow
     },
     props: {
         stockCode: {
@@ -110,6 +116,9 @@ export default {
             stockName: "",
             stock: "",
             history: "",
+            income_stmt:"",
+            balance_sheet:"",
+            cashflow:"",
             isLoading: false, // 로딩 상태
             selectedPeriod: "1mo", // 기본값
             selectedInterval: "1d", // 기본값
@@ -142,6 +151,33 @@ export default {
                 this.isLoading = false; // 로딩 종료
             }
         },
+        async fetchFinancialState(){
+            try {
+                axios
+                    .get(`http://127.0.0.1:8000/stock/financial_statement/1/${this.stockCode}`)
+                    .then(response => {
+                    this.income_stmt = response.data['output'];
+                    })
+                    .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
+                
+                axios
+                    .get(`http://127.0.0.1:8000/stock/financial_statement/2/${this.stockCode}`)
+                    .then(response => {
+                    this.balance_sheet = response.data['output'];
+                    })
+                    .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
+                
+                axios
+                    .get(`http://127.0.0.1:8000/stock/financial_statement/3/${this.stockCode}`)
+                    .then(response => {
+                    this.cashflow = response.data['output'];
+                    })
+                    .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
+            } catch (error) {
+                console.error("종목 히스토리를 가져오는 데 실패했습니다:", error);
+                this.income_stmt = [];
+            }
+        }
     },
 };
 </script>

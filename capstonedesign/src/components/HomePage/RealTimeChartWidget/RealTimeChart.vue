@@ -66,6 +66,9 @@ export default {
         legend: {
           show: false,
           position: 'bottom'
+        },
+        title:{
+          text: 'test'
         }
       }
     };
@@ -77,7 +80,6 @@ export default {
         const totalItems = historyArray.length;
         
         if (historyArray.length > 0) {
-          console.log("차트: ",historyArray)
           this.series = [
             {
               name: 'line',
@@ -89,9 +91,7 @@ export default {
             },
 
           ];
-          console.log('series',this.series);
         } else {
-          console.log(newHistory)
           console.error("Error: history 데이터의 output이 비어있거나 존재하지 않습니다.", newHistory);
           this.series = [];
         }
