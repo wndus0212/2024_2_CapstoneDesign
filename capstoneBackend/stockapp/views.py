@@ -89,3 +89,20 @@ def financial_state(request, Id, Option):
     except Exception as e:
         print(f"Error in financial_state: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+    
+def search_term(request):
+    try:
+        data=get_search_term()
+        if data is None or data.empty:  
+            return JsonResponse({"error": "No data found for the financial statement"}, status=404)
+        
+        # NaN 값을 처리하거나 제거할 필요가 있을 경우 (예시: NaN을 0으로 대체)
+        data = data.fillna(0)  # NaN을 0으로 대체 (원하는 방법으로 처리 가능)
+        
+        # DataFrame을 JSON으로 변환
+        result = data.to_dict(orient="records")  # 각 행을 딕셔너리 형태로 변환
+        
+        return JsonResponse({"output": result}, safe=False)  # JSON으로 반환
+    except Exception as e:
+        print(f"Error in financial_state: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)

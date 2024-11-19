@@ -11,8 +11,8 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(BASE_DIR, 'etf_data', 'Top_100_ETF_list.csv')
-
+etf_file_path = os.path.join(BASE_DIR, 'data', 'Top_100_ETF_list.csv')
+search_term_file_path = os.path.join(BASE_DIR, 'data', 'search_term.csv')
 # API 키와 Secret 키 입력
 client_id = "PSekA1zSBGgE4mJCmCgT06UTivilW4ZmLCim"
 client_key = "PfTX7zfZ26lV2OtzRGXYcB1g5/zSiq6FSwtfunbFqkLiM+Y4ljrd6NOiAurW2IvC4q5Xbmtx3FPOnUEfnn91lZ/+o9FL20G90440ALEZ2ozKUfw/RbREh8OXwg0G8LvCfm22OaIzVJBJeMi8kZNBhs+tw4CipqsuV+v6EWgi1Lv6gyDyUEE="
@@ -89,7 +89,7 @@ def get_etf_data(symbol):
 def get_stock_list(market, sort):
     try:
         # KRX 종목 리스트 가져오기
-        stocks = fdr.StockListing(market).head(50)
+        stocks = fdr.StockListing(market).head(100)
 
         # 심볼에 '.KS' 또는 '.KQ' 추가
         symbols = [
@@ -101,15 +101,6 @@ def get_stock_list(market, sort):
         market_caps = stocks['Marcap'].tolist()
         volume = stocks['Volume'].tolist()
 
-
-        # 데이터프레임 생성
-        data = {
-            'symbols': symbols,
-            'names': names,
-            'prices': prices,
-            'market_caps': market_caps,
-            'volume': volume
-        }
 
         # 데이터프레임 생성
         data = {
@@ -213,8 +204,7 @@ def get_etf_list(sort):
 def get_etf_list_global(sort):
     try:
         # KRX 종목 리스트 가져오기
-        stocks = pd.read_csv(file_path)
-        print(file_path)
+        stocks = pd.read_csv(etf_file_path)
         symbols = stocks['symbols']
         names = stocks['names'].tolist()
         with ThreadPoolExecutor(max_workers=10) as executor:
@@ -363,4 +353,6 @@ def get_financial_statement(Id, Option):
     
     return financial_state
 
-    
+def get_search_term():
+    stocks = pd.read_csv(search_term_file_path)
+    return stocks

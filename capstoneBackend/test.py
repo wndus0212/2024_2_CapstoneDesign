@@ -1,5 +1,8 @@
 import yfinance as yf
 import pandas as pd
+import FinanceDataReader as fdr
+from concurrent.futures import ThreadPoolExecutor
+import os
 
-stock=yf.Ticker('AAPL')
-print(stock.cashflow)
+stocks=fdr.StockListing('KRX')
+print(stocks)
