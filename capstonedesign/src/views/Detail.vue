@@ -118,6 +118,7 @@ export default {
       // API 호출
       axios.get("http://127.0.0.1:8000/stock/search_term/").then((response) => {
         this.searchData = response.data["output"]; // 전체 데이터를 SearchBar로 전달
+        console.log(this.searchData)
       });
     },
   },
