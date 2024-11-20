@@ -2,32 +2,38 @@
   <div>
     <TopNav />
     <div style="height: 120px;"></div>
-    <PageTitle>전체 종목 보기</PageTitle>
-    <div style="display: flex; justify-content: center;">
-      <SearchBar 
-      :searchData="searchData" />
-    </div>
+    <div style="display: flex; justify-content: center">
+      <div class="Container">
+      <PageTitle>전체 종목 보기</PageTitle>
+      <div style="display: flex; justify-content: center;">
+        <SearchBar 
+        :searchData="searchData" />
+      </div>
 
-    <div style="margin-left: 100px; min-width: 700px;">
-      <ButtonContainer>
-        <SelectBox :options="selectOption1" v-model="selectedOption1" width="200px"/>
-        <SelectBox :options="selectOption2" v-model="selectedOption2" width="200px"/>
-        <SelectBox v-if="selectedOption2 !== 'ETF'" :options="filteredSelectOption3" v-model="selectedOption3" width="200px"/>
-      </ButtonContainer>
-      <ButtonContainer>
-        <SelectBox :options="selectOption5" v-model="selectedOption5" width="200px"/>
-        <SelectBox :options="selectOption4" v-model="selectedOption4" width="200px"/>
-        <SmallButton text="시가총액"/>
-      </ButtonContainer>
+      <div style="margin-left: 100px; min-width: 700px;">
+        <ButtonContainer>
+          <SelectBox :options="selectOption1" v-model="selectedOption1" width="200px"/>
+          <SelectBox :options="selectOption2" v-model="selectedOption2" width="200px"/>
+          <SelectBox v-if="selectedOption2 !== 'ETF'" :options="filteredSelectOption3" v-model="selectedOption3" width="200px"/>
+        </ButtonContainer>
+        <ButtonContainer>
+          <SelectBox :options="selectOption5" v-model="selectedOption5" width="200px"/>
+          <SelectBox :options="selectOption4" v-model="selectedOption4" width="200px"/>
+          <SmallButton text="시가총액"/>
+        </ButtonContainer>
+      </div>
+      <div style="display: flex; justify-content: center;">
+        <StockTable :selectedOption1="selectedOption1"
+          :selectedOption2="selectedOption2"
+          :selectedOption3="selectedOption3"
+          :selectedOption4="selectedOption4"
+          :selectedOption5="selectedOption5">
+        </StockTable>
+      </div>
     </div>
-    <div style="display: flex; justify-content: center;">
-      <StockTable :selectedOption1="selectedOption1"
-        :selectedOption2="selectedOption2"
-        :selectedOption3="selectedOption3"
-        :selectedOption4="selectedOption4"
-        :selectedOption5="selectedOption5">
-      </StockTable>
+    
     </div>
+    
     
   </div>
 </template>
@@ -51,7 +57,7 @@ export default {
     ButtonContainer,
     StockTable,
     PageTitle,
-    SelectBox
+    SelectBox,
   },
   data() {
     return {
@@ -126,5 +132,9 @@ export default {
 </script>
 
 <style scoped>
-/* 스타일을 추가하실 수 있습니다 */
+.Container{
+    min-width: 1000px;
+    max-width: 1250px;
+    padding-top: 20px;
+}
 </style>

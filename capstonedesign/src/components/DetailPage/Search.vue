@@ -69,7 +69,8 @@ export default {
     },
     selectSuggestion(suggestion) {
       this.searchInput = suggestion['names']; // 선택된 추천 검색어로 검색창 값 설정
-      this.suggestions = [];  // 검색어 선택 후 추천 리스트 초기화
+      this.suggestions = []; // 연관 검색어 리스트 초기화
+      this.navigateTo(suggestion.symbols, suggestion.names); // navigateTo 호출
     },
     onEnter() {
       const lowerCaseInput = this.searchInput.toLowerCase();

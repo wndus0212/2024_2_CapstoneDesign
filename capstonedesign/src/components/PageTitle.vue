@@ -13,8 +13,6 @@ export default {
         font-size: 40px;
         font-weight: 600;
         display: flex;
-        padding: 50px;
-        margin-left: 50px;
         text-wrap: nowrap;
     }
 </style>
