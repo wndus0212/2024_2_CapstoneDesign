@@ -6,6 +6,7 @@
       placeholder="검색어를 입력하세요..."
       class="search-bar"
       @input="onInput"  
+      @keyup.enter="onEnter"
     />
 
     <ul v-if="suggestions.length" class="suggestion-list">
@@ -19,7 +20,7 @@
       </li>
     </ul>
     <div v-else-if="searchInput && !suggestions.length" class="no-results">
-      검색 결과가 없습니다.
+      검색 결과가 없습니다. 현재 시장별 시가총액 상위 50위 이상 종목만 검색할 수 있습니다.
     </div>
   </div>
 </template>
@@ -64,11 +65,42 @@ export default {
 
         // 둘 중 하나라도 일치하면 결과로 반환
         return nameMatches || symbolMatches;
-      });
+      }).slice(0, 5);
     },
     selectSuggestion(suggestion) {
-      this.searchInput = suggestion; // 선택된 추천 검색어로 검색창 값 설정
+      this.searchInput = suggestion['names']; // 선택된 추천 검색어로 검색창 값 설정
       this.suggestions = [];  // 검색어 선택 후 추천 리스트 초기화
+    },
+    onEnter() {
+      const lowerCaseInput = this.searchInput.toLowerCase();
+
+  // 입력값이 심볼인지 이름인지 판별하고 대응되는 값 가져오기
+      const matchedItem = this.searchData.find(item => {
+        const isSymbolMatch = item.symbols.toLowerCase() === lowerCaseInput;
+        const isNameMatch = item.names.toLowerCase() === lowerCaseInput;
+        console.log("item:",item)
+        return isSymbolMatch || isNameMatch;
+      });
+
+      if (matchedItem) {
+        // 입력값이 심볼이면 이름을 가져오고, 이름이면 심볼을 가져옴
+        const stockCode = matchedItem.symbols;
+        const stockName = matchedItem.names;
+        
+        // navigateTo 호출
+        this.navigateTo(stockCode, stockName);
+      } else {
+        console.warn("검색어와 일치하는 항목이 없습니다.");
+      }
+    },
+    navigateTo(stockCode, stockName) {
+      this.$router.push({
+        path: `/detail/${stockCode}`,
+        query: {
+          name: stockName,
+        },
+      });
+      console.log("Stock Name:", stockName);
     },
   },
 };
@@ -111,11 +143,16 @@ export default {
     margin: 0;
     padding: 0;
     z-index: 15;
+    font-size: 20px;
+    border-radius: 10px;
   }
   
   .suggestion-list li {
     padding: 10px;
     cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 20px
   }
   
   .suggestion-list li:hover {
