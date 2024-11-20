@@ -4,7 +4,8 @@
     <div style="height: 120px;"></div>
     <PageTitle>전체 종목 보기</PageTitle>
     <div style="display: flex; justify-content: center;">
-      <SearchBar />
+      <SearchBar 
+      :searchData="searchData" />
     </div>
 
     <div style="margin-left: 100px; min-width: 700px;">
@@ -32,6 +33,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import TopNav from '../components/Top/Top.vue'
 import SearchBar from '@/components/DetailPage/Search.vue';
 import SmallButton from '@/components/SmallButton.vue';
@@ -86,7 +88,9 @@ export default {
       selectedOption2: 'Stock',
       selectedOption3: 'KRX', // 이 값은 첫 번째 값에 맞게 초기화
       selectedOption4: 'market_caps',
-      selectedOption5: '1'
+      selectedOption5: '1',
+
+      searchData: [],
     };
   },
   computed: {
@@ -105,7 +109,19 @@ export default {
       
       this.selectedOption3 = this.selectOption3[newValue][0].value;
     }
-  }
+  },
+  mounted() {
+    this.fetchStockData(); // 페이지 로드 시 전체 데이터 로드
+  },
+  methods: {
+    fetchStockData() {
+      // API 호출
+      axios.get("http://127.0.0.1:8000/stock/search_term/").then((response) => {
+        this.searchData = response.data["output"]; // 전체 데이터를 SearchBar로 전달
+        console.log(this.searchData)
+      });
+    },
+  },
 }
 </script>
 

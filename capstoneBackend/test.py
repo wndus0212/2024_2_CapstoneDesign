@@ -1,11 +1,8 @@
-
-import requests
-from django.core.cache import cache
-from django.http import JsonResponse
 import yfinance as yf
-import FinanceDataReader as fdr
-import json
 import pandas as pd
+import FinanceDataReader as fdr
 from concurrent.futures import ThreadPoolExecutor
+import os
 
-print(fdr.StockListing('ETF/KR'))
+stocks=fdr.StockListing('KRX')
+print(stocks)
