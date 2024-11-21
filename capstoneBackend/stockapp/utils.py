@@ -309,6 +309,25 @@ def get_stock_index(Id):
         print(f"Error fetching data for {Id}: {e}")
         return None
 
+def get_sector_weight_kor(access_token):
+    url = f"https://openapi.koreainvestment.com:9443//uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "content-type": "application/json",
+        "appKey": client_id,
+        "appSecret": client_key,
+        "tr_id": "FHKUP03500100"  # 일봉 조회 API TR_ID
+    }
+    params = {
+        "FID_COND_MRKT_DIV_CODE": "U",  # 코스피(J) / 코스닥(K) 선택
+        "FID_INPUT_ISCD": "0001",       # 종목 코드 입력
+        "FID_INPUT_DATE_1": "20220411",
+        "FID_INPUT_DATE_2":"20220509",
+        "FID_PERIOD_DIV_CODE":"Y"
+    }
+    response = requests.get(url, headers=headers, params=params)
+    return response.json()
+
 def get_sector_weight():
     sectors = ['technology', 'financial-services', 'consumer-cyclical', 'healthcare', 
                'communication-services', 'industrials', 'consumer-defensive', 
@@ -335,23 +354,23 @@ def get_sector_weight():
         'sector': sectors,
         'market_weight': market_weight
     })
-
+    
     return df.to_dict(orient='records')
 
 def get_financial_statement(Id, Option):
     stock = yf.Ticker(Id)
     
-    if Option=='1':
+    if Option=='incom_stmt':
         financial_state=stock.income_stmt
-    elif Option=='2':
+    elif Option=='balance_sheet':
         financial_state=stock.balance_sheet
     else:
         financial_state=stock.cashflow
-    
+        
     if financial_state is not None:
         financial_state = financial_state.T  # 전치하여 년도를 행으로 변환
     
-    return financial_state
+    return financial_state[:-1]
 
 def get_search_term():
     stocks = pd.read_csv(search_term_file_path)

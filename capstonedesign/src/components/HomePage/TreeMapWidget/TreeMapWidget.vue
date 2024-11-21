@@ -3,7 +3,10 @@
     <box-title>
       시장 한눈에 보기
     </box-title>
-    <TreeMap/>
+    <div style="display: flex; gap: 40px">
+      <TreeMap/>
+      <TreeMap/>
+    </div>
   </container-box>
 </template>
 

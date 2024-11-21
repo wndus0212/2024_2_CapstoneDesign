@@ -4,7 +4,7 @@
       type="candlestick" 
       :options="chartOptions" 
       :series="series" 
-      :width="750"
+      :width="1000"
       :height="400"
     />
   </div>

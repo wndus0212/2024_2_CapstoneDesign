@@ -57,11 +57,19 @@ def stock_index(request, Id):
     
     return JsonResponse({"output": data_json})
 
+def sector_weight_kor(request):
+    access_token = get_access_token()  # 토큰 발급
+    daily_data = get_sector_weight_kor(access_token)  # 주식 데이터 가져오기
+
+    # 주식 데이터를 JsonResponse로 반환
+    return JsonResponse(daily_data)
+
 def sector_weight(request):
     try:
         # 섹터 데이터 가져오기
         data = get_sector_weight()
-        if data is None or data.empty:  # 데이터가 비어 있는 경우
+        print(data)
+        if not data:  # 데이터가 비어 있는 경우
             return JsonResponse({"error": "No data found for the sectors"}, status=404)
         
         # 정상 응답 반환
