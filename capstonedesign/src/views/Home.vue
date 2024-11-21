@@ -6,7 +6,7 @@
 
     <div>
       <div style="display: flex;">
-        <TreeMapWidget width="330px" height="350px"/>
+        <TreeMapWidget width="700px" height="350px"/>
       </div>
       <RealTimeChartWidget/>
       <StockRankingWidget/>    

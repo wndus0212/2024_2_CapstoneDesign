@@ -340,7 +340,7 @@ def get_sector_weight():
         try:
             sector_data = yf.Sector(sector).overview
             if sector_data is not None:
-                weight = sector_data.get('market_weight', 0)  # 값이 없으면 0으로 처리
+                weight = sector_data.get('market_cap', 0)  # 값이 없으면 0으로 처리
                 market_weight.append(weight)
             else:
                 print(f"No data for sector: {sector}")  # 디버깅 출력
@@ -366,7 +366,7 @@ def get_financial_statement(Id, Option):
         financial_state=stock.balance_sheet
     else:
         financial_state=stock.cashflow
-        
+
     if financial_state is not None:
         financial_state = financial_state.T  # 전치하여 년도를 행으로 변환
     

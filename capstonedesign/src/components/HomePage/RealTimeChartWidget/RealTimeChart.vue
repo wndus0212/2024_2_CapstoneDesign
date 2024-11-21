@@ -21,6 +21,10 @@ export default {
     history: {
       type: Array,
       required: true
+    },
+    chartname:{
+      type: String,
+      required:true
     }
   },
   data() {
@@ -68,7 +72,7 @@ export default {
           position: 'bottom'
         },
         title:{
-          text: 'test'
+          text: this.chartname
         }
       }
     };

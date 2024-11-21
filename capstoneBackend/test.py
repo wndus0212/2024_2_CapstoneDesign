@@ -6,25 +6,20 @@ import os
 from pykrx import stock
 from pprint import pprint
 
-def get_financial_statement(Id, Option):
-    stock = yf.Ticker(Id)
-    
-    if Option=='incom_stmt':
-        financial_state=stock.income_stmt
-        required_columns = ['Total Revenue','Cost Of Revenue', 'Gross Profit','Operating Income','Net Income']
-        filtered_data = financial_state[required_columns]
-    elif Option=='balance_sheet':
-        financial_state=stock.balance_sheet
-        required_columns = ['Current Assets ', 'Total Non Current Assets ', 'Current Liabilities ', 'Total Non Current Liabilities Net Minority Interest']
-        filtered_data = financial_state[required_columns]
-    else:
-        financial_state=stock.cashflow
-        required_columns = ['Operating Cash Flow', 'Investing Cash Flow', 'Financing Cash Flow', 'Cash And Cash Equivalents']
-        filtered_data = financial_state[required_columns]
-    if financial_state is not None:
-        financial_state = financial_state.T  # 전치하여 년도를 행으로 변환
-    
-    return filtered_data
 
+tickers = ['1001', '1002', '1003', '1004', '1005', '1006', '1007', '1008', '1009', '1010', 
+           '1011', '1012', '1013', '1014', '1015', '1016', '1017', '1018', '1019', '1020', 
+           '1021', '1024', '1025', '1026', '1027', '1028', '1034', '1035', '1150', '1151', 
+           '1152', '1153', '1154', '1155', '1156', '1157', '1158', '1159', '1160', '1167', 
+           '1182', '1224', '1227', '1232', '1244', '1894']
 
-print(yf.Ticker("MSFT").income_stmt.columns)
+for ticker in tickers:
+    print(ticker, stock.get_index_ticker_name(ticker))  # Print the name of the index
+    try:
+        price_change = stock.get_index_price_change("20240101", "20240228", ticker)  # Get price change data
+        print(price_change.head(2))
+    except Exception as e:  # Catch exceptions
+        print(f"Error with ticker {ticker}: {e}")
+
+data = stock.get_index_ohlcv_by_date("20240101", "20240228", "1028")  # KOSPI 200
+print(data)

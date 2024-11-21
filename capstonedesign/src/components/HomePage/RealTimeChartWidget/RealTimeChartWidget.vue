@@ -9,10 +9,10 @@
         <SmallButton text="채권"/>
       </ButtonContainer>
       <div style="display: flex; justify-content: space-between;">
-        <DAWRealTimeChart :history="KOSPI"/>
-        <DAWRealTimeChart :history="KOSDAQ"/>
-        <DAWRealTimeChart :history="NASDAQ"/>
-        <DAWRealTimeChart :history="DIJ"/>
+        <DAWRealTimeChart :history="KOSPI" chartname="KOSPI"/>
+        <DAWRealTimeChart :history="KOSDAQ" chartname="KOSDAQ"/>
+        <DAWRealTimeChart :history="NASDAQ" chartname="NASDAQ"/>
+        <DAWRealTimeChart :history="DIJ" chartname="DIJ"/>
       </div>
       
     </containerBox>
