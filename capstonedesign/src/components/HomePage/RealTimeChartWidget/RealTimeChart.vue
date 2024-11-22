@@ -1,11 +1,11 @@
 <template>
-  <div style="border-radius: 5px; border: 1px black solid; padding: 5px;">
+  <div style="border-radius: 5px; border: 1px black solid; padding: 5px; margin-bottom: 5px;">
     <apexchart 
       type="line" 
       :options="chartOptions" 
       :series="series" 
-      :width="150"
-      :height="230"
+      :width="300"
+      :height="300"
     />
   </div>
 </template>

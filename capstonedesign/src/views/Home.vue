@@ -2,14 +2,17 @@
   <TopNav/>
   <div style="height: 120px;"></div>
   <MainContainer>
-    <MyPortfolioWidget/>
-
+    <div>
+      <MyPortfolioWidget/>
+      <StockRankingWidget/> 
+    </div>
+    
     <div>
       <div style="display: flex;">
-        <TreeMapWidget width="700px" height="350px"/>
+        <TreeMapWidget width="700px" height="700px"/>
       </div>
       <RealTimeChartWidget/>
-      <StockRankingWidget/>    
+         
     </div>
   </MainContainer>
 

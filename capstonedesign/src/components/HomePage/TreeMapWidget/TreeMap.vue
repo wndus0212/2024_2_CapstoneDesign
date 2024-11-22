@@ -3,8 +3,8 @@
     type="treemap" 
     :options="chartOptions" 
     :series="series" 
-    :width="300" 
-    :height="290" />
+    :width="600" 
+    :height="590" />
 </template>
 
 <script>
@@ -33,7 +33,7 @@ export default {
         dataLabels: {
           enabled: true,
           style: {
-            fontSize: '12px',
+            fontSize: '20px',
           },
           formatter: function (text, op) {
             return [text, op.value];
@@ -49,7 +49,7 @@ export default {
               ranges: [
                 {
                   from: 0,
-                  to: 0.3,
+                  to: 1000000000000,
                   color: '#008f05'
                 },
               ]

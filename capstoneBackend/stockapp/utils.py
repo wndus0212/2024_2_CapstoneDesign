@@ -329,25 +329,34 @@ def get_sector_weight_kor(access_token):
     return response.json()
 
 def get_sector_weight():
-    sectors = ['technology', 'financial-services', 'consumer-cyclical', 'healthcare', 
-               'communication-services', 'industrials', 'consumer-defensive', 
-               'energy', 'real-estate', 'basic-materials', 'utilities']
+    sectors=['^SP500-25',
+        '^SP500-30',
+        '^SP500-35',
+        '^SP500-25',
+        '^SP500-45',
+        '^SP500-15',
+        '^SP500-60',
+        '^SP500-50',
+        '^SP500-55',
+        '^SP500-40',
+        '^GSPE'
+    ]
     
-    market_weight = []
+    market_cap = []
 
     for sector in sectors:
         # 섹터 데이터 가져오기
         try:
-            sector_data = yf.Sector(sector).overview
+            sector_data = yf.Ticker(sector).overview
             if sector_data is not None:
                 weight = sector_data.get('market_cap', 0)  # 값이 없으면 0으로 처리
-                market_weight.append(weight)
+                market_cap.append(weight)
             else:
                 print(f"No data for sector: {sector}")  # 디버깅 출력
-                market_weight.append(0)  # 기본값 0 추가
+                market_cap.append(0)  # 기본값 0 추가
         except Exception as e:
             print(f"Error fetching data for sector {sector}: {e}")
-            market_weight.append(0)  # 오류 발생 시 기본값 0 추가
+            market_cap.append(0)  # 오류 발생 시 기본값 0 추가
 
     # 데이터프레임 생성
     df = pd.DataFrame({

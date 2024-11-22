@@ -8,7 +8,7 @@
         <SmallButton text="원자재"/>
         <SmallButton text="채권"/>
       </ButtonContainer>
-      <div style="display: flex; justify-content: space-between;">
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap">
         <DAWRealTimeChart :history="KOSPI" chartname="KOSPI"/>
         <DAWRealTimeChart :history="KOSDAQ" chartname="KOSDAQ"/>
         <DAWRealTimeChart :history="NASDAQ" chartname="NASDAQ"/>

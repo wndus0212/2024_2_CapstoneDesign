@@ -6,20 +6,70 @@ import os
 from pykrx import stock
 from pprint import pprint
 
+import yfinance as yf
+import pandas as pd
 
-tickers = ['1001', '1002', '1003', '1004', '1005', '1006', '1007', '1008', '1009', '1010', 
-           '1011', '1012', '1013', '1014', '1015', '1016', '1017', '1018', '1019', '1020', 
-           '1021', '1024', '1025', '1026', '1027', '1028', '1034', '1035', '1150', '1151', 
-           '1152', '1153', '1154', '1155', '1156', '1157', '1158', '1159', '1160', '1167', 
-           '1182', '1224', '1227', '1232', '1244', '1894']
+def get_sector_data():
+    sectors = [
+        '^SP500-25', '^SP500-30', '^SP500-35', '^SP500-45',
+        '^SP500-15', '^SP500-60', '^SP500-50', '^SP500-55',
+        '^SP500-40', '^GSPE'
+    ]
+    
+    sector_data_list = []
 
-for ticker in tickers:
-    print(ticker, stock.get_index_ticker_name(ticker))  # Print the name of the index
-    try:
-        price_change = stock.get_index_price_change("20240101", "20240228", ticker)  # Get price change data
-        print(price_change.head(2))
-    except Exception as e:  # Catch exceptions
-        print(f"Error with ticker {ticker}: {e}")
+    for sector in sectors:
+        try:
+            ticker = yf.Ticker(sector)
+            # 현재 시가총액
+            current_market_cap = ticker.info.get('marketCap', None)
+            print(current_market_cap)
+            # 하루, 한 달, 1년 간격으로 주가 데이터 가져오기
+            daily_history = ticker.history(period="1d", interval="1d")
+            monthly_history = ticker.history(period="1mo", interval="1d")
+            yearly_history = ticker.history(period="1y", interval="1d")
+            
+            if not daily_history.empty and current_market_cap is not None:
+                # 하루 변화량
+                daily_change = current_market_cap * ((daily_history['Close'][-1] / daily_history['Close'][0]) - 1)
+                
+                # 한 달 변화량
+                monthly_change = current_market_cap * ((monthly_history['Close'][-1] / monthly_history['Close'][0]) - 1)
+                
+                # 1년 변화량
+                yearly_change = current_market_cap * ((yearly_history['Close'][-1] / yearly_history['Close'][0]) - 1)
+                
+                # 데이터 저장
+                sector_data_list.append({
+                    "Sector": sector,
+                    "Current Market Cap": current_market_cap,
+                    "1 Day Change": daily_change,
+                    "1 Month Change": monthly_change,
+                    "1 Year Change": yearly_change
+                })
+            else:
+                # 데이터가 없을 경우 처리
+                sector_data_list.append({
+                    "Sector": sector,
+                    "Current Market Cap": None,
+                    "1 Day Change": None,
+                    "1 Month Change": None,
+                    "1 Year Change": None
+                })
+        except Exception as e:
+            print(f"Error fetching data for {sector}: {e}")
+            sector_data_list.append({
+                "Sector": sector,
+                "Current Market Cap": None,
+                "1 Day Change": None,
+                "1 Month Change": None,
+                "1 Year Change": None
+            })
 
-data = stock.get_index_ohlcv_by_date("20240101", "20240228", "1028")  # KOSPI 200
-print(data)
+    # 데이터프레임 생성
+    df = pd.DataFrame(sector_data_list)
+    return df
+
+# 데이터 가져오기 및 출력
+sector_df = get_sector_data()
+print(sector_df)
