@@ -1,31 +1,41 @@
 <template>
-  <apexchart 
-    type="treemap" 
-    :options="chartOptions" 
-    :series="series" 
-    :width="600" 
-    :height="590" />
+  <apexchart
+    type="treemap"
+    :options="chartOptions"
+    :series="series"
+    :width="600"
+    :height="590"
+  />
 </template>
 
 <script>
-import VueApexCharts from 'vue3-apexcharts';
-import axios from 'axios'; // Axios import
+import VueApexCharts from "vue3-apexcharts";
 
 export default {
-  name: 'TreeMapWidget',
+  name: "TreeMap",
   components: {
     apexchart: VueApexCharts,
   },
+  props: {
+    treemapData: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
-      series: [], // 초기값은 빈 배열로 설정
+      series: [
+        {
+          data: [],
+        },
+      ],
       chartOptions: {
         legend: {
           show: false,
         },
         chart: {
           height: 350,
-          type: 'treemap',
+          type: "treemap",
           toolbar: {
             show: false,
           },
@@ -33,68 +43,53 @@ export default {
         dataLabels: {
           enabled: true,
           style: {
-            fontSize: '20px',
+            fontSize: "14px",
+            colors: ["#fff"],
           },
           formatter: function (text, op) {
-            return [text, op.value];
+            const value = op.value;
+            return [text, `${value}%`];
           },
-          offsetY: -4,
         },
         plotOptions: {
           treemap: {
-            enableShades: true,
-            shadeIntensity: 0.5,
-            reverseNegativeShade: true,
+            enableShades: false,
             colorScale: {
               ranges: [
-                {
-                  from: 0,
-                  to: 1000000000000,
-                  color: '#008f05'
-                },
-              ]
+                { from: -100, to: -1, color: "#FF4560" }, // 하락: 빨간색
+                { from: 0, to: 1, color: "#FEB019" },   // 변화 없음: 노란색
+                { from: 1, to: 100, color: "#00E396" },  // 상승: 녹색
+              ],
             },
           },
         },
       },
     };
   },
-  mounted() {
-    this.fetchTreeMapData(); // 컴포넌트가 마운트될 때 데이터 요청
-  },
-  methods: {
-    fetchTreeMapData() {
-      axios.get('http://127.0.0.1:8000/stock/sector_weight')
-        .then(response => {
-          // API 응답 데이터 확인
-          console.log('Response data:', response.data);
-
-          // output 배열 추출
-          const fetchedData = response.data.output;
-
-          // fetchedData가 배열인지 확인
-          if (Array.isArray(fetchedData)) {
-            // 데이터를 Treemap 형식에 맞게 변환
-            this.series = [
-              {
-                data: fetchedData.map(item => ({
-                  x: item.sector,       // 섹터 이름
-                  y: item.market_weight // 시장 가중치
-                }))
-              }
-            ];
-          } else {
-            console.error('Fetched data is not an array:', fetchedData);
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching sector data:', error);
-        });
+  watch: {
+    treemapData: {
+      handler(newData) {
+        if (Array.isArray(newData) && newData.length > 0) {
+          this.series = [
+            {
+              data: newData.map((item) => ({
+                x: item.names, // 섹터 이름
+                y: item.market_caps, // 시가총액: 네모 크기
+                color: item.change, // 변화량에 따라 색상
+              })),
+            },
+          ];
+        } else {
+          console.warn("No valid data for treemap.");
+          this.series = [{ data: [] }];
+        }
+      },
+      immediate: true,
     },
   },
 };
 </script>
 
 <style>
-/* 필요에 따라 스타일 추가 */
+/* 필요 시 스타일 추가 */
 </style>

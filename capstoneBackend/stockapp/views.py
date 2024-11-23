@@ -47,16 +47,24 @@ def stock_history(request, stock_id):
     
     return JsonResponse({"output": data_json})
 
-def stock_index(request, Id):
-    data = get_stock_index(Id=Id)  # 주식 데이터 가져오기
-    if data is None:
-        return JsonResponse({"error": "No data found for the specified stock"}, status=404)
+def index(request, option, indexname):
+    try:
+        # 섹터 데이터 가져오기
+        start = request.GET.get('start')
+        end = request.GET.get('end')
+        period = request.GET.get('period')
+        interval = request.GET.get('interval')
+        data = get_index(option, indexname, start, end, period, interval)
+        if data.empty:  # 데이터가 비어 있는 경우
+            return JsonResponse({"error": "No data found for the sectors"}, status=404)
+        
+        # 정상 응답 반환
+        data_json = data.to_dict(orient="records")
+        return JsonResponse({"output": data_json}, safe=False)
+    except Exception as e:
+        print(f"Error in sector_weight: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)
     
-    # 데이터프레임을 JSON 형식으로 변환
-    data_json = data.to_dict(orient="records")  # 행별로 JSON 객체를 생성
-    
-    return JsonResponse({"output": data_json})
-
 def sector_weight_kor(request):
     access_token = get_access_token()  # 토큰 발급
     daily_data = get_sector_weight_kor(access_token)  # 주식 데이터 가져오기
@@ -64,16 +72,16 @@ def sector_weight_kor(request):
     # 주식 데이터를 JsonResponse로 반환
     return JsonResponse(daily_data)
 
-def sector_weight(request):
+def sector_weight(request, period):
     try:
         # 섹터 데이터 가져오기
-        data = get_sector_weight()
-        print(data)
-        if not data:  # 데이터가 비어 있는 경우
+        data = get_sector_weight(period)
+        if data.empty:  # 데이터가 비어 있는 경우
             return JsonResponse({"error": "No data found for the sectors"}, status=404)
         
         # 정상 응답 반환
-        return JsonResponse({"output": data}, safe=False)
+        data_json = data.to_dict(orient="records")
+        return JsonResponse({"output": data_json}, safe=False)
     except Exception as e:
         print(f"Error in sector_weight: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)

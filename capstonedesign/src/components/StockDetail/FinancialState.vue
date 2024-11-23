@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex;flex-wrap: wrap; justify-content: center;">
-      <Box width="1250px">
+      <Box width="1200px">
         <div>
           <SubTitle style="margin: 10px;">
             재무제표 요약

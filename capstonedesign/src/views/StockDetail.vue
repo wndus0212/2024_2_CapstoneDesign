@@ -6,38 +6,44 @@
             {{ stockName || "로딩 중..." }}
         </PageTitle>
         <MainContainer>
-            <div>
-                <div style="display: flex;">
-                    <!-- 기간 선택 -->
-                    <select v-model="selectedPeriod" @change="fetchStockHistory">
-                        <option value="1mo">1개월</option>
-                        <option value="6mo">6개월</option>
-                        <option value="1y">1년</option>
-                        <option value="5y">5년</option>
-                        <option value="max">전체</option>
-                    </select>
-                    
-                    <!-- 간격 선택 -->
-                    <select v-model="selectedInterval" @change="fetchStockHistory">
-                        <option value="1d">일봉</option>
-                        <option value="1wk">주봉</option>
-                        <option value="1mo">월봉</option>
-                    </select>
-                    
-                    <select>
-                        <option>지표 보기</option>
-                    </select>
-                </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <div style="display: flex;">
+                        <!-- 기간 선택 -->
+                        <select v-model="selectedPeriod" @change="fetchStockHistory">
+                            <option value="1mo">1개월</option>
+                            <option value="6mo">6개월</option>
+                            <option value="1y">1년</option>
+                            <option value="5y">5년</option>
+                            <option value="max">전체</option>
+                        </select>
+                        
+                        <!-- 간격 선택 -->
+                        <select v-model="selectedInterval" @change="fetchStockHistory">
+                            <option value="1d">일봉</option>
+                            <option value="1wk">주봉</option>
+                            <option value="1mo">월봉</option>
+                        </select>
+                        
+                        <select>
+                            <option>지표 보기</option>
+                        </select>
+                    </div>
 
-                <!-- 로딩 상태 및 히스토리 데이터 처리 -->
-                <div v-if="isLoading">차트 데이터를 로딩 중입니다...</div>
-                <div v-else-if="!history || history.length === 0">데이터가 없습니다.</div>
-                <div v-else>
-                    <StockChart :history="history" />
-                </div>
+                    <!-- 로딩 상태 및 히스토리 데이터 처리 -->
+                    <div v-if="isLoading">차트 데이터를 로딩 중입니다...</div>
+                    <div v-else-if="!history || history.length === 0">데이터가 없습니다.</div>
+                    <div v-else>
+                        <StockChart :history="history" />
+                    </div>
 
-                <StockChartBelow />
+                    <StockChartBelow />
+                </div>
+                <Box width="600px">
+                    info
+                </Box>
             </div>
+            
         </MainContainer>
 
         <!-- 재무제표 요약 섹션 -->
@@ -56,6 +62,7 @@ import StockChart from "@/components/StockDetail/StockChart.vue";
 import StockChartBelow from "@/components/StockDetail/StockChartBelow.vue";
 import PageContainer from "@/components/PageContainer.vue";
 import FinancialState from "@/components/StockDetail/FinancialState.vue";
+import Box from "@/components/Box.vue";
 
 export default {
     components: {
@@ -65,7 +72,8 @@ export default {
         StockChart,
         StockChartBelow,
         PageContainer,
-        FinancialState
+        FinancialState,
+        Box
     },
     props: {
         stockCode: {

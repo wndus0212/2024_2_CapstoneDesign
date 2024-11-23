@@ -4,7 +4,7 @@
         type="line" 
         :options="chartOptions" 
         :series="series" 
-        :width="700"
+        :width="600"
         :height="400"
       />
     </div>

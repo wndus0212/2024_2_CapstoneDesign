@@ -8,9 +8,6 @@
     </div>
     
     <div>
-      <div style="display: flex;">
-        <TreeMapWidget width="700px" height="700px"/>
-      </div>
       <RealTimeChartWidget/>
          
     </div>
@@ -25,7 +22,6 @@ import MainContainer from '@/components/MainContainer.vue';
 import RealTimeChartWidget from '@/components/HomePage/RealTimeChartWidget/RealTimeChartWidget.vue';
 import MyPortfolioWidget from '@/components/HomePage/MyPortfolioWidget/MyPortfolioWidget.vue';
 import StockRankingWidget from '@/components/HomePage/StockRankingWidget/StockRankingWidget.vue';
-import TreeMapWidget from '@/components/HomePage/TreeMapWidget/TreeMapWidget.vue';
 
 export default {
   name: 'HomePage',
@@ -35,7 +31,6 @@ export default {
     RealTimeChartWidget,
     MyPortfolioWidget,
     StockRankingWidget,
-    TreeMapWidget
   },
   data() {
     return {

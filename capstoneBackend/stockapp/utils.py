@@ -12,6 +12,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 etf_file_path = os.path.join(BASE_DIR, 'data', 'Top_100_ETF_list.csv')
+sp500_file_path=os.path.join(BASE_DIR, 'data', 'sp500_sector.csv')
 search_term_file_path = os.path.join(BASE_DIR, 'data', 'search_term.csv')
 # API 키와 Secret 키 입력
 client_id = "PSekA1zSBGgE4mJCmCgT06UTivilW4ZmLCim"
@@ -85,6 +86,52 @@ def get_etf_data(symbol):
     except Exception as e:
         print(f"Error fetching data for {symbol}: {e}")
         return None, None, None
+
+def get_market_cap(symbol):
+    """
+    특정 심볼의 시가총액 가져오기
+    """
+    try:
+        stock_data = yf.Ticker(symbol)
+        stock_info = stock_data.info
+        return stock_info.get('marketCap', None)
+    except Exception as e:
+        print(f"Error fetching market cap for {symbol}: {e}")
+        return None
+    
+def get_marcap_diff(symbol, period):
+    try:
+        stock_data = yf.Ticker(symbol)
+        stock_info = stock_data.info
+        price = stock_info.get('currentPrice', None)
+        market_cap = stock_info.get('marketCap', None)
+        shares_outstanding = stock_info.get('sharesOutstanding', None)
+
+        # 과거 주가 데이터 가져오기
+        history = stock_data.history(period='ytd')  # 1년 데이터
+        if history.empty or not shares_outstanding:
+            return price, market_cap, None, None, None
+
+        # 하루 전, 1달 전, 1년 전의 종가 가져오기
+        if period=='1d':
+            past_close = history['Close'].iloc[-2] if len(history) > 1 else None
+        elif period=='1mo':
+            past_close = history['Close'].shift(20).iloc[-1] if len(history) > 20 else None
+        else:
+            past_close = history['Close'].iloc[0] if len(history) > 0 else None
+
+        # 시가총액 변화량 계산
+        change = (market_cap - (past_close * shares_outstanding)) if past_close else None
+        
+
+        # 퍼센트로 변화량 계산
+        change_percent = (change / (past_close * shares_outstanding)) * 100 if change else None
+    
+        return price, market_cap, change_percent
+    except Exception as e:
+        print(f"Error fetching data for {symbol}: {e}")
+        return None, None, None
+    
 
 def get_stock_list(market, sort):
     try:
@@ -293,21 +340,71 @@ def get_stock_history(Id, start=None, end=None, period=0, interval='1d'):
         print(f"Error fetching data for {Id}: {e}")
         return None
 
-def get_stock_index(Id):
-    try:
-        if Id=='SP500':
-            df=fdr.DataReader('S&P500','2024-06')
+
+def get_index(option, indexname, start, end, period, interval):
+    if option == 'sector':
+        if indexname == 'SPDR':
+            sectors = [
+                {'ticker': 'XLY', 'name': 'Consumer Discretionary'},
+                {'ticker': 'XLC', 'name': 'Communication Services'},
+                {'ticker': 'XLF', 'name': 'Financials'},
+                {'ticker': 'XLI', 'name': 'Industrials'},
+                {'ticker': 'XLE', 'name': 'Energy'},
+                {'ticker': 'XLB', 'name': 'Materials'},
+                {'ticker': 'XLV', 'name': 'Health Care'},
+                {'ticker': 'XLP', 'name': 'Consumer Staples'},
+                {'ticker': 'XLK', 'name': 'Technology'},
+                {'ticker': 'XLRE', 'name': 'Real Estate'},
+                {'ticker': 'XLU', 'name': 'Utilities'}
+            ]
         else:
-            df = fdr.DataReader(Id,'2024')
-        if df.empty:
-            print(f"No data found for stock {Id}")
-            return None
-        
-        return df
-        
-    except Exception as e:
-        print(f"Error fetching data for {Id}: {e}")
-        return None
+            sectors = [
+                {'ticker': 'KOSPI200SECTOR-0.KS', 'name': 'KOSPI 200 Communication Services'},
+                {'ticker': 'KOSPI200SECTOR-1.KS', 'name': 'KOSPI 200 Constructions'},
+                {'ticker': 'KOSPI200SECTOR-2.KS', 'name': 'KOSPI 200 Heavy Industries'},
+                {'ticker': 'KOSPI200SECTOR-3.KS', 'name': 'KOSPI 200 Steels & Materials'},
+                {'ticker': 'KOSPI200SECTOR-4.KS', 'name': 'KOSPI 200 Energy & Chemicals'},
+                {'ticker': 'KOSPI200SECTOR-5.KS', 'name': 'KOSPI 200 IT'},
+                {'ticker': 'KOSPI200SECTOR-6.KS', 'name': 'KOSPI 200 Financials'},
+                {'ticker': 'KOSPI200SECTOR-7.KS', 'name': 'KOSPI 200 Consumer Staples'},
+                {'ticker': 'KOSPI200SECTOR-8.KS', 'name': 'KOSPI 200 Consumer Discretionary'},
+                {'ticker': 'KOSPI200SECTOR-9.KS', 'name': 'KOSPI 200 Industrials'},
+                {'ticker': 'KOSPI200SECTOR-10.KS', 'name': 'KOSPI 200 Health Care'}
+            ]
+
+        sector_data = []
+        # 각 섹터별 데이터 가져오기
+        for sector in sectors:
+            try:
+                ticker = sector['ticker']  # 티커만 사용
+                df = get_stock_history(ticker, start, end, period, interval)  # 수정된 부분
+                if df is not None and not df.empty:  # 데이터가 존재하고 비어있지 않은지 확인
+                    sector_info = yf.Ticker(ticker).info
+                    name = sector_info.get('name', None)
+                    
+                    sector_data.append({
+                        'Sector': sector['name'],  # 섹터 이름 사용
+                        'Stock History': df
+                    })
+                else:
+                    print(f"No data found for {sector['name']}")
+            except Exception as e:
+                print(f"Error fetching data for {sector['name']}: {e}")
+
+        # 데이터프레임으로 변환
+        if sector_data:
+            df = pd.DataFrame(sector_data)
+            return df
+        else:
+            return None  # 데이터를 못 구한 경우 None 반환
+    else:
+        df = get_stock_history(indexname, start, end, period, interval)
+        if df is not None and not df.empty:
+            return df
+        else:
+            print(f"No data found for {indexname}")
+            return None  # 데이터가 없으면 None 반환
+
 
 def get_sector_weight_kor(access_token):
     url = f"https://openapi.koreainvestment.com:9443//uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice"
@@ -328,43 +425,64 @@ def get_sector_weight_kor(access_token):
     response = requests.get(url, headers=headers, params=params)
     return response.json()
 
-def get_sector_weight():
-    sectors=['^SP500-25',
-        '^SP500-30',
-        '^SP500-35',
-        '^SP500-25',
-        '^SP500-45',
-        '^SP500-15',
-        '^SP500-60',
-        '^SP500-50',
-        '^SP500-55',
-        '^SP500-40',
-        '^GSPE'
-    ]
-    
-    market_cap = []
+def get_sector_weight(period):
+    try:
+        # CSV 파일 읽기
+        stocks = pd.read_csv(sp500_file_path)
+        symbols = stocks['Symbol']
+        names = stocks['Name']
+        sectors = stocks['Sector']
 
-    for sector in sectors:
-        # 섹터 데이터 가져오기
-        try:
-            sector_data = yf.Ticker(sector).overview
-            if sector_data is not None:
-                weight = sector_data.get('market_cap', 0)  # 값이 없으면 0으로 처리
-                market_cap.append(weight)
-            else:
-                print(f"No data for sector: {sector}")  # 디버깅 출력
-                market_cap.append(0)  # 기본값 0 추가
-        except Exception as e:
-            print(f"Error fetching data for sector {sector}: {e}")
-            market_cap.append(0)  # 오류 발생 시 기본값 0 추가
+        # 병렬 처리로 시가총액 정보 가져오기
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            marcap_results = list(executor.map(lambda symbol: get_market_cap(symbol), symbols))
 
-    # 데이터프레임 생성
-    df = pd.DataFrame({
-        'sector': sectors,
-        'market_weight': market_weight
-    })
-    
-    return df.to_dict(orient='records')
+        # 시가총액 정보를 DataFrame에 추가
+        stocks['Market Cap'] = marcap_results
+
+        # 섹터별 그룹화 후 상위 5개 선택
+        grouped = stocks.groupby('Sector', group_keys=False).apply(
+            lambda x: x.nlargest(1, 'Market Cap')
+        )
+
+        # 필터링된 데이터에서 정보 추출
+        symbols = grouped['Symbol']
+        names = grouped['Name'].tolist()
+        sectors = grouped['Sector'].tolist()
+
+        # 변화량 등 추가 정보 가져오기
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            marcap_results = list(executor.map(lambda args: get_marcap_diff(args[0], args[1]), zip(symbols, [period] * len(symbols))))
+
+        # 결과 처리
+        prices, market_caps, change_percent = zip(*marcap_results)
+        prices = [price if price is not None else 0 for price in prices]
+        market_caps = [market_cap if market_cap is not None else 0 for market_cap in market_caps]
+        changes = [change if change is not None else 0 for change in change_percent]
+
+        # 데이터프레임 생성
+        data = {
+            'symbols': symbols,
+            'names': names,
+            'market_caps': market_caps,
+            'sector': sectors,
+            'change':changes
+        }
+
+        # 데이터프레임 생성 후 정렬
+        df = pd.DataFrame(data)
+        df_sorted = df.sort_values(by='market_caps', ascending=False)
+
+        # 숫자 포맷팅
+        df_sorted['market_caps'] = df_sorted['market_caps'].apply(lambda x: f"{x:,.2f}")
+        df_sorted['change'] = df_sorted['change'].apply(lambda x: f"{x:,.2f}")
+
+        return df_sorted
+
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        return None
+
 
 def get_financial_statement(Id, Option):
     stock = yf.Ticker(Id)

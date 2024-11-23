@@ -4,8 +4,8 @@
       type="line" 
       :options="chartOptions" 
       :series="series" 
-      :width="300"
-      :height="300"
+      :width="600"
+      :height="600"
     />
   </div>
 </template>
@@ -36,43 +36,32 @@ export default {
           width: 230,
           type: 'line',
           sparkline: {
-            enabled: true
+            enabled: false
           },
           toolbar: {
-            show: false,
+            show: true,
           },
         },
-        xaxis: {
-            labels: {
-                show: false  // x축 레이블 숨기기
-            },
-            axisBorder: {
-                show: false  // x축 경계선 숨기기
-            },
-            axisTicks: {
-                show: false  // x축 눈금 숨기기
-            }
-        },
-        yaxis: {
-            labels: {
-                show: false  // y축 레이블 숨기기
-            },
-            axisBorder: {
-                show: false  // y축 경계선 숨기기
-            },
-            axisTicks: {
-                show: false  // y축 눈금 숨기기
-            }
-        },
         tooltip: {
-            enabled: false  // 툴팁 숨기기
+            enabled: true  // 툴팁 숨기기
         },
         legend: {
-          show: false,
+          show: true,
           position: 'bottom'
         },
         title:{
           text: this.chartname
+        },
+        xaxis: {
+          type: 'datetime'
+        },
+        yaxis: {
+          labels: {
+            formatter: (value) => {
+              // 소수점 이하 자리수를 제거
+              return Math.floor(value); 
+            }
+          }
         }
       }
     };
@@ -90,7 +79,7 @@ export default {
               type: 'line',
               data: historyArray.map((entry, index) => ({
                 x: new Date(new Date().setDate(new Date().getDate() - totalItems + index)),
-                y: entry.Close,
+                y: [entry.Open, entry.High, entry.Low, entry.Close], // 시가, 고가, 저가, 종가
               }))
             },
 
