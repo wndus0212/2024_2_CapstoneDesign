@@ -28,9 +28,9 @@ def stock_list_global(request, market, sort):
 
 def stock_detail(request, stock_id):
     print(f"Requested stock_id: {stock_id}")
-    access_token = get_access_token()  # 토큰 발급
-    data = get_stock_detail_info(access_token, id)  # 주식 데이터 가져오기
+    data = get_stock_detail_info(stock_id)  # 주식 데이터 가져오기
     return JsonResponse(data)
+
 
 def stock_history(request, stock_id):
     start = request.GET.get('start')
@@ -65,12 +65,6 @@ def index(request, option, indexname):
         print(f"Error in sector_weight: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
     
-def sector_weight_kor(request):
-    access_token = get_access_token()  # 토큰 발급
-    daily_data = get_sector_weight_kor(access_token)  # 주식 데이터 가져오기
-
-    # 주식 데이터를 JsonResponse로 반환
-    return JsonResponse(daily_data)
 
 def sector_weight(request, period):
     try:

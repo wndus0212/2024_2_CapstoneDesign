@@ -40,7 +40,17 @@
                     <StockChartBelow />
                 </div>
                 <Box width="600px">
-                    info
+                    <div>
+                        <div>
+                            {{ info.sector }}
+                        </div>
+                        <div>
+                            {{ info.industry }}
+                        </div>
+                        <div>
+                            시가총액: {{ info.marketCap }}
+                        </div>
+                    </div>
                 </Box>
             </div>
             
@@ -86,6 +96,7 @@ export default {
             stockName: "",
             stock: "",
             history: "",
+            info:"",
             income_stmt:"",
             balance_sheet:"",
             cashflow:"",
@@ -97,6 +108,7 @@ export default {
     async mounted() {
         this.stockName = this.$route.query.name || "알 수 없는 종목";
         await this.fetchStockHistory();
+        await this.fetchStockInfo();
     },
     methods: {
         async fetchStockHistory() {
@@ -117,6 +129,22 @@ export default {
             } catch (error) {
                 console.error("종목 히스토리를 가져오는 데 실패했습니다:", error);
                 this.history = [];
+            } finally {
+                this.isLoading = false; // 로딩 종료
+            }
+        },
+        async fetchStockInfo() {
+            this.isLoading = true; // 로딩 시작
+            try {
+                const response = await axios.get(
+                    `http://127.0.0.1:8000/stock/detail_info/${this.stockCode}/`,
+                );
+                this.info = response.data["output"] || [];
+                console.log(response.data)
+                print("info: ", this.info.sector)
+            } catch (error) {
+                console.error("종목 정보를 가져오는 데 실패했습니다:", error);
+                this.info = [];
             } finally {
                 this.isLoading = false; // 로딩 종료
             }

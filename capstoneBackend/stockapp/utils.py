@@ -147,7 +147,7 @@ def get_stock_list(market, sort):
         prices = stocks['Close'].tolist()
         market_caps = stocks['Marcap'].tolist()
         volume = stocks['Volume'].tolist()
-        
+
 
         # 데이터프레임 생성
         data = {
@@ -288,31 +288,16 @@ def get_etf_list_global(sort):
 
 
 
-def get_stock_detail_info(access_token, Id):
-    if Id.endswith(".KS") or Id.endswith(".KQ"):
-        id=Id[:6]
-        url = f"https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/search-info"
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "content-type": "application/json",
-            "appKey": client_id,
-            "appSecret": client_key,
-            "tr_id": "CTPF1604R",
-            "custtype": "P"
-        }
-        params = {
-            "PDNO":id,
-            "PRDT_TYPE_CD":"300"
-        }
-        response = requests.get(url, headers=headers, params=params)
-        return response.json()
-    else:
-        stock=yf.Ticker(Id)
-        # 결과를 JSON 형태로 변환
-        stocks_json = stock.to_json(orient='records', force_ascii=False)
-
-        # JsonResponse로 반환
-        return JsonResponse(json.loads(stocks_json), safe=False)
+def get_stock_detail_info(Id):
+    ticker = yf.Ticker(Id)
+    try:
+        ticker_info=ticker.info
+        print(ticker)
+        return ticker_info
+    
+    except Exception as e:
+        print(f"Error fetching data for {Id}: {e}")
+        return None
 
 def get_stock_history(Id, start=None, end=None, period=0, interval='1d'):
     ticker = yf.Ticker(Id)
@@ -411,63 +396,36 @@ def get_index(option, indexname, start, end, period, interval):
             print(f"No data found for {indexname}")
             return None  # 데이터가 없으면 None 반환
 
-def get_sector_weight(period):
-    try:
-        # CSV 파일 읽기
-        stocks = pd.read_csv(sp500_file_path)
-        symbols = stocks['Symbol']
-        names = stocks['Name']
-        sectors = stocks['Sector']
+def get_sector_weight():
+    sectors=['technology',
+            'financial-services',
+            'consumer-cyclical',
+            'healthcare',
+            'communication-services',
+            'industrials',
+            'consumer-defensive',
+            'energy',
+            'real-estate',
+            'basic-materials',
+            'utilities']
 
-        # 병렬 처리로 시가총액 정보 가져오기
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            marcap_results = list(executor.map(lambda symbol: get_market_cap(symbol), symbols))
+    market_weight=[]
 
-        # 시가총액 정보를 DataFrame에 추가
-        stocks['Market Cap'] = marcap_results
+    for sector in sectors:
+        market_weight.append(yf.Sector(sector).overview['market_weight'])
 
-        # 섹터별 그룹화 후 상위 5개 선택
-        grouped = stocks.groupby('Sector', group_keys=False).apply(
-            lambda x: x.nlargest(1, 'Market Cap')
-        )
+    data = {
+        market_weight:'sectors',
+        market_weight:'market_weight'
+    }
 
-        # 필터링된 데이터에서 정보 추출
-        symbols = grouped['Symbol']
-        names = grouped['Name'].tolist()
-        sectors = grouped['Sector'].tolist()
+    df = pd.DataFrame(data)
 
-        # 변화량 등 추가 정보 가져오기
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            marcap_results = list(executor.map(lambda args: get_marcap_diff(args[0], args[1]), zip(symbols, [period] * len(symbols))))
+    # 결과를 JSON 형태로 변환
+    stocks_json = df.to_json(orient='records', force_ascii=False)
 
-        # 결과 처리
-        prices, market_caps, change_percent = zip(*marcap_results)
-        prices = [price if price is not None else 0 for price in prices]
-        market_caps = [market_cap if market_cap is not None else 0 for market_cap in market_caps]
-        changes = [change if change is not None else 0 for change in change_percent]
-
-        # 데이터프레임 생성
-        data = {
-            'symbols': symbols,
-            'names': names,
-            'market_caps': market_caps,
-            'sector': sectors,
-            'change':changes
-        }
-
-        # 데이터프레임 생성 후 정렬
-        df = pd.DataFrame(data)
-        df_sorted = df.sort_values(by='market_caps', ascending=False)
-
-        # 숫자 포맷팅
-        df_sorted['market_caps'] = df_sorted['market_caps'].apply(lambda x: f"{x:,.2f}")
-        df_sorted['change'] = df_sorted['change'].apply(lambda x: f"{x:,.2f}")
-
-        return df_sorted
-
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return None
+    # JsonResponse로 반환
+    return JsonResponse(json.loads(stocks_json), safe=False)
 
 
 def get_financial_statement(Id, Option):
