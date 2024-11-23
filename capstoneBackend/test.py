@@ -91,6 +91,7 @@ def get_index(option, indexname, start, end, period, interval):
         # 데이터프레임으로 변환
         if sector_data:
             df = pd.DataFrame(sector_data)
+            print(df)
             return df
         else:
             return None  # 데이터를 못 구한 경우 None 반환
@@ -104,8 +105,5 @@ def get_index(option, indexname, start, end, period, interval):
             print(f"No data found for {indexname}")
             return None  # 데이터가 없으면 None 반환
 
-
-# 테스트 호출
-df = get_index('index', 'KS11', "", "2024-12-31", "1mo", "1d")
-
+df = fdr.SnapDataReader('KRX/INDEX/STOCK/1150') # KOSPI 200 (KRX)
 print(df)

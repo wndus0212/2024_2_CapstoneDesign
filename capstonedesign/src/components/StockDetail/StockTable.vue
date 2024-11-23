@@ -10,6 +10,7 @@
               <th scope="col">현재가</th>
               <th scope="col">거래량</th>
               <th scope="col">시가총액(억)</th>
+              <th scope="col">섹터</th>
             </tr>
           </thead>
           <tbody>

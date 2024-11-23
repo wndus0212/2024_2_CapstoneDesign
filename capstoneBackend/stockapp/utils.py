@@ -147,7 +147,7 @@ def get_stock_list(market, sort):
         prices = stocks['Close'].tolist()
         market_caps = stocks['Marcap'].tolist()
         volume = stocks['Volume'].tolist()
-
+        
 
         # 데이터프레임 생성
         data = {
@@ -377,14 +377,18 @@ def get_index(option, indexname, start, end, period, interval):
         for sector in sectors:
             try:
                 ticker = sector['ticker']  # 티커만 사용
+                if indexname=='KOSPI':
+                    period='5d'
+                    interval='1d'
                 df = get_stock_history(ticker, start, end, period, interval)  # 수정된 부분
                 if df is not None and not df.empty:  # 데이터가 존재하고 비어있지 않은지 확인
                     sector_info = yf.Ticker(ticker).info
+                    stock_history_json = df.reset_index().to_dict(orient='records')
                     name = sector_info.get('name', None)
                     
                     sector_data.append({
                         'Sector': sector['name'],  # 섹터 이름 사용
-                        'Stock History': df
+                        'Stock History': stock_history_json
                     })
                 else:
                     print(f"No data found for {sector['name']}")
@@ -394,7 +398,9 @@ def get_index(option, indexname, start, end, period, interval):
         # 데이터프레임으로 변환
         if sector_data:
             df = pd.DataFrame(sector_data)
+            print(df)
             return df
+    
         else:
             return None  # 데이터를 못 구한 경우 None 반환
     else:
@@ -404,26 +410,6 @@ def get_index(option, indexname, start, end, period, interval):
         else:
             print(f"No data found for {indexname}")
             return None  # 데이터가 없으면 None 반환
-
-
-def get_sector_weight_kor(access_token):
-    url = f"https://openapi.koreainvestment.com:9443//uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice"
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "content-type": "application/json",
-        "appKey": client_id,
-        "appSecret": client_key,
-        "tr_id": "FHKUP03500100"  # 일봉 조회 API TR_ID
-    }
-    params = {
-        "FID_COND_MRKT_DIV_CODE": "U",  # 코스피(J) / 코스닥(K) 선택
-        "FID_INPUT_ISCD": "0001",       # 종목 코드 입력
-        "FID_INPUT_DATE_1": "20220411",
-        "FID_INPUT_DATE_2":"20220509",
-        "FID_PERIOD_DIV_CODE":"Y"
-    }
-    response = requests.get(url, headers=headers, params=params)
-    return response.json()
 
 def get_sector_weight(period):
     try:

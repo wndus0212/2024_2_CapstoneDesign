@@ -9,7 +9,7 @@
         </li>
         <li>
             <TopNavButton @click="goToDetail">
-                <p>종목별</p>
+                <p>종목 검색</p>
             </TopNavButton>
         </li>
         <li>

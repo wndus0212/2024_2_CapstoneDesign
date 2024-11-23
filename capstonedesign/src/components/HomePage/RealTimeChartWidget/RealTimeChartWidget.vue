@@ -56,7 +56,7 @@ export default {
   },
   data() {
     return {
-      selectedIndex: { label: 'KOSPI', value: '^KS11' }, // 기본 선택된 옵션 (label과 value로 유지)
+      selectedIndex: '^KS11', // 기본 선택된 옵션 (label과 value로 유지)
       selectedPeriod: '1mo', // 기본 선택 기간
       selectedInterval: '1d', // 기본 선택 간격
       chartData: null, // 차트 데이터

@@ -9,7 +9,7 @@
     
     <div>
       <RealTimeChartWidget/>
-         
+      <SectorChartWidget/>
     </div>
   </MainContainer>
 
@@ -20,6 +20,7 @@
 import TopNav from '../components/Top/Top.vue'
 import MainContainer from '@/components/MainContainer.vue';
 import RealTimeChartWidget from '@/components/HomePage/RealTimeChartWidget/RealTimeChartWidget.vue';
+import SectorChartWidget from '@/components/HomePage/SectorChartWidget copy/SectorChartWidget .vue';
 import MyPortfolioWidget from '@/components/HomePage/MyPortfolioWidget/MyPortfolioWidget.vue';
 import StockRankingWidget from '@/components/HomePage/StockRankingWidget/StockRankingWidget.vue';
 
@@ -31,6 +32,7 @@ export default {
     RealTimeChartWidget,
     MyPortfolioWidget,
     StockRankingWidget,
+    SectorChartWidget
   },
   data() {
     return {
