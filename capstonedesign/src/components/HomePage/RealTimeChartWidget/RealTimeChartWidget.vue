@@ -113,7 +113,7 @@ export default {
     fetchStockIndexHistory() {
       const selectedIndexValue = this.selectedIndex; // selectedIndex의 value 값
       axios
-        .get(`http://127.0.0.1:8000/stock/index/index/${selectedIndexValue}/`, {
+        .get(`https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/index/index/${selectedIndexValue}/`, {
           params: {
             start: "",
             end: "",

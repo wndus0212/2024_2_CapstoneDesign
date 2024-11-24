@@ -46,7 +46,7 @@
         try {
             this.isLoading = true; // 로딩 시작
             axios
-                .get(`http://127.0.0.1:8000/stock/financial_state/income_stmt/${this.stockCode}/`)
+                .get(`https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/financial_state/income_stmt/${this.stockCode}/`)
                 .then(response => {
                     this.income_stmt = response.data["output"] || [];
                     console.log("재무제표", this.income_stmt)
@@ -54,7 +54,7 @@
                 .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
             
             axios
-                .get(`http://127.0.0.1:8000/stock/financial_state/balance_sheet/${this.stockCode}/`)
+                .get(`https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/financial_state/balance_sheet/${this.stockCode}/`)
                 .then(response => {
                     this.income_stmt = response.data["output"] || [];
                     console.log("재무제표", this.income_stmt)
@@ -62,7 +62,7 @@
                 .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
             
             axios
-                .get(`http://127.0.0.1:8000/stock/financial_state/cashflow/${this.stockCode}/`)
+                .get(`https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/financial_state/cashflow/${this.stockCode}/`)
                 .then(response => {
                     this.income_stmt = response.data["output"] || [];
                     console.log("재무제표", this.income_stmt)

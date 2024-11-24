@@ -125,7 +125,7 @@ export default {
       };
 
       axios
-        .get(`http://127.0.0.1:8000/stock/index/sector/${this.selectedIndex}/`, { params })
+        .get(`https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/index/sector/${this.selectedIndex}/`, { params })
         .then((response) => {
           this.chartData = response.data['output'] || null;
         })
