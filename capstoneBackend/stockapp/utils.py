@@ -431,7 +431,7 @@ def get_sector_weight():
 def get_financial_statement(Id, Option):
     stock = yf.Ticker(Id)
     
-    if Option=='incom_stmt':
+    if Option=='income_stmt':
         financial_state=stock.income_stmt
     elif Option=='balance_sheet':
         financial_state=stock.balance_sheet
