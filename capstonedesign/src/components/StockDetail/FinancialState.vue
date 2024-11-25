@@ -7,8 +7,8 @@
           </SubTitle>
         </div>
         <IncomeStatement :data="income_stmt"/>
-        <IncomeStatement :data="balance_sheet"/>
-        <IncomeStatement :data="cashflow"/>
+        <BalanceSheet :data="balance_sheet"/>
+        <CashFlowData :data="cashflow"/>
       </Box>
     </div>
   </template>
@@ -17,6 +17,8 @@
   import axios from 'axios';
   import Box from '../Box.vue';
   import IncomeStatement from './IncomeStatement.vue';
+  import BalanceSheet from './BalanceSheet.vue';
+  import CashFlowData from './CashFlowData.vue';
   import SubTitle from '../SubTitle.vue';
   
   export default {
@@ -24,6 +26,8 @@
       Box,
       IncomeStatement,
       SubTitle, 
+      BalanceSheet,
+      CashFlowData
     },
     props: {
         stockCode: {
@@ -49,23 +53,24 @@
                 .get(`http://127.0.0.1:8000/stock/financial_state/income_stmt/${this.stockCode}/`)
                 .then(response => {
                     this.income_stmt = response.data["output"] || [];
-                    console.log("재무제표", this.income_stmt)
+                    console.log("this.income:",this.income_stmt);
+                    console.log("재무제표", this.income_stmt);
                 })    
                 .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
             
             axios
                 .get(`http://127.0.0.1:8000/stock/financial_state/balance_sheet/${this.stockCode}/`)
                 .then(response => {
-                    this.income_stmt = response.data["output"] || [];
-                    console.log("재무제표", this.income_stmt)
+                    this.balance_sheet = response.data["output"] || [];
+                    console.log("재무제표", this.balance_sheet)
                 })    
                 .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
             
             axios
                 .get(`http://127.0.0.1:8000/stock/financial_state/cashflow/${this.stockCode}/`)
                 .then(response => {
-                    this.income_stmt = response.data["output"] || [];
-                    console.log("재무제표", this.income_stmt)
+                    this.cashflow = response.data["output"] || [];
+                    console.log("재무제표", this.cashflow)
                 })    
                 .catch(error => console.error("종목 히스토리를 가져오는 데 실패했습니다:", error));
         } catch (error) {
