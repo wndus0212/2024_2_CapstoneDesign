@@ -106,22 +106,21 @@ export default {
       return Object.keys(this.data);
     },
     series() {
-      const revenue = [];
-      const operatingIncome = [];
-      const netIncome = [];
+      const totalAssets = [];
+      const liabilities = [];
+      const equity = [];
 
       this.years.forEach((year) => {
         const yearData = this.data[year];
         console.log("yearData", yearData)
-        revenue.push(yearData["Total Revenue"] || 0);
-        operatingIncome.push(yearData["Operating Income"] || 0);
-        netIncome.push(yearData["Net Income"] || 0);
+        totalAssets.push(yearData["Total Assets"] || 0);
+        liabilities.push(yearData["Current Liabilities"] || 0);
+        equity.push(yearData["Common Stock Equity"] || 0);
       });
-      console.log("revenue",revenue)
       return [
-        { name: "Revenue", data: revenue },
-        { name: "Operating Income", data: operatingIncome },
-        { name: "Net Income", data: netIncome },
+        { name: "totalAssets", data: totalAssets },
+        { name: "liabilities", data: liabilities },
+        { name: "equity", data: equity },
       ];
     },
     formattedData() {
