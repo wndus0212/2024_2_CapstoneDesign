@@ -35,9 +35,9 @@
                     <div v-else-if="!history || history.length === 0">데이터가 없습니다.</div>
                     <div v-else>
                         <StockChart :history="history" />
+                        <StockChart :history="history" />
                     </div>
-
-                    <StockChartBelow />
+                    
                 </div>
                 <Box width="600px">
                     <div>
@@ -48,7 +48,19 @@
                             {{ info.industry }}
                         </div>
                         <div>
+                            현재 주가: {{ info.currentPrice }}
+                        </div>
+                        <div>
+                            구매량: {{ info.volume }}
+                        </div>
+                        <div>
                             시가총액: {{ info.marketCap }}
+                        </div>
+                        <div>
+                            전일 종가: {{ info.previousClose }}
+                        </div>
+                        <div>
+                            open: {{ info.open }}
                         </div>
                     </div>
                 </Box>
@@ -69,7 +81,6 @@ import Top from "@/components/Top/Top.vue";
 import PageTitle from "@/components/PageTitle.vue";
 import MainContainer from "@/components/MainContainer.vue";
 import StockChart from "@/components/StockDetail/StockChart.vue";
-import StockChartBelow from "@/components/StockDetail/StockChartBelow.vue";
 import PageContainer from "@/components/PageContainer.vue";
 import FinancialState from "@/components/StockDetail/FinancialState.vue";
 import Box from "@/components/Box.vue";
@@ -80,7 +91,6 @@ export default {
         PageTitle,
         MainContainer,
         StockChart,
-        StockChartBelow,
         PageContainer,
         FinancialState,
         Box
@@ -139,9 +149,7 @@ export default {
                 const response = await axios.get(
                     `https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/detail_info/${this.stockCode}/`,
                 );
-                this.info = response.data["output"] || [];
-                console.log(response.data)
-                print("info: ", this.info.sector)
+                this.info = response.data|| [];
             } catch (error) {
                 console.error("종목 정보를 가져오는 데 실패했습니다:", error);
                 this.info = [];
