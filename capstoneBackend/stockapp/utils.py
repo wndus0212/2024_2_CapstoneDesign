@@ -342,20 +342,6 @@ def get_index(option, indexname, start, end, period, interval):
                 {'ticker': 'XLRE', 'name': 'Real Estate'},
                 {'ticker': 'XLU', 'name': 'Utilities'}
             ]
-        else:
-            sectors = [
-                {'ticker': 'KOSPI200SECTOR-0.KS', 'name': 'KOSPI 200 Communication Services'},
-                {'ticker': 'KOSPI200SECTOR-1.KS', 'name': 'KOSPI 200 Constructions'},
-                {'ticker': 'KOSPI200SECTOR-2.KS', 'name': 'KOSPI 200 Heavy Industries'},
-                {'ticker': 'KOSPI200SECTOR-3.KS', 'name': 'KOSPI 200 Steels & Materials'},
-                {'ticker': 'KOSPI200SECTOR-4.KS', 'name': 'KOSPI 200 Energy & Chemicals'},
-                {'ticker': 'KOSPI200SECTOR-5.KS', 'name': 'KOSPI 200 IT'},
-                {'ticker': 'KOSPI200SECTOR-6.KS', 'name': 'KOSPI 200 Financials'},
-                {'ticker': 'KOSPI200SECTOR-7.KS', 'name': 'KOSPI 200 Consumer Staples'},
-                {'ticker': 'KOSPI200SECTOR-8.KS', 'name': 'KOSPI 200 Consumer Discretionary'},
-                {'ticker': 'KOSPI200SECTOR-9.KS', 'name': 'KOSPI 200 Industrials'},
-                {'ticker': 'KOSPI200SECTOR-10.KS', 'name': 'KOSPI 200 Health Care'}
-            ]
 
         sector_data = []
         # 각 섹터별 데이터 가져오기

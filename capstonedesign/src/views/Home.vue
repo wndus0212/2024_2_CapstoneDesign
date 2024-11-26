@@ -2,8 +2,8 @@
   <TopNav/>
   <div style="height: 120px;"></div>
   <MainContainer>
+    <TrendingSectorWidget/>
     <div>
-      <MyPortfolioWidget/>
       <StockRankingWidget/> 
     </div>
     
@@ -21,8 +21,8 @@ import TopNav from '../components/Top/Top.vue'
 import MainContainer from '@/components/MainContainer.vue';
 import RealTimeChartWidget from '@/components/HomePage/RealTimeChartWidget/RealTimeChartWidget.vue';
 import SectorChartWidget from '@/components/HomePage/SectorChartWidget copy/SectorChartWidget .vue';
-import MyPortfolioWidget from '@/components/HomePage/MyPortfolioWidget/MyPortfolioWidget.vue';
 import StockRankingWidget from '@/components/HomePage/StockRankingWidget/StockRankingWidget.vue';
+import TrendingSectorWidget from '@/components/HomePage/TrendingSector/TrendingSectorWidget.vue';
 
 export default {
   name: 'HomePage',
@@ -30,9 +30,9 @@ export default {
     TopNav,
     MainContainer,
     RealTimeChartWidget,
-    MyPortfolioWidget,
     StockRankingWidget,
-    SectorChartWidget
+    SectorChartWidget,
+    TrendingSectorWidget
   },
   data() {
     return {

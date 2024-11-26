@@ -24,7 +24,4 @@ export default {
   padding: 0px;
 }
 
-body{
-  background-color: rgb(244, 244, 244);
-}
 </style>

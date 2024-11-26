@@ -41,7 +41,7 @@
 <script>
 import axios from 'axios';
 import TopNav from '../components/Top/Top.vue'
-import SearchBar from '@/components/DetailPage/Search.vue';
+import SearchBar from '@/components/Top/Search.vue';
 import SmallButton from '@/components/SmallButton.vue';
 import ButtonContainer from '@/components/ButtonContainer.vue';
 import StockTable from '@/components/StockDetail/StockTable.vue';

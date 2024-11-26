@@ -5,9 +5,11 @@ import MyPage from '../views/Mypage.vue';
 import MyPortfolio from '@/views/MyPage/MyPortfolio.vue';
 import AddPortfolio from '@/views/MyPage/ManagePortfolio.vue';
 import StockDetail from '@/views/StockDetail.vue';
+import LandingPage from '@/views/LandingPage.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
+  { path: '/login', name: 'login', component: LandingPage},
   { path: '/Detail', name: 'Detail', component: DetailPage},
   { path: '/detail/:stockCode', name: 'StockDetail', component: StockDetail, props: true},
   { path: '/Mypage', name: 'MyPage', component: MyPage,

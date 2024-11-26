@@ -4,15 +4,8 @@
       섹터 지수
     </BoxTitle>
 
-    <!-- 주가지수 선택 -->
-    <SelectBox 
-      :options="SelectIndex" 
-      v-model="selectedIndex" 
-      width="200px" 
-      @change="updateChartData" />
-
     <!-- 버튼 컨테이너 -->
-    <div v-if="selectedIndex === 'SPDR'" style="display: flex; gap: 10px; margin-top: 10px;">
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
       <!-- 기간 선택 -->
       <SelectBox 
         :options="SelectPeriod" 
@@ -36,8 +29,7 @@
     <!-- 차트 표시 -->
     <div v-if="!loading && chartData" style="display: flex; justify-content: space-between; flex-wrap: wrap; margin-top: 20px;">
       <RealTimeChart 
-        :history="chartData" 
-        :chartname="selectedIndex === 'SPDR' ? 'SPDR' : 'KOSPI'" />
+        :history="chartData" />
     </div>
 
     <div v-if="!loading && !chartData" style="text-align: center; color: gray; margin-top: 20px;">
@@ -68,10 +60,6 @@ export default {
       selectedInterval: '1d', // 기본 선택 간격
       chartData: null, // 차트 데이터
       loading: false, // 로딩 상태
-      SelectIndex: [
-        { label: 'SPDR', value: 'SPDR' },
-        { label: 'KOSPI', value: 'KOSPI' }
-      ],
       SelectPeriod: [
         { label: '1개월', value: '1mo' },
         { label: '6개월', value: '6mo' },
@@ -87,17 +75,6 @@ export default {
     };
   },
   watch: {
-    selectedIndex(newIndex) {
-      // KOSPI 선택 시 period와 interval을 자동 설정
-      if (newIndex === 'KOSPI') {
-        this.selectedPeriod = '5d'; // 기본 기간 설정
-        this.selectedInterval = '1h'; // 기본 간격 설정
-      } else {
-        this.selectedPeriod = '1mo'; // 기본 기간 설정
-        this.selectedInterval = '1d'; // 기본 간격 설정
-      }
-      this.updateChartData();
-    },
     selectedPeriod() {
       this.updateChartData();
     },
@@ -125,7 +102,7 @@ export default {
       };
 
       axios
-        .get(`http://127.0.0.1:8000/stock/index/sector/${this.selectedIndex}/`, { params })
+        .get(`http://127.0.0.1:8000/stock/index/sector/SPDR/`, { params })
         .then((response) => {
           this.chartData = response.data['output'] || null;
         })

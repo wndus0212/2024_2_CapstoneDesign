@@ -48,7 +48,7 @@ export default {
           position: 'bottom',
         },
         title: {
-          text: this.chartname,
+          text: "SPDR",
         },
         xaxis: {
           type: 'datetime',
