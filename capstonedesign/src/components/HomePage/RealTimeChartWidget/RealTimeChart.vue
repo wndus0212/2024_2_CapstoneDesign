@@ -1,21 +1,35 @@
 <template>
-  <div style="border-radius: 5px; border: 1px black solid; padding: 5px; margin-bottom: 5px;">
-    <apexchart 
-      type="line" 
-      :options="chartOptions" 
-      :series="series" 
-      :width="600"
-      :height="600"
-    />
-  </div>
+  <Box width="300px">
+    <div style="display: flex">
+      <div>
+        <div class="chart-name">
+          {{ this.chartname }}
+        </div>
+        <div>
+          {{  }}
+        </div>
+      </div>
+      
+      <apexchart 
+        type="line" 
+        :options="chartOptions" 
+        :series="series" 
+        :width="200"
+        :height="100"
+      />
+    </div>
+    
+  </Box>
 </template>
 
 <script>
 import VueApexCharts from 'vue3-apexcharts';
+import Box from '@/components/Box.vue';
 
 export default {
   components: {
-    apexchart: VueApexCharts
+    apexchart: VueApexCharts,
+    Box
   },
   props: {
     history: {
@@ -36,24 +50,25 @@ export default {
           width: 230,
           type: 'line',
           sparkline: {
-            enabled: false
+            enabled: true
           },
           toolbar: {
             show: true,
           },
         },
         tooltip: {
-            enabled: true  // 툴팁 숨기기
+            enabled: false  // 툴팁 숨기기
         },
         legend: {
-          show: true,
+          show: false,
           position: 'bottom'
         },
         title:{
-          text: this.chartname
+          show: false
         },
         xaxis: {
-          type: 'datetime'
+          type: 'datetime',
+          show: false
         },
         yaxis: {
           labels: {
@@ -79,7 +94,7 @@ export default {
               type: 'line',
               data: historyArray.map((entry, index) => ({
                 x: new Date(new Date().setDate(new Date().getDate() - totalItems + index)),
-                y: [entry.Open, entry.High, entry.Low, entry.Close], // 시가, 고가, 저가, 종가
+                y: entry.Close
               }))
             },
 

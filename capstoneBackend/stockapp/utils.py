@@ -11,8 +11,8 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-etf_file_path = os.path.join(BASE_DIR, 'data', 'Top_100_ETF_list.csv')
-sp500_file_path=os.path.join(BASE_DIR, 'data', 'sp500_sector.csv')
+etf_file_path = os.path.join(BASE_DIR, 'data', 'Top_100_ETF.csv')
+sp500_file_path=os.path.join(BASE_DIR, 'data', 'sp500.csv')
 search_term_file_path = os.path.join(BASE_DIR, 'data', 'search_term.csv')
 # API 키와 Secret 키 입력
 client_id = "PSekA1zSBGgE4mJCmCgT06UTivilW4ZmLCim"
@@ -356,10 +356,11 @@ def get_index(option, indexname, start, end, period, interval):
                     sector_info = yf.Ticker(ticker).info
                     stock_history_json = df.reset_index().to_dict(orient='records')
                     name = sector_info.get('name', None)
-                    
+                    current=sector_info.get('currentPrice')
                     sector_data.append({
                         'Sector': sector['name'],  # 섹터 이름 사용
-                        'Stock History': stock_history_json
+                        'Stock History': stock_history_json,
+                        'Current Price': current
                     })
                 else:
                     print(f"No data found for {sector['name']}")
@@ -382,36 +383,21 @@ def get_index(option, indexname, start, end, period, interval):
             print(f"No data found for {indexname}")
             return None  # 데이터가 없으면 None 반환
 
-def get_sector_weight():
-    sectors=['technology',
-            'financial-services',
-            'consumer-cyclical',
-            'healthcare',
-            'communication-services',
-            'industrials',
-            'consumer-defensive',
-            'energy',
-            'real-estate',
-            'basic-materials',
-            'utilities']
+def get_sector_diff():
+    sectors = [
+        {'ticker': 'XLY', 'name': 'Consumer Discretionary'},
+        {'ticker': 'XLC', 'name': 'Communication Services'},
+        {'ticker': 'XLF', 'name': 'Financials'},
+        {'ticker': 'XLI', 'name': 'Industrials'},
+        {'ticker': 'XLE', 'name': 'Energy'},
+        {'ticker': 'XLB', 'name': 'Materials'},
+        {'ticker': 'XLV', 'name': 'Health Care'},
+        {'ticker': 'XLP', 'name': 'Consumer Staples'},
+        {'ticker': 'XLK', 'name': 'Technology'},
+        {'ticker': 'XLRE', 'name': 'Real Estate'},
+        {'ticker': 'XLU', 'name': 'Utilities'}
+    ]
 
-    market_weight=[]
-
-    for sector in sectors:
-        market_weight.append(yf.Sector(sector).overview['market_weight'])
-
-    data = {
-        market_weight:'sectors',
-        market_weight:'market_weight'
-    }
-
-    df = pd.DataFrame(data)
-
-    # 결과를 JSON 형태로 변환
-    stocks_json = df.to_json(orient='records', force_ascii=False)
-
-    # JsonResponse로 반환
-    return JsonResponse(json.loads(stocks_json), safe=False)
 
 
 def get_financial_statement(Id, Option):

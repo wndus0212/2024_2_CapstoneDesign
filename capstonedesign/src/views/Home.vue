@@ -3,14 +3,10 @@
   <div style="height: 120px;"></div>
   <MainContainer>
     <TrendingSectorWidget/>
-    <div>
-      <StockRankingWidget/> 
-    </div>
+    <RealTimeChartWidget/>
+    <StockRankingWidget/> 
     
-    <div>
-      <RealTimeChartWidget/>
-      <SectorChartWidget/>
-    </div>
+    <SectorChartWidget/>
   </MainContainer>
 
   

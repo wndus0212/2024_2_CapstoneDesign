@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <Box>
+      <Box width="1280px">
         <ButtonContainer>
           <SelectBox :options="selectOption1" v-model="selectedOption1" width="200px"/>
           <SelectBox :options="selectOption2" v-model="selectedOption2" width="200px"/>
@@ -10,7 +10,6 @@
         <ButtonContainer>
           <SelectBox :options="selectOption5" v-model="selectedOption5" width="200px"/>
           <SelectBox :options="selectOption4" v-model="selectedOption4" width="200px"/>
-          <SmallButton text="시가총액"/>
         </ButtonContainer>
         <StockTable :selectedOption1="selectedOption1"
           :selectedOption2="selectedOption2"
@@ -26,7 +25,6 @@
 
 <script>
 import SelectBox from '@/components/SelectBox.vue';
-import SmallButton from '@/components/SmallButton.vue';
 import ButtonContainer from '@/components/ButtonContainer.vue';
 import StockTable from '@/components/StockDetail/StockTable.vue';
 import Box from '@/components/Box.vue';
@@ -34,7 +32,6 @@ import Box from '@/components/Box.vue';
 export default {
   name: 'DetailPage',
   components: {
-    SmallButton,
     ButtonContainer,
     StockTable,
     SelectBox,
@@ -102,8 +99,7 @@ export default {
 
 <style scoped>
 .Container{
-    min-width: 1000px;
-    max-width: 1250px;
+    min-width: 1280px;
     padding-top: 20px;
 }
 </style>
