@@ -9,6 +9,7 @@ import json
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 import os
+from datetime import datetime, timedelta
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 etf_file_path = os.path.join(BASE_DIR, 'data', 'Top_100_ETF.csv')
@@ -98,40 +99,6 @@ def get_market_cap(symbol):
     except Exception as e:
         print(f"Error fetching market cap for {symbol}: {e}")
         return None
-    
-def get_marcap_diff(symbol, period):
-    try:
-        stock_data = yf.Ticker(symbol)
-        stock_info = stock_data.info
-        price = stock_info.get('currentPrice', None)
-        market_cap = stock_info.get('marketCap', None)
-        shares_outstanding = stock_info.get('sharesOutstanding', None)
-
-        # 과거 주가 데이터 가져오기
-        history = stock_data.history(period='ytd')  # 1년 데이터
-        if history.empty or not shares_outstanding:
-            return price, market_cap, None, None, None
-
-        # 하루 전, 1달 전, 1년 전의 종가 가져오기
-        if period=='1d':
-            past_close = history['Close'].iloc[-2] if len(history) > 1 else None
-        elif period=='1mo':
-            past_close = history['Close'].shift(20).iloc[-1] if len(history) > 20 else None
-        else:
-            past_close = history['Close'].iloc[0] if len(history) > 0 else None
-
-        # 시가총액 변화량 계산
-        change = (market_cap - (past_close * shares_outstanding)) if past_close else None
-        
-
-        # 퍼센트로 변화량 계산
-        change_percent = (change / (past_close * shares_outstanding)) * 100 if change else None
-    
-        return price, market_cap, change_percent
-    except Exception as e:
-        print(f"Error fetching data for {symbol}: {e}")
-        return None, None, None
-    
 
 def get_stock_list(market, sort):
     try:
@@ -326,56 +293,7 @@ def get_stock_history(Id, start=None, end=None, period=0, interval='1d'):
         return None
 
 
-def get_index(option, indexname, start, end, period, interval):
-    if option == 'sector':
-        if indexname == 'SPDR':
-            sectors = [
-                {'ticker': 'XLY', 'name': 'Consumer Discretionary'},
-                {'ticker': 'XLC', 'name': 'Communication Services'},
-                {'ticker': 'XLF', 'name': 'Financials'},
-                {'ticker': 'XLI', 'name': 'Industrials'},
-                {'ticker': 'XLE', 'name': 'Energy'},
-                {'ticker': 'XLB', 'name': 'Materials'},
-                {'ticker': 'XLV', 'name': 'Health Care'},
-                {'ticker': 'XLP', 'name': 'Consumer Staples'},
-                {'ticker': 'XLK', 'name': 'Technology'},
-                {'ticker': 'XLRE', 'name': 'Real Estate'},
-                {'ticker': 'XLU', 'name': 'Utilities'}
-            ]
-
-        sector_data = []
-        # 각 섹터별 데이터 가져오기
-        for sector in sectors:
-            try:
-                ticker = sector['ticker']  # 티커만 사용
-                if indexname=='KOSPI':
-                    period='5d'
-                    interval='1d'
-                df = get_stock_history(ticker, start, end, period, interval)  # 수정된 부분
-                if df is not None and not df.empty:  # 데이터가 존재하고 비어있지 않은지 확인
-                    sector_info = yf.Ticker(ticker).info
-                    stock_history_json = df.reset_index().to_dict(orient='records')
-                    name = sector_info.get('name', None)
-                    current=sector_info.get('currentPrice')
-                    sector_data.append({
-                        'Sector': sector['name'],  # 섹터 이름 사용
-                        'Stock History': stock_history_json,
-                        'Current Price': current
-                    })
-                else:
-                    print(f"No data found for {sector['name']}")
-            except Exception as e:
-                print(f"Error fetching data for {sector['name']}: {e}")
-
-        # 데이터프레임으로 변환
-        if sector_data:
-            df = pd.DataFrame(sector_data)
-            print(df)
-            return df
-    
-        else:
-            return None  # 데이터를 못 구한 경우 None 반환
-    else:
+def get_index(indexname, start, end, period, interval):
         df = get_stock_history(indexname, start, end, period, interval)
         if df is not None and not df.empty:
             return df
@@ -397,6 +315,46 @@ def get_sector_diff():
         {'ticker': 'XLRE', 'name': 'Real Estate'},
         {'ticker': 'XLU', 'name': 'Utilities'}
     ]
+    sector_changes = []
+
+    for sector in sectors:
+        # 섹터 티커
+        ticker = sector['ticker']
+
+        # 데이터 가져오기: 최근 1년, 1개월, 1일의 데이터
+        try:
+            stock_data = yf.Ticker(ticker)
+            stock_info = stock_data.info
+            price = stock_info.get('currentPrice', None)
+            market_cap = stock_info.get('marketCap', None)
+            shares_outstanding = stock_info.get('sharesOutstanding', None)
+
+            # 과거 주가 데이터 가져오기
+            history = stock_data.history(period='ytd')  # 1년 데이터
+            if history.empty or not shares_outstanding:
+                return price, market_cap, None, None, None
+
+            # 하루 전, 1달 전, 1년 전의 종가 가져오기
+            d_past_close = history['Close'].iloc[-2] if len(history) > 1 else None
+            m_past_close = history['Close'].shift(20).iloc[-1] if len(history) > 20 else None
+            y_past_close = history['Close'].iloc[0] if len(history) > 0 else None
+
+            # 시가총액 변화량 계산
+            dchange = (market_cap - (d_past_close * shares_outstanding)) if d_past_close else None
+            mchange = (market_cap - (m_past_close * shares_outstanding)) if m_past_close else None
+            ychange = (market_cap - (y_past_close * shares_outstanding)) if y_past_close else None
+
+            # 퍼센트로 변화량 계산
+            dchange_percent = (dchange / (d_past_close * shares_outstanding)) * 100 if dchange else None
+            mchange_percent = (mchange / (m_past_close * shares_outstanding)) * 100 if mchange else None
+            ychange_percent = (ychange / (y_past_close * shares_outstanding)) * 100 if ychange else None
+            
+        except Exception as e:
+            print(f"Error fetching data for {ticker}: {e}")
+            
+
+    return sector_changes
+
 
 
 

@@ -1,5 +1,5 @@
 <template>
-  <containerBox>
+  <Box width="1280px">
     <BoxTitle>
       주가지수
     </BoxTitle>
@@ -13,27 +13,28 @@
         @change="updateChartData" />
     </div>
     
-    <div v-if="chartData" style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+    <div v-if="chartData" style="display: flex; justify-content: space-between; flex-wrap: nowrap;">
       <!-- 조건부 렌더링: chartData가 있을 경우에만 차트를 렌더링 -->
       <div 
         v-for="(data, index) in chartData" 
         :key="index" 
-        style="flex: 1 1 calc(50% - 20px); margin: 10px;">
+        style="display: flex; margin: 10px;">
         <RealTimeChart 
           :history="data.history" 
           :chartname="data.label"
           :current="data.current" />
+
       </div>
     </div>
     <div v-else style="text-align: center; color: gray; margin-top: 20px;">
-      차트 데이터를 선택하세요.
+      차트 데이터 로딩중.
     </div>
-  </containerBox>
+  </Box>
 </template>
 
 <script>
 import axios from 'axios';
-import containerBox from '@/components/Box.vue';
+import Box from '@/components/Box.vue';
 import BoxTitle from '@/components/BoxTitle.vue';
 import RealTimeChart from './RealTimeChart.vue';
 import SelectBox from '@/components/SelectBox.vue';
@@ -41,7 +42,7 @@ import SelectBox from '@/components/SelectBox.vue';
 export default {
   name: 'RealTimeChartWidget',
   components: {
-    containerBox,
+    Box,
     BoxTitle,
     RealTimeChart,
     SelectBox
@@ -50,6 +51,7 @@ export default {
     return {
       selectedPeriod: '1mo', // 기본 선택 기간
       chartData: null, // 차트 데이터
+
       stockIndices: [
         { label: 'KOSPI', value: '^KS11' },
         { label: 'KOSDAQ', value: '^KQ11' },
@@ -58,11 +60,10 @@ export default {
         { label: 'DJI', value: '^DJI' },
       ],
       SelectPeriod: [
+        { label: '1일', value: '1d' },
         { label: '1개월', value: '1mo' },
         { label: '6개월', value: '6mo' },
         { label: '1년', value: '1y' },
-        { label: '5년', value: '5y' },
-        { label: '전체', value: 'max' }
       ]
     };
   },
@@ -79,33 +80,66 @@ export default {
     },
     fetchAllIndexData() {
       const requests = this.stockIndices.map(index => {
-        return axios
-          .get(`http://127.0.0.1:8000/stock/index/index/${index.value}/`, {
-            params: {
-              period: this.selectedPeriod,
-              interval: '1d',
-            },
-          })
-          .then(response => ({
+        // history 데이터 요청
+        const historyRequest = axios.get(`http://127.0.0.1:8000/stock/index/index/${index.value}/`, {
+          params: {
+            period: this.selectedPeriod,
+            interval: '1d',
+          },
+        }).then(response => {
+          if (!response.data.output) {
+            console.log(response)
+            throw new Error(`Output is missing for ${index.label}`);
+          }
+          return {
             label: index.label,
-            history: response.data.output['Stock History'] || [],
-            current: response.data.output['Current Price'] || 0
-          }))
-          .catch(error => {
-            console.error(`Error fetching data for ${index.label}:`, error);
-            return { label: index.label, history: [], current: 0 };
+            history: response.data.output || [],
+          };
+          
+        });
+
+        // current 데이터 요청 (다른 API에서)
+        const currentRequest = axios.get(`http://127.0.0.1:8000/stock/detail_info/${index.value}/`) // 예시 URL
+          .then(response => {
+            if (!response.data) {
+              console.log(response);
+              throw new Error(`Current price missing for ${index.label}`);
+              
+            }
+            return response.data['regularMarketPreviousClose'] || 0;
           });
+
+        // 두 요청을 병합하여 처리
+        return Promise.all([historyRequest, currentRequest]).then(([historyData, currentPrice]) => {
+          return {
+            label: index.label,
+            history: historyData.history,
+            current: currentPrice,
+          };
+        }).catch(error => {
+          console.error(`Error fetching data for ${index.label}:`, error);
+          return { label: index.label, history: [], current: 0 }; // 실패 시 기본값
+        });
       });
 
-      Promise.all(requests)
+      Promise.allSettled(requests)
         .then(results => {
-          this.chartData = results; // 모든 주가지수 데이터를 저장
+          this.chartData = results
+            .filter(result => result.status === 'fulfilled')
+            .map(result => result.value);
+
+          if (this.chartData.length === 0) {
+            console.warn('모든 요청이 실패했습니다.');
+            this.chartData = null;
+          }
         })
         .catch(error => {
-          console.error('Error fetching all index data:', error);
+          console.error('Error processing index data:', error);
           this.chartData = null;
         });
     }
+
+
   }
 };
 </script>

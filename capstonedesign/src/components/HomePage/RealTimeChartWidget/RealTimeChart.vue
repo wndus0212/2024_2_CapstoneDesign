@@ -1,12 +1,15 @@
 <template>
-  <Box width="300px">
+  <div class="realtime_container" width="300px">
     <div style="display: flex">
-      <div>
+      <div style="width: 100px">
         <div class="chart-name">
           {{ this.chartname }}
         </div>
         <div>
-          {{  }}
+          현재 {{ this.current }}
+        </div>
+        <div>
+          하루 변화량: {{ this.current }}
         </div>
       </div>
       
@@ -14,22 +17,20 @@
         type="line" 
         :options="chartOptions" 
         :series="series" 
-        :width="200"
+        :width="100"
         :height="100"
       />
     </div>
     
-  </Box>
+  </div>
 </template>
 
 <script>
 import VueApexCharts from 'vue3-apexcharts';
-import Box from '@/components/Box.vue';
 
 export default {
   components: {
     apexchart: VueApexCharts,
-    Box
   },
   props: {
     history: {
@@ -55,6 +56,7 @@ export default {
           toolbar: {
             show: true,
           },
+          
         },
         tooltip: {
             enabled: false  // 툴팁 숨기기
@@ -77,6 +79,9 @@ export default {
               return Math.floor(value); 
             }
           }
+        },
+        stroke: {
+          width: 1
         }
       }
     };
@@ -109,3 +114,15 @@ export default {
   }
 };
 </script>
+<style>
+  .realtime_container{
+    background-color: rgb(240, 240, 250);
+    border-radius: 15px;
+    padding: 15px;
+    width: 200px;
+  }
+
+  .chart-name{
+    font-weight:500;
+  }
+</style>
