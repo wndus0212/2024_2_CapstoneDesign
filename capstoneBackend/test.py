@@ -10,13 +10,23 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, 'stockapp\data\stock_list', 'sp500_with_industries.csv')
 
 # 예시 데이터 생성
-data=yf.Ticker('MSFT').history()
+data = yf.Ticker('MSFT').history(period="1y")
 
-# 3일 이동평균선 계산 (rolling 함수 사용)
-data['MA_3'] = data['Close'].rolling(window=3).mean()
+# DataFrame 생성
+df = pd.DataFrame(data)
 
-# 5일 이동평균선 계산
-data['MA_5'] = data['Close'].rolling(window=5).mean()
+# 20일 이동평균선 (Middle Band)
+df['Middle Band'] = df['Close'].rolling(window=20).mean()
 
-# 출력
-print(data)
+# 20일 표준편차
+df['STD'] = df['Close'].rolling(window=20).std()
+
+# 상단선 (Upper Band)
+df['Upper Band'] = df['Middle Band'] + (df['STD'] * 2)
+
+# 하단선 (Lower Band)
+df['Lower Band'] = df['Middle Band'] - (df['STD'] * 2)
+
+# 결과 출력
+df_reset = df.reset_index()
+print(df_reset[['Date', 'Middle Band', 'Upper Band', 'Lower Band']].dropna())

@@ -51,6 +51,12 @@ export default {
         legend: {
           show: true,
           position: 'bottom'
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 0, // 테두리 반경을 0으로 설정
+            borderWidth: 0,  // 테두리 두께를 0으로 설정하여 테두리를 없앰
+          }
         }
       }
     };

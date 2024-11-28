@@ -442,6 +442,14 @@ def get_financial_statement(Id, Option):
     
     return financial_state[:-1]
 
+def get_moving_average(stock_id, start, end, period, interval):
+    df = get_stock_history(stock_id, start, end, period, interval)
+    df['MA_3'] = df['Close'].rolling(window=3).mean()
+    df['MA_5'] = df['Close'].rolling(window=5).mean()
+    ma_df = df[['MA_3', 'MA_5']].dropna()
+    print(ma_df)
+    return ma_df
+
 def get_search_term():
     stocks = pd.read_csv(search_term_file_path)
     return stocks
