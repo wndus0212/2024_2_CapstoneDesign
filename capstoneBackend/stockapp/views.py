@@ -62,7 +62,7 @@ def index(request, option, indexname):
         data_json = data.to_dict(orient="records")
         return JsonResponse({"output": data_json}, safe=False)
     except Exception as e:
-        print(f"Error in sector_weight: {e}")
+        print(f"Error in index: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
     
 
