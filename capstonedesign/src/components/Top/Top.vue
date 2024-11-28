@@ -6,13 +6,14 @@
                 <p>홈</p>
             </TopNavButton>
         </li>
+        
+        <li  style="display: flex; flex-direction: column; justify-content: center;">
+          <Search :searchData="searchData"/>
+        </li>
         <li>
             <TopNavButton @click="goToMyPage">
                 <p>마이페이지</p>
             </TopNavButton>
-        </li>
-        <li  style="display: flex; flex-direction: column; justify-content: center;">
-          <Search :searchData="searchData"/>
         </li>
       </ul>
     </nav>
@@ -70,7 +71,7 @@
     padding: 0px 20px;
     margin: 0px;
     display: flex;
-    gap:  20px;
+    gap:  40px;
     height: 100px;
     position: fixed; 
     top: 0; 

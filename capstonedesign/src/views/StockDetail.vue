@@ -35,7 +35,7 @@
                     <div v-else-if="!history || history.length === 0">데이터가 없습니다.</div>
                     <div v-else>
                         <StockChart :history="history" />
-                        <StockChart :history="history" />
+                        <StockChart2 :history="history" />
                     </div>
                     
                 </div>
@@ -81,6 +81,7 @@ import Top from "@/components/Top/Top.vue";
 import PageTitle from "@/components/PageTitle.vue";
 import MainContainer from "@/components/MainContainer.vue";
 import StockChart from "@/components/StockDetail/StockChart.vue";
+import StockChart2 from "@/components/StockDetail/StockChart2.vue";
 import PageContainer from "@/components/PageContainer.vue";
 import FinancialState from "@/components/StockDetail/FinancialState.vue";
 import Box from "@/components/Box.vue";
@@ -93,7 +94,8 @@ export default {
         StockChart,
         PageContainer,
         FinancialState,
-        Box
+        Box,
+        StockChart2
     },
     props: {
         stockCode: {

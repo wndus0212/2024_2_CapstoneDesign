@@ -9,11 +9,14 @@ from pprint import pprint
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, 'stockapp\data\stock_list', 'sp500_with_industries.csv')
 
-df=pd.read_csv(file_path,dtype=str)
+# 예시 데이터 생성
+data=yf.Ticker('MSFT').history()
 
-grouped = df.groupby(['Sector', 'Industry'])
+# 3일 이동평균선 계산 (rolling 함수 사용)
+data['MA_3'] = data['Close'].rolling(window=3).mean()
 
-# 그룹별 데이터 확인 (예시로 첫 번째 그룹 출력)
-for (Sector, Industry), group in grouped:
-    print(f"Sector: {Sector}, Industry: {Industry}")
-    print(group.head(), "\n")
+# 5일 이동평균선 계산
+data['MA_5'] = data['Close'].rolling(window=5).mean()
+
+# 출력
+print(data)

@@ -10,15 +10,13 @@
       <SelectBox 
         :options="SelectPeriod" 
         v-model="selectedPeriod" 
-        width="150px" 
-        @change="updateChartData" />
+        width="150px" />
 
       <!-- 간격 선택 -->
       <SelectBox 
         :options="SelectInterval" 
         v-model="selectedInterval" 
-        width="150px" 
-        @change="updateChartData" />
+        width="150px" />
     </div>
 
     <!-- 로딩 중 표시 -->
@@ -65,7 +63,6 @@ export default {
         { label: '6개월', value: '6mo' },
         { label: '1년', value: '1y' },
         { label: '5년', value: '5y' },
-        { label: '전체', value: 'max' }
       ],
       SelectInterval: [
         { label: '일봉', value: '1d' },
@@ -86,33 +83,24 @@ export default {
     this.updateChartData(); // 초기 데이터 로드
   },
   methods: {
-    updateChartData() {
-      if (!this.selectedIndex) {
-        console.warn('Invalid selectedIndex:', this.selectedIndex);
-        this.chartData = null;
-        return;
-      }
-
+    async updateChartData() {
       this.loading = true; // 로딩 상태 활성화
       this.chartData = null; // 이전 데이터 초기화
 
       const params = {
-        period: this.selectedIndex === 'KOSPI' ? undefined : this.selectedPeriod,
-        interval: this.selectedIndex === 'KOSPI' ? undefined : this.selectedInterval
+        period: this.selectedPeriod,
+        interval: this.selectedInterval,
       };
 
-      axios
-        .get(`http://127.0.0.1:8000/stock/index/sector/SPDR/`, { params })
-        .then((response) => {
-          this.chartData = response.data['output'] || null;
-        })
-        .catch((error) => {
-          console.error('차트 데이터를 가져오는 데 실패했습니다:', error);
-          this.chartData = null;
-        })
-        .finally(() => {
-          this.loading = false; // 로딩 상태 비활성화
-        });
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/stock/index/sector/SPDR/`, { params });
+        this.chartData = response.data['output'] || null;
+      } catch (error) {
+        console.error('차트 데이터를 가져오는 데 실패했습니다:', error);
+        this.chartData = null;
+      } finally {
+        this.loading = false; // 로딩 상태 비활성화
+      }
     }
   }
 };

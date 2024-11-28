@@ -66,10 +66,10 @@ def index(request, option, indexname):
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
     
 
-def sector_weight(request, period):
+def stock_diff(request, stock_id):
     try:
         # 섹터 데이터 가져오기
-        data = get_sector_weight(period)
+        data = get_stock_diff(stock_id)
         if data.empty:  # 데이터가 비어 있는 경우
             return JsonResponse({"error": "No data found for the sectors"}, status=404)
         
@@ -77,7 +77,21 @@ def sector_weight(request, period):
         data_json = data.to_dict(orient="records")
         return JsonResponse({"output": data_json}, safe=False)
     except Exception as e:
-        print(f"Error in sector_weight: {e}")
+        print(f"Error in diff: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+    
+def sector_diff(request):
+    try:
+        # 섹터 데이터 가져오기
+        data = get_sector_diff(request)
+        if data.empty:  # 데이터가 비어 있는 경우
+            return JsonResponse({"error": "No data found for the sectors"}, status=404)
+        
+        # 정상 응답 반환
+        data_json = data.to_dict(orient="records")
+        return JsonResponse({"output": data_json}, safe=False)
+    except Exception as e:
+        print(f"Error in diff: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
     
 def financial_state(request, Id, Option):

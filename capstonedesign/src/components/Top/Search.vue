@@ -113,7 +113,6 @@ export default {
     height: 50px;
     width: 600px;
     border-radius: 10px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     position: relative;
   }
 
@@ -122,6 +121,10 @@ export default {
     width: 600px;
     font-size: 20px;
     border-radius: 10px;
+    border: none;
+    outline: none;
+    background-color: rgb(240, 240, 250);
+    padding: 5px;
   }
 
   .textInput {

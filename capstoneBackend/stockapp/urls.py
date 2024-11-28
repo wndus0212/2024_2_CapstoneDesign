@@ -9,7 +9,8 @@ urlpatterns = [
     path('detail_info/<str:stock_id>/', views.stock_detail, name='stock_detail'),
     path('history/<str:stock_id>/', views.stock_history, name='stock_history'),
     path('index/<str:option>/<str:indexname>/', views.index, name='index'),
-    path('sector_weight/<str:period>/', views.sector_weight, name='sector_weight'),
+    path('stock_diff/<str:stock_id>/', views.stock_diff, name='stock_diff'),
+    path('sector_diff/', views.sector_diff, name='sector_diff'),
     path('financial_state/<str:Option>/<str:Id>/',views.financial_state, name='financial_state'),
     path('search_term/', views.search_term, name='search_term')
 ]

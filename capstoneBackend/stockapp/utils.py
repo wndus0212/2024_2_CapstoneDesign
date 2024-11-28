@@ -15,6 +15,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 etf_file_path = os.path.join(BASE_DIR, 'data', 'Top_100_ETF.csv')
 sp500_file_path=os.path.join(BASE_DIR, 'data', 'sp500.csv')
 search_term_file_path = os.path.join(BASE_DIR, 'data', 'search_term.csv')
+sectors_list = os.path.join(BASE_DIR, 'data', 'sectors_with_korean_names.csv')
 # API 키와 Secret 키 입력
 client_id = "PSekA1zSBGgE4mJCmCgT06UTivilW4ZmLCim"
 client_key = "PfTX7zfZ26lV2OtzRGXYcB1g5/zSiq6FSwtfunbFqkLiM+Y4ljrd6NOiAurW2IvC4q5Xbmtx3FPOnUEfnn91lZ/+o9FL20G90440ALEZ2ozKUfw/RbREh8OXwg0G8LvCfm22OaIzVJBJeMi8kZNBhs+tw4CipqsuV+v6EWgi1Lv6gyDyUEE="
@@ -314,24 +315,30 @@ def get_index(option, indexname, start, end, period, interval):
         for sector in sectors:
             try:
                 ticker = sector['ticker']  # 티커만 사용
+                if indexname=='KOSPI':
+                    period='5d'
+                    interval='1d'
                 df = get_stock_history(ticker, start, end, period, interval)  # 수정된 부분
                 if df is not None and not df.empty:  # 데이터가 존재하고 비어있지 않은지 확인
                     sector_info = yf.Ticker(ticker).info
+                    stock_history_json = df.reset_index().to_dict(orient='records')
                     name = sector_info.get('name', None)
                     
                     sector_data.append({
                         'Sector': sector['name'],  # 섹터 이름 사용
-                        'Stock History': df
+                        'Stock History': stock_history_json
                     })
                 else:
                     print(f"No data found for {sector['name']}")
             except Exception as e:
                 print(f"Error fetching data for {sector['name']}: {e}")
+
         # 데이터프레임으로 변환
         if sector_data:
             df = pd.DataFrame(sector_data)
             print(df)
             return df
+    
         else:
             return None  # 데이터를 못 구한 경우 None 반환
     else:
@@ -343,76 +350,81 @@ def get_index(option, indexname, start, end, period, interval):
             print(f"No data found for {indexname}")
             return None  # 데이터가 없으면 None 반환
 
-def get_sector_diff():
-    sectors = [
-        {'ticker': 'XLY', 'name': 'Consumer Discretionary'},
-        {'ticker': 'XLC', 'name': 'Communication Services'},
-        {'ticker': 'XLF', 'name': 'Financials'},
-        {'ticker': 'XLI', 'name': 'Industrials'},
-        {'ticker': 'XLE', 'name': 'Energy'},
-        {'ticker': 'XLB', 'name': 'Materials'},
-        {'ticker': 'XLV', 'name': 'Health Care'},
-        {'ticker': 'XLP', 'name': 'Consumer Staples'},
-        {'ticker': 'XLK', 'name': 'Technology'},
-        {'ticker': 'XLRE', 'name': 'Real Estate'},
-        {'ticker': 'XLU', 'name': 'Utilities'}
-    ]
+def get_stock_diff(symbol):
+    try:
+        stock_data = yf.Ticker(symbol)
+        stock_info = stock_data.info
+        price = stock_info.get('currentPrice', None)
+        name=stock_info.get('name', None)
+        # 과거 주가 데이터 가져오기
+        history = stock_data.history(period='ytd')  # 1년 데이터
+        if stock_info['quoteType']=='Stock':
+            price=stock_info['currentPrice']
+        else:
+            price=history['Close'].iloc[-1] if len(history)>1 else None
+
+        d_close = history['Close'].iloc[-2] if len(history) > 1 else None
+        m_close = history['Close'].shift(20).iloc[-1] if len(history) > 20 else None
+        y_close = history['Close'].iloc[0] if len(history) > 0 else None
+
+        # 시가총액 변화량 계산
+        d_change = price - d_close  if d_close else 0
+        m_change = price - m_close if m_close else 0
+        y_change = price - y_close if y_close else 0
+
+        # 퍼센트로 변화량 계산
+        d_change_percent = (d_change / (d_close)) * 100 if d_change else 0
+        m_change_percent = (m_change / (m_close)) * 100 if m_change else 0
+        y_change_percent = (y_change / (y_close )) * 100 if y_change else 0
+
+        data = {
+            'Symbol': [symbol],
+            'Name': [name],
+            'Current Price': [price],
+            '1 Day Change': [d_change],
+            '1 Day Change per': [d_change_percent],
+            '1 Month Change': [m_change],
+            '1 Month Change per': [m_change_percent],
+            '1 Year Change': [y_change],
+            '1 Year Change per': [y_change_percent]
+        }
+
+        df = pd.DataFrame(data)
+        return df
+    except Exception as e:
+        print(f"Error fetching data for {symbol}: {e}")
+        return None, None, None
+    
+def get_sector_diff(request):
+    sectors = pd.read_csv(sectors_list)  # 섹터 목록 CSV 파일 읽기
     sector_changes = []
 
-    for sector in sectors:
-        ticker = sector['ticker']
+    for _, sector in sectors.iterrows():  # 각 섹터에 대해 반복
+        symbol = sector['ticker']
+        name_ko = sector['name_ko']
+        name = sector['name']
 
-        try:
-            stock_data = yf.Ticker(ticker)
-            stock_info = stock_data.info
-            price = stock_info.get('currentPrice', None)
-            market_cap = stock_info.get('marketCap', None)
-            shares_outstanding = stock_info.get('sharesOutstanding', None)
+        # get_stock_diff 함수 호출하여 변화량 데이터를 가져오기
+        stock_diff_df = get_stock_diff(symbol)
+        print(stock_diff_df)
+        
+        if stock_diff_df is not None:  # 데이터가 있는 경우
+            # 이름과 한글 이름을 데이터프레임에 추가
+            stock_diff_df['name'] = name
+            stock_diff_df['name_ko'] = name_ko
+            
+            sector_changes.append(stock_diff_df)
 
-            # 과거 주가 데이터 가져오기
-            history = stock_data.history(period='ytd')  # 1년 데이터
-            if history.empty or not shares_outstanding:
-                continue  # 데이터가 없으면 다음 섹터로
+    # 모든 섹터에 대해 가져온 데이터프레임을 하나로 결합
+    if sector_changes:
+        combined_df = pd.concat(sector_changes, ignore_index=True)
+        
+        # 하루 변화량 기준으로 정렬
+        combined_df = combined_df.sort_values(by='1 Day Change per', ascending=False)
 
-            # 하루 전, 1달 전, 1년 전의 종가 가져오기
-            d_past_close = history['Close'].iloc[-2] if len(history) > 1 else None
-            m_past_close = history['Close'].shift(20).iloc[-1] if len(history) > 20 else None
-            y_past_close = history['Close'].iloc[0] if len(history) > 0 else None
-
-            # 시가총액 변화량 계산
-            dchange = (market_cap - (d_past_close * shares_outstanding)) if d_past_close else None
-            mchange = (market_cap - (m_past_close * shares_outstanding)) if m_past_close else None
-            ychange = (market_cap - (y_past_close * shares_outstanding)) if y_past_close else None
-
-            # 퍼센트로 변화량 계산
-            dchange_percent = (dchange / (d_past_close * shares_outstanding)) * 100 if dchange else None
-            mchange_percent = (mchange / (m_past_close * shares_outstanding)) * 100 if mchange else None
-            ychange_percent = (ychange / (y_past_close * shares_outstanding)) * 100 if ychange else None
-
-            # 결과 추가
-            sector_changes.append({
-                'ticker': ticker,
-                'name': sector['name'],
-                'daily_change': dchange,
-                'daily_change_percent': dchange_percent,
-                'monthly_change': mchange,
-                'monthly_change_percent': mchange_percent,
-                'yearly_change': ychange,
-                'yearly_change_percent': ychange_percent
-            })
-
-        except Exception as e:
-            print(f"Error fetching data for {ticker}: {e}")
-
-    # 하루 변화 퍼센트 기준으로 내림차순 정렬
-    sector_changes = sorted(
-        sector_changes, 
-        key=lambda x: x['daily_change_percent'] if x['daily_change_percent'] is not None else float('-inf'),
-        reverse=True
-    )
-    
-    return sector_changes
-
+        return combined_df
+    else:
+        return None
 
 
 def get_financial_statement(Id, Option):

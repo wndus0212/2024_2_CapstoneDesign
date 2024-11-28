@@ -40,6 +40,10 @@ export default {
     chartname:{
       type: String,
       required:true
+    },
+    current:{
+      type: Number,
+      required:true
     }
   },
   data() {
