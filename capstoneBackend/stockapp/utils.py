@@ -336,7 +336,6 @@ def get_index(option, indexname, start, end, period, interval):
         # 데이터프레임으로 변환
         if sector_data:
             df = pd.DataFrame(sector_data)
-            print(df)
             return df
     
         else:
@@ -406,8 +405,7 @@ def get_sector_diff(request):
 
         # get_stock_diff 함수 호출하여 변화량 데이터를 가져오기
         stock_diff_df = get_stock_diff(symbol)
-        print(stock_diff_df)
-        
+
         if stock_diff_df is not None:  # 데이터가 있는 경우
             # 이름과 한글 이름을 데이터프레임에 추가
             stock_diff_df['name'] = name
@@ -447,7 +445,6 @@ def get_moving_average(stock_id, start, end, period, interval):
     df['MA_3'] = df['Close'].rolling(window=3).mean()
     df['MA_5'] = df['Close'].rolling(window=5).mean()
     ma_df = df[['MA_3', 'MA_5']].dropna()
-    print(ma_df)
     return ma_df
 
 def get_search_term():

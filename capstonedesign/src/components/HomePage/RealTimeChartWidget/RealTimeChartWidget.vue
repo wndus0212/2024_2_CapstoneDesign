@@ -22,7 +22,8 @@
         <RealTimeChart 
           :history="data.history" 
           :chartname="data.label"
-          :current="data.current" />
+          :diff="data.diff"
+          :period="selectedPeriod" />
 
       </div>
     </div>
@@ -62,7 +63,6 @@ export default {
       SelectPeriod: [
         { label: '1일', value: '1d' },
         { label: '1개월', value: '1mo' },
-        { label: '6개월', value: '6mo' },
         { label: '1년', value: '1y' },
       ]
     };
@@ -99,26 +99,27 @@ export default {
         });
 
         // current 데이터 요청 (다른 API에서)
-        const currentRequest = axios.get(`http://127.0.0.1:8000/stock/detail_info/${index.value}/`) // 예시 URL
+        const diffRequest = axios.get(`http://127.0.0.1:8000/stock/stock_diff/${index.value}/`) // 예시 URL
           .then(response => {
             if (!response.data) {
               console.log(response);
               throw new Error(`Current price missing for ${index.label}`);
               
             }
-            return response.data['regularMarketPreviousClose'] || 0;
+            console.log(response.data.output)
+            return response.data.output || 0;
           });
 
         // 두 요청을 병합하여 처리
-        return Promise.all([historyRequest, currentRequest]).then(([historyData, currentPrice]) => {
+        return Promise.all([historyRequest, diffRequest]).then(([historyData, currentPrice]) => {
           return {
             label: index.label,
             history: historyData.history,
-            current: currentPrice,
+            diff: currentPrice,
           };
         }).catch(error => {
           console.error(`Error fetching data for ${index.label}:`, error);
-          return { label: index.label, history: [], current: 0 }; // 실패 시 기본값
+          return { label: index.label, history: [], diff: 0 }; // 실패 시 기본값
         });
       });
 
@@ -137,6 +138,8 @@ export default {
           console.error('Error processing index data:', error);
           this.chartData = null;
         });
+
+        console.log(this.chartData)
     }
 
 

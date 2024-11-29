@@ -3,16 +3,16 @@
     <div style="display: flex">
       <div style="width: 100px">
         <div class="chart-name">
-          {{ this.chartname }}
+          {{ chartname }}
         </div>
         <div>
-          현재 {{ this.current }}
+          현재: {{ diff[0]?.['Current Price'].toFixed(2) || "데이터 없음" }}
         </div>
         <div>
-          하루 변화량: {{ this.current }}
+          {{ period }} 변화량: {{ changeValue }}
         </div>
       </div>
-      
+
       <apexchart 
         type="line" 
         :options="chartOptions" 
@@ -21,12 +21,11 @@
         :height="100"
       />
     </div>
-    
   </div>
 </template>
 
 <script>
-import VueApexCharts from 'vue3-apexcharts';
+import VueApexCharts from "vue3-apexcharts";
 
 export default {
   components: {
@@ -35,16 +34,20 @@ export default {
   props: {
     history: {
       type: Array,
-      required: true
+      required: true,
     },
-    chartname:{
+    chartname: {
       type: String,
-      required:true
+      required: true,
     },
-    current:{
-      type: Number,
-      required:true
-    }
+    diff: {
+      type: Array, // diff는 배열로 정의
+      required: true,
+    },
+    period: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -53,80 +56,98 @@ export default {
         chart: {
           height: 150,
           width: 230,
-          type: 'line',
+          type: "line",
           sparkline: {
-            enabled: true
+            enabled: true,
           },
-          toolbar: {
-            show: true,
-          },
-          
         },
         tooltip: {
-            enabled: false  // 툴팁 숨기기
-        },
-        legend: {
-          show: false,
-          position: 'bottom'
-        },
-        title:{
-          show: false
+          enabled: false, // 툴팁 숨기기
         },
         xaxis: {
-          type: 'datetime',
-          show: false
+          type: "datetime",
+          labels: {
+            show: false,
+          },
         },
         yaxis: {
           labels: {
-            formatter: (value) => {
-              // 소수점 이하 자리수를 제거
-              return Math.floor(value); 
-            }
-          }
+            formatter: (value) => Math.floor(value),
+          },
         },
         stroke: {
-          width: 1
-        }
-      }
+          width: 1,
+        },
+      },
     };
+  },
+  computed: {
+    /**
+     * period와 diff를 기반으로 변화량을 계산
+     */
+    changeValue() {
+      if (!this.diff || !this.diff[0]) {
+        return "데이터 없음";
+      }
+      if (this.period === '1d') {
+        return `${this.diff[0]['1 Day Change per'].toFixed(2)}%`;
+      } else if (this.period === '1mo') {
+        return `${this.diff[0]['1 Month Change per'].toFixed(2)}%`;
+      } else if (this.period === '1y') {
+        return `${this.diff[0]['1 Year Change per'].toFixed(2)}%`;
+      }
+      return "데이터 없음";
+    },
   },
   watch: {
     history: {
       handler(newHistory) {
-        const historyArray = newHistory && Array.isArray(newHistory) ? newHistory : [];
+        const historyArray = Array.isArray(newHistory) ? newHistory : [];
         const totalItems = historyArray.length;
-        
+
         if (historyArray.length > 0) {
           this.series = [
             {
-              name: 'line',
-              type: 'line',
+              name: "line",
+              type: "line",
               data: historyArray.map((entry, index) => ({
-                x: new Date(new Date().setDate(new Date().getDate() - totalItems + index)),
-                y: entry.Close
-              }))
+                x: new Date(
+                  new Date().setDate(new Date().getDate() - totalItems + index)
+                ),
+                y: entry.Close,
+              })),
             },
-
           ];
         } else {
-          console.error("Error: history 데이터의 output이 비어있거나 존재하지 않습니다.", newHistory);
+          console.error(
+            "Error: history 데이터의 output이 비어있거나 존재하지 않습니다.",
+            newHistory
+          );
           this.series = [];
         }
       },
-      immediate: true
+      immediate: true,
+    },
+  },
+  mounted() {
+    if (!this.diff || !Array.isArray(this.diff) || !this.diff[0]) {
+      console.error("Error: diff 데이터가 비어 있거나 유효하지 않습니다.", this.diff);
+    } else {
+      console.log("diff 데이터:", this.diff[0]);
     }
-  }
+  },
 };
 </script>
-<style>
-  .realtime_container{
-    background-color: rgb(240, 240, 250);
-    border-radius: 15px;
-    padding: 15px;
-    width: 200px;
-  }
 
-  .chart-name{
-    font-weight:500;
-  }
+<style>
+.realtime_container {
+  background-color: rgb(240, 240, 250);
+  border-radius: 15px;
+  padding: 15px;
+  width: 200px;
+}
+
+.chart-name {
+  font-weight: 500;
+}
 </style>

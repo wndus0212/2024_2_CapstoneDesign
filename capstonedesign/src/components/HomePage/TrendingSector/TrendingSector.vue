@@ -1,6 +1,6 @@
 <template>
     <div class="diff_container" style="width: 200px">
-      <div style="display: flex">
+      <div style="display: flex; width: 200px">
         <div>
           <div class="chart-name">
             {{ this.data['name_ko'] }}
