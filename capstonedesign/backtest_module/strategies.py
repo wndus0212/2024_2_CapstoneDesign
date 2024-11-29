@@ -1,7 +1,4 @@
 import backtrader as bt
-
-import backtrader as bt
-
 class FixedAllocationStrategy(bt.Strategy):
     params = (
         ('rebalance_months', 1),  # 리밸런싱 간격 (개월 수)
@@ -15,17 +12,21 @@ class FixedAllocationStrategy(bt.Strategy):
         self.allocation = allocation
         self.last_rebalance = None  # 마지막 리밸런싱 날짜 저장
         self.rebalance_log = []  # 리밸런싱 결과 저장 리스트
+        self.portfolio_values = []
 
     def next(self):
-        # 리밸런싱을 위한 현재 날짜
+        # 현재 날짜 및 포트폴리오 가치 기록
         current_date = self.datas[0].datetime.date(0)
+        current_value = self.broker.get_value()
+        self.portfolio_values.append(current_value)
 
         # 첫 번째 리밸런싱 실행 시점 설정
         if not self.last_rebalance:
             self.last_rebalance = current_date
 
         # 리밸런싱: 현재 날짜와 마지막 리밸런싱 날짜 비교
-        months_since_rebalance = (current_date.year - self.last_rebalance.year) * 12 + (current_date.month - self.last_rebalance.month)
+        months_since_rebalance = (current_date.year - self.last_rebalance.year) * 12 + (
+                    current_date.month - self.last_rebalance.month)
         if months_since_rebalance >= self.params.rebalance_months:
             self.rebalance_portfolio()
             self.last_rebalance = current_date
@@ -59,7 +60,8 @@ class FixedAllocationStrategy(bt.Strategy):
         self.rebalance_log.append({
             'portfolio_name': self.params.portfolio_name,
             'date': self.last_rebalance,
-            'positions': positions
+            'portfolio_value': total_value,
+            'positions': positions,
         })
 
         print(f"리밸런싱 완료: {self.last_rebalance}")
