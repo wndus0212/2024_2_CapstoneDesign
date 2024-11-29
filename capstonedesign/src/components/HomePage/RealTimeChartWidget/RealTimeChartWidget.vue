@@ -1,5 +1,5 @@
 <template>
-  <Box width="1280px">
+  <Box width="1400px">
     <BoxTitle>
       주가지수
     </BoxTitle>

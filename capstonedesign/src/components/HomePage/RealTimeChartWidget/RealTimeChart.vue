@@ -1,15 +1,15 @@
 <template>
-  <div class="realtime_container" width="300px">
+  <div class="realtime_container" width="200px">
     <div style="display: flex">
-      <div style="width: 100px">
+      <div style="width: 130px; text-overflow: ellipsis;">
         <div class="chart-name">
           {{ chartname }}
         </div>
-        <div>
-          현재: {{ diff[0]?.['Current Price'].toFixed(2) || "데이터 없음" }}
+        <div style="font-size: 20px;">
+          {{ diff[0]?.['Current Price'].toFixed(2) || "데이터 없음" }}
         </div>
-        <div>
-          {{ period }} 변화량: {{ changeValue }}
+        <div style="font-size: 15px;">
+          {{ changeValue }}
         </div>
       </div>
 
@@ -17,7 +17,7 @@
         type="line" 
         :options="chartOptions" 
         :series="series" 
-        :width="100"
+        :width="80"
         :height="100"
       />
     </div>
@@ -144,7 +144,7 @@ export default {
   background-color: rgb(240, 240, 250);
   border-radius: 15px;
   padding: 15px;
-  width: 200px;
+  width: 220px;
 }
 
 .chart-name {

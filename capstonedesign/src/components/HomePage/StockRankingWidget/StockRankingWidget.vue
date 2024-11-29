@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <Box width="1280px">
+      <Box width="1400px">
         <ButtonContainer>
           <SelectBox :options="selectOption1" v-model="selectedOption1" width="200px"/>
           <SelectBox :options="selectOption2" v-model="selectedOption2" width="200px"/>
