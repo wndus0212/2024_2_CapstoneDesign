@@ -5,6 +5,7 @@ from data_loader import load_data_from_csv, cleanup_temp_files
 from strategies import FixedAllocationStrategy
 import csv
 import time
+from data_extraction import calculate_mdd
 
 def run_backtest(csv_folder, initial_cash=1000000, allocation=None, start_date=None, end_date=None,
                  portfolio_name="Default Portfolio", temp_dir="temp_filtered_data"):
@@ -37,6 +38,10 @@ def run_backtest(csv_folder, initial_cash=1000000, allocation=None, start_date=N
     # 첫 번째 전략 인스턴스의 리밸런싱 로그 가져오기
     strategy = strategies[0]
     rebalance_log = strategy.rebalance_log
+    portfolio_values = strategy.portfolio_values
+
+    mdd = calculate_mdd(portfolio_values)
+    print(f"최종 최대 손실폭 (MDD): {mdd * 100:.2f}%")
 
     # 임시 파일 정리
     cleanup_temp_files(temp_dir)
