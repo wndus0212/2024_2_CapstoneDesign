@@ -19,6 +19,7 @@ sectors_list = os.path.join(BASE_DIR, 'data', 'sectors_with_korean_names.csv')
 # API 키와 Secret 키 입력
 client_id = "PSekA1zSBGgE4mJCmCgT06UTivilW4ZmLCim"
 client_key = "PfTX7zfZ26lV2OtzRGXYcB1g5/zSiq6FSwtfunbFqkLiM+Y4ljrd6NOiAurW2IvC4q5Xbmtx3FPOnUEfnn91lZ/+o9FL20G90440ALEZ2ozKUfw/RbREh8OXwg0G8LvCfm22OaIzVJBJeMi8kZNBhs+tw4CipqsuV+v6EWgi1Lv6gyDyUEE="
+koreabank_key='E5WOQZL3DAUIKF1YS69Q'
 
 # 토큰 발급
 def get_access_token():
@@ -450,3 +451,36 @@ def get_moving_average(stock_id, start, end, period, interval):
 def get_search_term():
     stocks = pd.read_csv(search_term_file_path)
     return stocks
+
+def get_kor_bond(name, start, end):
+    koreabank_key='E5WOQZL3DAUIKF1YS69Q'
+    url = 'https://ecos.bok.or.kr/api/StatisticSearch/' + koreabank_key \
+            + '/json/kr/1/100/817Y002/D/'+start+'/'+end+'/010210000'
+    response = requests.get(url)
+    result = response.json()
+    list_total_count=(int)(result['StatisticSearch']['list_total_count'])
+    list_count=(int)(list_total_count/100) + 1
+
+
+    rows=[]
+    for i in range(0,list_count):
+        starttmp = str(i * 100 + 1)
+        endtmp = str((i + 1) * 100)
+        
+        url = 'https://ecos.bok.or.kr/api/StatisticSearch/' + koreabank_key + '/json/kr/' \
+                + starttmp + '/' + endtmp + '/817Y002/D/20060101/20230315/010210000'
+        response = requests.get(url)
+        result = response.json()
+        rows = rows + result['StatisticSearch']['row']
+        
+    df10y=pd.DataFrame(rows)
+
+    df10y=df10y[['ITEM_NAME1','TIME','DATA_VALUE']]
+    df10y['date']=pd.to_datetime((df10y['TIME'].str[:4] + '-' + df10y['TIME'].str[4:6] + '-' + df10y['TIME'].str[6:8]))
+    df10y=df10y.astype({'DATA_VALUE':'float'})
+    df10y=df10y.drop_duplicates()
+    print(df10y)
+
+def get_us_bond(name, periond):
+    df = get_stock_history(name, period=periond )
+    return df

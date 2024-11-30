@@ -5,28 +5,35 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 from pykrx import stock
 from pprint import pprint
+import requests
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, 'stockapp\data\stock_list', 'sp500_with_industries.csv')
 
-# 예시 데이터 생성
-data = yf.Ticker('MSFT').history(period="1y")
+koreabank_key='E5WOQZL3DAUIKF1YS69Q'
+url = 'https://ecos.bok.or.kr/api/StatisticSearch/' + koreabank_key \
+        + '/json/kr/1/100/817Y002/D/20070101/20230315/010210000'
+response = requests.get(url)
+result = response.json()
+list_total_count=(int)(result['StatisticSearch']['list_total_count'])
+list_count=(int)(list_total_count/100) + 1
 
-# DataFrame 생성
-df = pd.DataFrame(data)
 
-# 20일 이동평균선 (Middle Band)
-df['Middle Band'] = df['Close'].rolling(window=20).mean()
+rows=[]
+for i in range(0,list_count):
+    start = str(i * 100 + 1)
+    end = str((i + 1) * 100)
+    
+    url = 'https://ecos.bok.or.kr/api/StatisticSearch/' + koreabank_key + '/json/kr/' \
+            + start + '/' + end + '/817Y002/D/20070101/20230315/010210000'
+    response = requests.get(url)
+    result = response.json()
+    rows = rows + result['StatisticSearch']['row']
+    
+df10y=pd.DataFrame(rows)
 
-# 20일 표준편차
-df['STD'] = df['Close'].rolling(window=20).std()
-
-# 상단선 (Upper Band)
-df['Upper Band'] = df['Middle Band'] + (df['STD'] * 2)
-
-# 하단선 (Lower Band)
-df['Lower Band'] = df['Middle Band'] - (df['STD'] * 2)
-
-# 결과 출력
-df_reset = df.reset_index()
-print(df_reset[['Date', 'Middle Band', 'Upper Band', 'Lower Band']].dropna())
+df10y=df10y[['ITEM_NAME1','TIME','DATA_VALUE']]
+df10y['date']=pd.to_datetime((df10y['TIME'].str[:4] + '-' + df10y['TIME'].str[4:6] + '-' + df10y['TIME'].str[6:8]))
+df10y=df10y.astype({'DATA_VALUE':'float'})
+df10y=df10y.drop_duplicates()
+print(df10y)

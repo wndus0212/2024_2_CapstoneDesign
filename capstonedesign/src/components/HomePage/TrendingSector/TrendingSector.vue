@@ -1,5 +1,5 @@
 <template>
-    <div class="diff_container" style="width: 200px">
+    <div class="diff_container">
       <div style="display: flex; width: 200px">
         <div>
           <div class="chart-name">
@@ -43,6 +43,7 @@
   
   .chart-name {
     font-weight: 500;
+    font-size: 20px;
   }
   </style>
   

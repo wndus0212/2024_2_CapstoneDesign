@@ -1,6 +1,7 @@
 # stockapp/views.py
 from django.http import JsonResponse
 from .utils import *
+from .models import *
 
 def stock_data(request):
     symbol = "005930"  # 삼성전자 종목 코드
@@ -147,3 +148,46 @@ def search_term(request):
     except Exception as e:
         print(f"Error in financial_state: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+    
+def kor_bonds(name, start, end, request):
+    try:
+        data=get_kor_bond(name, start, end)
+        if data is None or data.empty:  
+            return JsonResponse({"error": "No data found for the financial statement"}, status=404)
+        
+        # NaN 값을 처리하거나 제거할 필요가 있을 경우 (예시: NaN을 0으로 대체)
+        data = data.fillna(0)  # NaN을 0으로 대체 (원하는 방법으로 처리 가능)
+        
+        # DataFrame을 JSON으로 변환
+        result = data.to_dict(orient="records")  # 각 행을 딕셔너리 형태로 변환
+        
+        return JsonResponse({"output": result}, safe=False)  # JSON으로 반환
+    except Exception as e:
+        print(f"Error in financial_state: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+
+def us_bonds(name, period, request):
+    try:
+        data=get_us_bond(name, period)
+        if data is None or data.empty:  
+            return JsonResponse({"error": "No data found for the financial statement"}, status=404)
+        
+        # NaN 값을 처리하거나 제거할 필요가 있을 경우 (예시: NaN을 0으로 대체)
+        data = data.fillna(0)  # NaN을 0으로 대체 (원하는 방법으로 처리 가능)
+        
+        # DataFrame을 JSON으로 변환
+        result = data.to_dict(orient="records")  # 각 행을 딕셔너리 형태로 변환
+        
+        return JsonResponse({"output": result}, safe=False)  # JSON으로 반환
+    except Exception as e:
+        print(f"Error in financial_state: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+    
+def create_test_data(request):
+    # 테스트 데이터 생성
+    test_data = Users.objects.create(
+        user_id=1234, 
+        google_id = "test",
+        email ="test",
+        name = "test",)
+    return JsonResponse({"message": "Test data created successfully!"})

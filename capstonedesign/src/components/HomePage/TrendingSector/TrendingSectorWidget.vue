@@ -8,7 +8,7 @@
         데이터 로딩 중...
       </div>
       <div v-else class="sector-list">
-        <div v-for="(sector, index) in sector_diffs" :key="index" class="sector-item">
+        <div v-for="(sector, index) in sector_diffs" :key="index">
           <TrendingSector
             :data="sector"
           />
@@ -76,12 +76,5 @@
     gap: 20px;
   }
   
-  .sector-item {
-    background-color: #f0f0f0;
-    border-radius: 15px;
-    padding: 20px;
-    width: 250px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
   </style>
   
