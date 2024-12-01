@@ -2,11 +2,20 @@
   <div>
     <div>
       <Box width="1400px">
-        <ButtonContainer>
-          <SelectBox :options="selectOption1" v-model="selectedOption1" width="200px"/>
-          <SelectBox :options="selectOption2" v-model="selectedOption2" width="200px"/>
-          <SelectBox v-if="selectedOption2 !== 'ETF'" :options="filteredSelectOption3" v-model="selectedOption3" width="200px"/>
-        </ButtonContainer>
+        <BoxTitle>
+          주식 목록 보기
+        </BoxTitle>
+        <div>
+          <div>
+            분류
+          </div>
+          <ButtonContainer>
+            <SelectBox :options="selectOption1" v-model="selectedOption1" width="200px"/>
+            <SelectBox :options="selectOption2" v-model="selectedOption2" width="200px"/>
+            <SelectBox v-if="selectedOption2 !== 'ETF'" :options="filteredSelectOption3" v-model="selectedOption3" width="200px"/>
+          </ButtonContainer>
+        </div>
+        
         <ButtonContainer>
           <div>
             <div>
@@ -31,6 +40,7 @@ import SelectBox from '@/components/SelectBox.vue';
 import ButtonContainer from '@/components/ButtonContainer.vue';
 import StockTable from '@/components/StockDetail/StockTable.vue';
 import Box from '@/components/Box.vue';
+import BoxTitle from '@/components/BoxTitle.vue';
 
 export default {
   name: 'DetailPage',
@@ -38,7 +48,8 @@ export default {
     ButtonContainer,
     StockTable,
     SelectBox,
-    Box
+    Box,
+    BoxTitle
   },
   data() {
     return {

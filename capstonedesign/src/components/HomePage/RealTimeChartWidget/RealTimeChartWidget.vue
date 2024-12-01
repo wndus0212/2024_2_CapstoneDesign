@@ -23,7 +23,9 @@
           :history="data.history" 
           :chartname="data.label"
           :diff="data.diff"
-          :period="selectedPeriod" />
+          :period="selectedPeriod" 
+          :index="index"
+          />
 
       </div>
     </div>

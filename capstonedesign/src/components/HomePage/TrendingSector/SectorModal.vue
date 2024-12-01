@@ -225,7 +225,14 @@ li {
   border-bottom: 1px solid #ddd;
 }
 
+li :hover{
+  background-color: #f0f8ff; /* 호버 시 배경색 변경 */
+  transform: translateY(-2px); /* 살짝 위로 이동하는 효과 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 추가 */
+}
+
 li:last-child {
   border-bottom: none;
 }
+
 </style>

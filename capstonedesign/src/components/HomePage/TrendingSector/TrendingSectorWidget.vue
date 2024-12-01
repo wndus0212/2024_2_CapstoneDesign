@@ -9,10 +9,13 @@
     </div>
     <div v-else class="sector-list">
       <div v-for="(sector, index) in visibleSectors" :key="index" @click="openModal(sector)">
-        <TrendingSector
-          :data="sector"
-          :index="index"
-        />
+        <div class="sectorhover">
+          <TrendingSector
+            :data="sector"
+            :index="index"
+          />
+        </div>
+        
       </div>
     </div>
     
@@ -121,4 +124,11 @@ export default {
   cursor: pointer;
   margin-top: 20px;
 }
+
+.sectorhover :hover{
+  transform: translateY(-3px) ;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
 </style>

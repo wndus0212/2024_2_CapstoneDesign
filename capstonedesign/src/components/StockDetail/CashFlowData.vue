@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="financialbox">
     <apexchart 
       :options="chartOptions" 
       :series="series" 
@@ -8,12 +8,12 @@
     />
     
     <ToggleButton
-      label="손익 계산서"
+      label="현금 흐름표 자세히"
       :isVisible="toggle"
       @toggle="toggleIncomeStatement"
     />
     <div v-if="toggle" class="table-wrapper">
-      <div>손익 계산서</div>
+      <div>현금 흐름표</div>
       <table class="FinancialStatement">
         <thead>
           <tr>
@@ -55,6 +55,9 @@ export default {
           width: 500,
           type: "bar",
         },
+        dataLabels: {
+          enabled: false
+        },
         stroke: {
           width: [3, 1],
         },
@@ -64,9 +67,6 @@ export default {
               value.toFixed(0);
               return value.toLocaleString(); // 1000 단위마다 쉼표 추가
             }
-          },
-          title: {
-            text: "Price",
           },
         },
         xaxis: {
@@ -188,5 +188,11 @@ export default {
   padding: 8px;
   text-align: left;
   border: none;
+}
+
+.financialbox{
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 10px
 }
 </style>

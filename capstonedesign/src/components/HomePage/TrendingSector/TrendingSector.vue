@@ -3,7 +3,7 @@
       <div style="display: flex; width: 230px">
         <div>
           <div class="chart-name">
-            {{ this.data['name_ko'] }}
+            {{this.index+1}} . {{ this.data['name_ko'] }}
           </div>
   
           <div>
@@ -21,6 +21,10 @@
         type: Object,
         required: true
       },
+      index:{
+        type: Number,
+        required: true
+      }
     },
     computed: {
       formattedChange() {
@@ -40,11 +44,17 @@
     padding: 15px;
     width: 220px;
   }
-  
+
+  .diff_container :hover{
+    transform: none !important; 
+    box-shadow: none !important;
+  }
+
   .chart-name {
     font-weight: 600;
     font-size: 20px;
     margin-bottom: 10px;
   }
+
   </style>
   

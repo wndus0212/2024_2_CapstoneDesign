@@ -146,7 +146,6 @@ export default {
   height: 100%;
   display: flex;
   background-color: white;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .table-wrapper {
@@ -182,17 +181,46 @@ export default {
   top: 0;
   z-index: 10;
   background-color: white;
-  border: none;
 }
 
 .StockTable tbody tr {
   height: 100px;
-  border: none;
 }
 
 .StockTable td, .StockTable th {
   padding: 8px;
   text-align: left;
   border: none;
+
 }
+
+.StockTable tbody tr {
+  height: 100px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.StockTable tbody tr:hover {
+  background-color: #f0f8ff; /* 호버 시 배경색 변경 */
+  transform: translateY(-2px); /* 살짝 위로 이동하는 효과 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 추가 */
+}
+
+.table-wrapper::-webkit-scrollbar {
+  width: 12px; /* 세로 스크롤바의 너비 */
+  height: 12px; /* 가로 스크롤바의 높이 */
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 스크롤 트랙(배경) 색상 */
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #888; /* 스크롤 핸들 색상 */
+  border-radius: 4px; /* 핸들 모서리 둥글게 */
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 핸들에 마우스 오버 시 색상 */
+}
+
 </style>
