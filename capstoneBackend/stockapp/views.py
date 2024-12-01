@@ -2,6 +2,11 @@
 from django.http import JsonResponse
 from .utils import *
 from .models import *
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import now
+import json
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
 def stock_data(request):
     symbol = "005930"  # 삼성전자 종목 코드
@@ -204,3 +209,42 @@ def create_test_data(request):
         email ="test",
         name = "test",)
     return JsonResponse({"message": "Test data created successfully!"})
+
+@csrf_exempt
+def save_user(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            credential = data.get("credential")
+            if not credential:
+                return JsonResponse({"error": "Credential is missing"}, status=400)
+
+            # ID 토큰 검증
+            idinfo = id_token.verify_oauth2_token(
+                credential,
+                requests.Request(),
+                "411762794275-vpjchb1sc9dgpu2ar25tkbb60u82o52o.apps.googleusercontent.com",
+            )
+
+            # 사용자 정보 추출
+            google_id = idinfo["sub"]
+            email = idinfo["email"]
+            name = idinfo.get("name", "")
+            profile_picture = idinfo.get("picture", "")
+
+            user, created = Users.objects.update_or_create(
+                google_id=google_id,
+                defaults={
+                    "email": email,
+                    "name": name,
+                    "profile_picture": profile_picture,
+                    "created_at": now(),
+                },
+            )
+
+            return JsonResponse({"message": "User saved successfully"}, status=200)
+        except ValueError as e:
+            return JsonResponse({"error": "Invalid token", "details": str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"error": "Invalid request method"}, status=400)
