@@ -1,80 +1,121 @@
 <template>
-    <Box width="1400px">
-      <BoxTitle>
-        지금 뜨는 섹터
-      </BoxTitle>
-      
-      <div v-if="isLoading" class="loading">
-        데이터 로딩 중...
+  <Box width="1400px">
+    <BoxTitle>
+      지금 뜨는 섹터
+    </BoxTitle>
+    
+    <div v-if="isLoading" class="loading">
+      데이터 로딩 중...
+    </div>
+    <div v-else class="sector-list">
+      <div v-for="(sector, index) in visibleSectors" :key="index" @click="openModal(sector)">
+        <TrendingSector
+          :data="sector"
+        />
       </div>
-      <div v-else class="sector-list">
-        <div v-for="(sector, index) in sector_diffs" :key="index">
-          <TrendingSector
-            :data="sector"
-          />
-        </div>
-      </div>
-    </Box>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  import Box from '@/components/Box.vue';
-  import BoxTitle from '@/components/BoxTitle.vue';
-  import TrendingSector from './TrendingSector.vue';
-  
-  export default {
-    components: {
-      Box,
-      BoxTitle,
-      TrendingSector,
+    </div>
+    
+    <!-- 더보기 버튼 -->
+    <div @click="toggleShowAll" class="load-more">
+      {{ showAll ? '접기' : '더보기' }}
+    </div>
+    
+    <!-- 모달 컴포넌트 -->
+    <SectorModal
+      :isOpen="isModalOpen"
+      :sector="modalSector"
+      @close="closeModal"
+    />
+  </Box>
+</template>
+
+<script>
+import axios from 'axios';
+import Box from '@/components/Box.vue';
+import BoxTitle from '@/components/BoxTitle.vue';
+import TrendingSector from './TrendingSector.vue';
+import SectorModal from './SectorModal.vue';
+
+export default {
+  components: {
+    Box,
+    BoxTitle,
+    TrendingSector,
+    SectorModal, // 모달 컴포넌트 등록
+  },
+  mounted() {
+    this.updateChartData(); // 초기 데이터 로드
+  },
+  data() {
+    return {
+      isLoading: true, // 로딩 상태 플래그
+      sector_diffs: [], // 섹터의 차트 데이터
+      showAll: false, // 더보기 버튼 클릭 여부
+      isModalOpen: false, // 모달 열림 상태
+      modalSector: {}, // 모달에 전달할 섹터 정보
+    };
+  },
+  computed: {
+    visibleSectors() {
+      // 더보기 버튼을 클릭했을 때는 모든 데이터를 보여주고, 아니면 5개만 보여준다.
+      return this.showAll ? this.sector_diffs : this.sector_diffs.slice(0, 5);
     },
-    mounted() {
-      this.updateChartData(); // 초기 데이터 로드
+  },
+  methods: {
+    updateChartData() {
+      console.log("Updating chart data...");
+      this.fetchAllDiffData();
     },
-    data() {
-      return {
-        isLoading: true, // 로딩 상태 플래그
-        sector_diffs: [], // 섹터의 차트 데이터
-      };
+    fetchAllDiffData() {
+      this.isLoading = true; // 로딩 시작
+      axios
+        .get("http://127.0.0.1:8000/stock/sector_diff/")
+        .then((response) => {
+          this.sector_diffs = response.data["output"];
+          console.log("sectordiff", this.sector_diffs);
+        })
+        .catch((error) => {
+          console.error("데이터 로드 중 오류:", error);
+        })
+        .finally(() => {
+          this.isLoading = false; // 로딩 종료
+        });
     },
-    methods: {
-      updateChartData() {
-        console.log("Updating chart data...");
-        this.fetchAllDiffData();
-      },
-      fetchAllDiffData() {
-        this.isLoading = true; // 로딩 시작
-        axios
-          .get("http://127.0.0.1:8000/stock/sector_diff/")
-          .then((response) => {
-            this.sector_diffs = response.data["output"];
-            console.log("sectordiff", this.sector_diffs);
-          })
-          .catch((error) => {
-            console.error("데이터 로드 중 오류:", error);
-          })
-          .finally(() => {
-            this.isLoading = false; // 로딩 종료
-          });
-      },
+    toggleShowAll() {
+      this.showAll = !this.showAll; // 버튼 클릭 시 showAll 값을 토글
     },
-  };
-  </script>
-  
-  <style scoped>
-  .loading {
-    text-align: center;
-    font-size: 1.5em;
-    color: gray;
-    margin-top: 20px;
-  }
-  
-  .sector-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  
-  </style>
-  
+    openModal(sector) {
+      this.modalSector = sector; // 클릭한 섹터 정보를 모달에 전달
+      this.isModalOpen = true; // 모달 열기
+    },
+    closeModal() {
+      this.isModalOpen = false; // 모달 닫기
+      this.modalSector = {}; // 모달 내용 초기화
+    },
+  },
+};
+</script>
+
+<style scoped>
+.loading {
+  text-align: center;
+  font-size: 1.5em;
+  color: gray;
+  margin-top: 20px;
+}
+
+.sector-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.load-more {
+  text-align: center;
+  font-size: 1.2em;
+  color: blue;
+  cursor: pointer;
+  margin-top: 20px;
+}
+</style>

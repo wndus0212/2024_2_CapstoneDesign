@@ -14,6 +14,9 @@ from datetime import datetime, timedelta
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 etf_file_path = os.path.join(BASE_DIR, 'data', 'Top_100_ETF.csv')
 sp500_file_path=os.path.join(BASE_DIR, 'data', 'sp500.csv')
+kosdaq = os.path.join(BASE_DIR, 'data\stock_list', 'kosdaq_150_with_industries.csv')
+kospi = os.path.join(BASE_DIR, 'data\stock_list', 'kospi_200_with_industries.csv')
+sp500 = os.path.join(BASE_DIR, 'data\stock_list', 'sp500_with_industries.csv')
 search_term_file_path = os.path.join(BASE_DIR, 'data', 'search_term.csv')
 sectors_list = os.path.join(BASE_DIR, 'data', 'sectors_with_korean_names.csv')
 # API 키와 Secret 키 입력
@@ -425,6 +428,26 @@ def get_sector_diff(request):
     else:
         return None
 
+def get_sector_stock_list(sector):
+    # CSV 파일 읽기
+    kosdaq_df = pd.read_csv(kosdaq)
+    kospi_df = pd.read_csv(kospi)
+    sp500_df = pd.read_csv(sp500)
+    
+    # 섹터 컬럼이 'Industry'라고 가정하고, 섹터 필터링
+    kosdaq_sector = kosdaq_df[kosdaq_df['Sector'] == sector]
+    kospi_sector = kospi_df[kospi_df['Sector'] == sector]
+    sp500_sector = sp500_df[sp500_df['Sector'] == sector]
+
+    # 필요한 컬럼을 선택 (예: Stock Name, Symbol 등)
+    kosdaq_stocks = kosdaq_sector[['Name', 'Symbol']] 
+    kospi_stocks = kospi_sector[['Name', 'Symbol']]
+    sp500_stocks = sp500_sector[['Name', 'Symbol']]
+    
+    # 세 개의 데이터프레임을 합침
+    combined_stocks = pd.concat([kosdaq_stocks, kospi_stocks, sp500_stocks], ignore_index=True)
+       
+    return combined_stocks
 
 def get_financial_statement(Id, Option):
     stock = yf.Ticker(Id)

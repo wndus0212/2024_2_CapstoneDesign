@@ -1,0 +1,135 @@
+﻿Name,Symbol,Market
+리노공업,058470,KOSDAQ
+서진시스템,178320,KOSDAQ
+이오테크닉스,039030,KOSDAQ
+파크시스템스,140860,KOSDAQ
+테크윙,089030,KOSDAQ
+제이앤티씨,204270,KOSDAQ
+원익IPS,240810,KOSDAQ
+엠로,058970,KOSDAQ
+덕산네오룩스,213420,KOSDAQ
+안랩,053800,KOSDAQ
+넥스틴,348210,KOSDAQ
+고영,098460,KOSDAQ
+시노펙스,025320,KOSDAQ
+SFA반도체,036540,KOSDAQ
+원익QnC,074600,KOSDAQ
+피에스케이,319660,KOSDAQ
+하나머티리얼즈,166090,KOSDAQ
+이녹스첨단소재,272290,KOSDAQ
+다우데이타,032190,KOSDAQ
+서울반도체,046890,KOSDAQ
+셀바스AI,108860,KOSDAQ
+코미코,183300,KOSDAQ
+유티아이,179900,KOSDAQ
+가온칩스,399720,KOSDAQ
+심텍,222800,KOSDAQ
+케이엠더블유,032500,KOSDAQ
+에프에스티,036810,KOSDAQ
+아이티엠반도체,084850,KOSDAQ
+NHN KCP,060250,KOSDAQ
+인탑스,049070,KOSDAQ
+KG이니시스,035600,KOSDAQ
+프로텍,053610,KOSDAQ
+네패스,033640,KOSDAQ
+삼성전자,005930,KOSPI
+SK하이닉스,000660,KOSPI
+LG전자,066570,KOSPI
+LG,003550,KOSPI
+삼성에스디에스,018260,KOSPI
+SK스퀘어,402340,KOSPI
+삼성전기,009150,KOSPI
+한미반도체,042700,KOSPI
+LG디스플레이,034220,KOSPI
+LG이노텍,011070,KOSPI
+포스코DX,022100,KOSPI
+카카오페이,377300,KOSPI
+코스모신소재,005070,KOSPI
+SK아이이테크놀로지,361610,KOSPI
+Apple Inc.,AAPL,S&P500
+Nvidia,NVDA,S&P500
+Microsoft,MSFT,S&P500
+Broadcom,AVGO,S&P500
+Oracle Corporation,ORCL,S&P500
+Salesforce,CRM,S&P500
+Cisco,CSCO,S&P500
+Adobe Inc.,ADBE,S&P500
+Accenture,ACN,S&P500
+Advanced Micro Devices,AMD,S&P500
+ServiceNow,NOW,S&P500
+IBM,IBM,S&P500
+Texas Instruments,TXN,S&P500
+Intuit,INTU,S&P500
+Qualcomm,QCOM,S&P500
+Uber,UBER,S&P500
+Palantir Technologies,PLTR,S&P500
+Applied Materials,AMAT,S&P500
+Arista Networks,ANET,S&P500
+Palo Alto Networks,PANW,S&P500
+Fiserv,FI,S&P500
+Automatic Data Processing,ADP,S&P500
+Micron Technology,MU,S&P500
+Analog Devices,ADI,S&P500
+Intel,INTC,S&P500
+Lam Research,LRCX,S&P500
+Amphenol,APH,S&P500
+Dell Technologies,DELL,S&P500
+KLA Corporation,KLAC,S&P500
+Synopsys,SNPS,S&P500
+CrowdStrike,CRWD,S&P500
+Cadence Design Systems,CDNS,S&P500
+Motorola Solutions,MSI,S&P500
+Fortinet,FTNT,S&P500
+Autodesk,ADSK,S&P500
+Roper Technologies,ROP,S&P500
+NXP Semiconductors,NXPI,S&P500
+Fair Isaac,FICO,S&P500
+Paychex,PAYX,S&P500
+Fidelity National Information Services,FIS,S&P500
+TE Connectivity,TEL,S&P500
+Corning Inc.,GLW,S&P500
+Garmin,GRMN,S&P500
+Gartner,IT,S&P500
+Cognizant,CTSH,S&P500
+Microchip Technology,MCHP,S&P500
+HP Inc.,HPQ,S&P500
+Ansys,ANSS,S&P500
+ON Semiconductor,ON,S&P500
+Keysight Technologies,KEYS,S&P500
+Apple Inc.,AAPL,NASDAQ
+Nvidia,NVDA,NASDAQ
+Microsoft,MSFT,NASDAQ
+Broadcom Inc.,AVGO,NASDAQ
+ASML Holding,ASML,NASDAQ
+Cisco,CSCO,NASDAQ
+Adobe Inc.,ADBE,NASDAQ
+Advanced Micro Devices Inc.,AMD,NASDAQ
+Texas Instruments,TXN,NASDAQ
+Intuit,INTU,NASDAQ
+Qualcomm,QCOM,NASDAQ
+Applied Materials,AMAT,NASDAQ
+Palo Alto Networks,PANW,NASDAQ
+ADP,ADP,NASDAQ
+Micron Technology,MU,NASDAQ
+Analog Devices,ADI,NASDAQ
+Intel,INTC,NASDAQ
+Lam Research,LRCX,NASDAQ
+KLA Corporation,KLAC,NASDAQ
+Synopsys,SNPS,NASDAQ
+CrowdStrike,CRWD,NASDAQ
+Cadence Design Systems,CDNS,NASDAQ
+Marvell Technology,MRVL,NASDAQ
+Fortinet,FTNT,NASDAQ
+Atlassian,TEAM,NASDAQ
+"Workday, Inc.",WDAY,NASDAQ
+Autodesk,ADSK,NASDAQ
+NXP,NXPI,NASDAQ
+Paychex,PAYX,NASDAQ
+Datadog,DDOG,NASDAQ
+Cognizant,CTSH,NASDAQ
+Microchip Technology,MCHP,NASDAQ
+Zscaler,ZS,NASDAQ
+Ansys,ANSS,NASDAQ
+Zoom Video Communications,ZM,NASDAQ
+GlobalFoundries,GFS,NASDAQ
+Enphase Energy,ENPH,NASDAQ

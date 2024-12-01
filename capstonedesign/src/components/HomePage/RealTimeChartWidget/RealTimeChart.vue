@@ -2,13 +2,13 @@
   <div class="realtime_container" width="200px">
     <div style="display: flex">
       <div style="width: 130px; text-overflow: ellipsis;">
-        <div class="chart-name">
+        <div class="indexname">
           {{ chartname }}
         </div>
-        <div style="font-size: 20px;">
+        <div style="font-size: 20px; font-weight: 600;">
           {{ diff[0]?.['Current Price'].toFixed(2) || "데이터 없음" }}
         </div>
-        <div style="font-size: 15px;">
+        <div :style="{ color: changeValueColor }" style="font-size: 15px;">
           {{ changeValue }}
         </div>
       </div>
@@ -98,6 +98,12 @@ export default {
       }
       return "데이터 없음";
     },
+    changeValueColor() {
+      const value = this.changeValue;
+      if (value === "데이터 없음") return "black"; // 데이터 없음일 때 기본 색상
+      const percentage = parseFloat(value.replace('%', '')); // % 제거하고 숫자만 추출
+      return percentage > 0 ? "red" : (percentage < 0 ? "blue" : "black");
+    },
   },
   watch: {
     history: {
@@ -147,7 +153,8 @@ export default {
   width: 220px;
 }
 
-.chart-name {
+.indexname {
   font-weight: 500;
+  margin-bottom: 10px;
 }
 </style>
