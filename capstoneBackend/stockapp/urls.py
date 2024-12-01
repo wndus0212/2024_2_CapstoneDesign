@@ -1,6 +1,7 @@
 # stockapp/urls.py
 from django.urls import path
 from . import views
+from .views import save_user
 
 urlpatterns = [
     path('data/', views.stock_data, name='stock_data'),
@@ -15,4 +16,5 @@ urlpatterns = [
     path('financial_state/<str:Option>/<str:Id>/',views.financial_state, name='financial_state'),
     path('search_term/', views.search_term, name='search_term'),
     path('create_test_data/', views.create_test_data, name='create_test_data'),
+    path('api/users', save_user, name='save_user'),
 ]
