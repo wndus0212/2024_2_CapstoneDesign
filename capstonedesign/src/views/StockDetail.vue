@@ -47,16 +47,38 @@
 
                 <!-- 종목 정보 -->
                 <Box width="600px">
-                    <div v-if="info">
-                        <div>{{ info.sector }}</div>
-                        <div>{{ info.industry }}</div>
-                        <div>현재 주가: {{ info.currentPrice.toLocaleString() }}</div>
-                        <div>구매량: {{ info.volume.toLocaleString() }}</div>
-                        <div>시가총액: {{ info.marketCap.toLocaleString() }}</div>
-                        <div>전일 종가: {{ info.previousClose.toLocaleString() }}</div>
-                        <div>Open: {{ info.open.toLocaleString() }}</div>
+                    <div v-if="info" class="info-card">
+                        <div class="info-item">
+                        <span class="info-title">섹터:</span>
+                        <span>{{ info.sector || '정보 없음' }}</span>
+                        </div>
+                        <div class="info-item">
+                        <span class="info-title">산업:</span>
+                        <span>{{ info.industry || '정보 없음' }}</span>
+                        </div>
+                        <div class="info-item">
+                        <span class="info-title">현재 주가:</span>
+                        <span class="price">{{ info.currentPrice ? info.currentPrice.toLocaleString() : '정보 없음' }} {{ stockUnit }}</span>
+                        </div>
+                        <div class="info-item">
+                        <span class="info-title">구매량:</span>
+                        <span>{{ info.volume ? info.volume.toLocaleString() : '정보 없음' }}</span>
+                        </div>
+                        <div class="info-item">
+                        <span class="info-title">시가총액:</span>
+                        <span>{{ info.marketCap ? (info.marketCap/ 100000000).toLocaleString() : '정보 없음' }} 억{{ stockUnit }}</span>
+                        </div>
+                        <div class="info-item">
+                        <span class="info-title">전일 종가:</span>
+                        <span>{{ info.previousClose ? info.previousClose.toLocaleString() : '정보 없음' }} {{ stockUnit }}</span>
+                        </div>
+                        <div class="info-item">
+                        <span class="info-title">Open:</span>
+                        <span>{{ info.open ? info.open.toLocaleString() : '정보 없음' }} {{ stockUnit }}</span>
+                        </div>
                     </div>
                 </Box>
+
             </div>
         </MainContainer>
 
@@ -103,6 +125,7 @@ export default {
     data() {
         return {
             stockName: "",
+            stockUnit: "",
             stock: "",
             history: [],
             movingAveragedata: [],
@@ -158,6 +181,7 @@ export default {
     },
     async created() {
         this.stockName = this.$route.query.name || "알 수 없는 종목";
+        this.stockUnit = this.$route.query.unit || "알 수 없는 단위";
         await this.fetchStockHistory();
         await this.fetchStockInfo();
         await this.fetchMovingAverage();
@@ -223,5 +247,37 @@ export default {
 
 
 <style scoped>
-/* 필요한 스타일 추가 */
+.info-card {
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.info-title {
+  font-weight: bold;
+  color: #333;
+}
+
+.price {
+  font-size: 1.2em;
+  color: #2c7dff;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
 </style>

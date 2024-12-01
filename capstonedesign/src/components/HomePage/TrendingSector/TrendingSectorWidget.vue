@@ -116,8 +116,8 @@ export default {
 
 .load-more {
   text-align: center;
-  font-size: 1.2em;
-  color: blue;
+  font-size: 1em;
+  color: gray;
   cursor: pointer;
   margin-top: 20px;
 }

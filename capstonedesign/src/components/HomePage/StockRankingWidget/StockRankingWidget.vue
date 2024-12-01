@@ -8,14 +8,17 @@
           <SelectBox v-if="selectedOption2 !== 'ETF'" :options="filteredSelectOption3" v-model="selectedOption3" width="200px"/>
         </ButtonContainer>
         <ButtonContainer>
-          <SelectBox :options="selectOption5" v-model="selectedOption5" width="200px"/>
-          <SelectBox :options="selectOption4" v-model="selectedOption4" width="200px"/>
+          <div>
+            <div>
+              정렬 기준
+            </div>
+            <SelectBox :options="selectOption4" v-model="selectedOption4" width="200px"/>
+          </div>
         </ButtonContainer>
         <StockTable :selectedOption1="selectedOption1"
           :selectedOption2="selectedOption2"
           :selectedOption3="selectedOption3"
-          :selectedOption4="selectedOption4"
-          :selectedOption5="selectedOption5">
+          :selectedOption4="selectedOption4">
         </StockTable>
       </Box>
     </div>
@@ -65,14 +68,10 @@ export default {
         { label: '주가', value: 'prices'},
         {label: '거래량', value: 'volume'}
       ],
-      selectOption5: [
-        { label: '전체', value: '1' },
-      ],
       selectedOption1: 'KOR',
       selectedOption2: 'Stock',
       selectedOption3: 'KRX', // 이 값은 첫 번째 값에 맞게 초기화
       selectedOption4: 'market_caps',
-      selectedOption5: '1',
 
       searchData: [],
     };

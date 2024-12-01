@@ -60,9 +60,10 @@ export default {
         },
         yaxis: {
           labels: {
-            formatter: function (val) {
-              return val.toFixed(0);
-            },
+            formatter: function (value) {
+              value.toFixed(0);
+              return value.toLocaleString(); // 1000 단위마다 쉼표 추가
+            }
           },
           title: {
             text: "Price",

@@ -41,6 +41,12 @@ export default {
             title: {
               text: '주가'
             },
+            labels: {
+              formatter: function (value) {
+                value.toFixed(0);
+                return value.toLocaleString(); // 1000 단위마다 쉼표 추가
+              }
+            }
           }
         ],
         tooltip: {

@@ -16,7 +16,7 @@ export default {
         margin:0px;
         padding: 0px;
         height:100%;
-        font-size: 26px;
+        font-size: 24px;
         font-weight: 500;
         color:rgb(111, 114, 121)
     }

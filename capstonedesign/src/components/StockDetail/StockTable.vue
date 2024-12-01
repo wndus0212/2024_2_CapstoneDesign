@@ -15,9 +15,9 @@
           <tbody>
             <tr v-for="stock in stocks" :key="stock.symbols" @click="navigateTo(stock.symbols, stock.names)">
               <td>{{ stock.names }}</td>
-              <td>{{ stock.prices }}</td>
-              <td>{{ stock.volume }}</td>
-              <td>{{ (stock.market_caps / 100000000).toFixed(2) }}</td>
+              <td>{{ formatPrice(stock.prices) }}</td>
+              <td>{{ stock.volume.toLocaleString() }}</td>
+              <td>{{ formatPrice((stock.market_caps / 100000000).toFixed(2)) }}</td>
             </tr>
           </tbody>
         </table>
@@ -68,29 +68,28 @@ export default {
   methods: {
     fetchStockRank() {
       this.loading = true; // 로딩 시작
-      let market='';
-      let sort='';
-      if(this.selectedOption1=='KOR'){
-        market="list/"
-      }else{
-        market="list_global/"
+      let market = '';
+      let sort = '';
+      
+      if(this.selectedOption1 === 'KOR'){
+        market = "list/";
+      } else {
+        market = "list_global/";
       }
 
-      if(this.selectedOption2=='Stock'){
-        market=market+this.selectedOption3
-        console.log(market);
-      }else{
-        if(this.selectedOption1=='KOR'){
-          market=market+"KOR_ETF";
-        }else{
-          market=market+"GLB_ETF";
+      if(this.selectedOption2 === 'Stock'){
+        market = market + this.selectedOption3;
+      } else {
+        if(this.selectedOption1 === 'KOR'){
+          market = market + "KOR_ETF";
+        } else {
+          market = market + "GLB_ETF";
         }
       }
 
-      sort=this.selectedOption4
-    
+      sort = this.selectedOption4;
+      
       const url = `http://127.0.0.1:8000/stock/${market}/${sort}/`;
-      console.log(url);
       axios
         .get(url)
         .then(response => {
@@ -104,17 +103,31 @@ export default {
           this.loading = false; // 로딩 종료
         });
     },
+    
+    // 가격 단위 표시 함수
+    formatPrice(value) {
+      if (this.selectedOption1 === 'KOR') {
+        return value.toLocaleString() + ' 원'; // 한국 원화
+      } else {
+        return value.toLocaleString() + ' $'; // 글로벌 달러
+      }
+    },
+    
     sortStocksByMarketCap() {
       this.stocks.sort((a, b) => parseFloat(b.Marcap) - parseFloat(a.Marcap));
     },
+    
     navigateTo(stockCode, stockName) {
+      // selectedOption1에 따른 unit 값을 설정
+      const unit = this.selectedOption1 === 'KOR' ? '원' : '$';
+      console.log(unit)
       this.$router.push({
         path: `/detail/${stockCode}`,
         query: {
           name: stockName,
+          unit: unit 
         }
       });
-      console.log("Stock Name:", stockName);
     }
   },
   mounted() {

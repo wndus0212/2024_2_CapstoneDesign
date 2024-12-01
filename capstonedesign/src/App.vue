@@ -24,4 +24,7 @@ export default {
   padding: 0px;
 }
 
+* {
+  font-family: 'Nanum Gothic', sans-serif;
+}
 </style>
