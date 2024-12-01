@@ -4,19 +4,20 @@
       지금 뜨는 섹터
     </BoxTitle>
     
-    <div v-if="isLoading" class="loading">
-      데이터 로딩 중...
+    <div v-if="isLoading">
+      <LoadingComponent/>
     </div>
     <div v-else class="sector-list">
       <div v-for="(sector, index) in visibleSectors" :key="index" @click="openModal(sector)">
         <TrendingSector
           :data="sector"
+          :index="index"
         />
       </div>
     </div>
     
-    <!-- 더보기 버튼 -->
-    <div @click="toggleShowAll" class="load-more">
+    <!-- 더보기 버튼: 로딩 중일 때는 보이지 않도록 조건 추가 -->
+    <div v-if="!isLoading" @click="toggleShowAll" class="load-more">
       {{ showAll ? '접기' : '더보기' }}
     </div>
     
@@ -35,13 +36,15 @@ import Box from '@/components/Box.vue';
 import BoxTitle from '@/components/BoxTitle.vue';
 import TrendingSector from './TrendingSector.vue';
 import SectorModal from './SectorModal.vue';
+import LoadingComponent from '@/components/LoadingComponent.vue';
 
 export default {
   components: {
     Box,
     BoxTitle,
     TrendingSector,
-    SectorModal, // 모달 컴포넌트 등록
+    SectorModal,
+    LoadingComponent
   },
   mounted() {
     this.updateChartData(); // 초기 데이터 로드

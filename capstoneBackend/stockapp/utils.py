@@ -429,25 +429,47 @@ def get_sector_diff(request):
         return None
 
 def get_sector_stock_list(sector):
-    # CSV 파일 읽기
-    kosdaq_df = pd.read_csv(kosdaq)
-    kospi_df = pd.read_csv(kospi)
-    sp500_df = pd.read_csv(sp500)
-    
-    # 섹터 컬럼이 'Industry'라고 가정하고, 섹터 필터링
-    kosdaq_sector = kosdaq_df[kosdaq_df['Sector'] == sector]
-    kospi_sector = kospi_df[kospi_df['Sector'] == sector]
-    sp500_sector = sp500_df[sp500_df['Sector'] == sector]
+    # KOSPI 데이터 읽기
+    kospi_list = pd.read_csv(kospi, dtype={'Symbol': str})
+    kospi_list['Symbol'] +='.KS'
+    kospi_sector_stocks = kospi_list[kospi_list['Sector'] == sector].head(5)
+    kospi_sector_stocks['Market'] = 'KOSPI'  # KOSPI 시장 추가
 
-    # 필요한 컬럼을 선택 (예: Stock Name, Symbol 등)
-    kosdaq_stocks = kosdaq_sector[['Name', 'Symbol']] 
-    kospi_stocks = kospi_sector[['Name', 'Symbol']]
-    sp500_stocks = sp500_sector[['Name', 'Symbol']]
+    # KOSDAQ 데이터 읽기
+    kosdaq_list = pd.read_csv(kosdaq, dtype={'Symbol': str})
+    kosdaq_list['Symbol'] +='.KQ'
+    kosdaq_sector_stocks = kosdaq_list[kosdaq_list['Sector'] == sector].head(5)
+    kosdaq_sector_stocks['Market'] = 'KOSDAQ'  # KOSDAQ 시장 추가
+
+    # S&P500 데이터 읽기
+    sp500_list = pd.read_csv(sp500, dtype={'Symbol': str})
+    sp500_sector_stocks = sp500_list[sp500_list['Sector'] == sector].head(5)
+    sp500_sector_stocks['Market'] = 'S&P500'  # S&P500 시장 추가
+
+    # 세 데이터프레임 합치기
+    combined_df = pd.concat([kospi_sector_stocks, kosdaq_sector_stocks, sp500_sector_stocks], ignore_index=True)
+
+    stock_data = []
+    for _, stock in combined_df.iterrows():
+        ticker = yf.Ticker(stock['Symbol'])
+        try:
+            # 시가총액 추출
+            market_cap = ticker.info.get('marketCap', 0)
+
+            stock_data.append({
+                'Name': stock['Name'],
+                'Symbol': stock['Symbol'],
+                'Market': stock['Market'],
+                'MarketCap': market_cap,
+            })
+        except Exception as e:
+            print(f"Error fetching data for {stock['Symbol']}: {e}")
     
-    # 세 개의 데이터프레임을 합침
-    combined_stocks = pd.concat([kosdaq_stocks, kospi_stocks, sp500_stocks], ignore_index=True)
-       
-    return combined_stocks
+    # 데이터프레임 생성
+    final_df = pd.DataFrame(stock_data)
+
+    return final_df
+
 
 def get_financial_statement(Id, Option):
     stock = yf.Ticker(Id)

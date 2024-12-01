@@ -50,11 +50,11 @@
                     <div v-if="info">
                         <div>{{ info.sector }}</div>
                         <div>{{ info.industry }}</div>
-                        <div>현재 주가: {{ info.currentPrice }}</div>
-                        <div>구매량: {{ info.volume }}</div>
-                        <div>시가총액: {{ info.marketCap }}</div>
-                        <div>전일 종가: {{ info.previousClose }}</div>
-                        <div>Open: {{ info.open }}</div>
+                        <div>현재 주가: {{ info.currentPrice.toLocaleString() }}</div>
+                        <div>구매량: {{ info.volume.toLocaleString() }}</div>
+                        <div>시가총액: {{ info.marketCap.toLocaleString() }}</div>
+                        <div>전일 종가: {{ info.previousClose.toLocaleString() }}</div>
+                        <div>Open: {{ info.open.toLocaleString() }}</div>
                     </div>
                 </Box>
             </div>

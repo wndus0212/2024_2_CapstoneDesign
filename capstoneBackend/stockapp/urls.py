@@ -12,6 +12,7 @@ urlpatterns = [
     path('index/<str:option>/<str:indexname>/', views.index, name='index'),
     path('stock_diff/<str:stock_id>/', views.stock_diff, name='stock_diff'),
     path('sector_diff/', views.sector_diff, name='sector_diff'),
+    path('sector_stock_list/<str:sector>/', views.sector_stock_list, name='sector_stock_list'),
     path('financial_state/<str:Option>/<str:Id>/',views.financial_state, name='financial_state'),
     path('search_term/', views.search_term, name='search_term'),
     path('create_test_data/', views.create_test_data, name='create_test_data'),

@@ -15,9 +15,9 @@
             <tbody>
               <tr v-for="stock in stocks" :key="stock.symbols" @click="navigateTo(stock.symbols, stock.names)">
                 <td>{{ stock.names }}</td>
-                <td>{{ stock.prices }}</td>
-                <td>{{ stock.volume }}</td>
-                <td>{{ (stock.market_caps / 100000000).toFixed(2) }}</td>
+                <td>{{ stock.prices.toLocaleString() }}</td>
+                <td>{{ stock.volume.toLocaleString() }}</td>
+                <td>{{ (stock.market_caps / 100000000).toFixed(2).toLocaleString() }}</td>
               </tr>
             </tbody>
           </table>

@@ -95,6 +95,19 @@ def sector_diff(request):
         print(f"Error in diff: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
 
+def sector_stock_list(request, sector):
+    try:
+        data=get_sector_stock_list(sector)
+        if data.empty:  # 데이터가 비어 있는 경우
+            return JsonResponse({"error": "No data found for the sectors"}, status=404)
+        
+        # 정상 응답 반환
+        data_json = data.to_dict(orient="records")
+        return JsonResponse({"output": data_json}, safe=False)
+    except Exception as e:
+        print(f"Error in diff: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+
 def moving_avarage(request, stock_id):
     try:
         start = request.GET.get('start')
