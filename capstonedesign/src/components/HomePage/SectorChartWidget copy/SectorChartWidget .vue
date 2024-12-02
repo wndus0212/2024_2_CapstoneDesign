@@ -92,8 +92,9 @@ export default {
         interval: this.selectedInterval,
       };
 
+
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/stock/index/sector/SPDR/`, { params });
+        const response = await axios.get(`http://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/index/sector/SPDR/`, { params });
         this.chartData = response.data['output'] || null;
       } catch (error) {
         console.error('차트 데이터를 가져오는 데 실패했습니다:', error);
@@ -101,6 +102,7 @@ export default {
       } finally {
         this.loading = false; // 로딩 상태 비활성화
       }
+
     }
   }
 };

@@ -200,7 +200,7 @@ export default {
             this.isLoading = true; // 로딩 시작
             try {
                 const response = await axios.get(
-                    `http://127.0.0.1:8000/stock/history/${this.stockCode}/`,
+                    `https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/history/${this.stockCode}/`,
                     {
                         params: {
                             period: this.selectedPeriod,
@@ -260,7 +260,7 @@ export default {
             this.isLoading = true; // 로딩 시작
             try {
                 const response = await axios.get(
-                    `http://127.0.0.1:8000/stock/detail_info/${this.stockCode}/`,
+                    `https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/detail_info/${this.stockCode}/`,
                 );
                 this.info = response.data || {}; // 응답 데이터가 없으면 빈 객체로 처리
             } catch (error) {

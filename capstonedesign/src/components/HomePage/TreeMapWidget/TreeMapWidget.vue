@@ -66,7 +66,7 @@ export default {
     async fetchSectorData() {
       this.isLoading = true; // 로딩 시작
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/stock/sector_weight/${this.selectedOption1}`);
+        const response = await axios.get(`https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/sector_weight/${this.selectedOption1}`);
         const output = response.data.output || [];
         if (!Array.isArray(output) || output.length === 0) {
           console.warn("API returned no valid data.");
