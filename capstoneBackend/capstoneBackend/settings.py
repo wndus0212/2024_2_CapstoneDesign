@@ -27,7 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS= ['*']
+CSRF_TRUSTED_ORIGINS= [   
+    'http://https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000'
+]
 
 # Application definition
 
