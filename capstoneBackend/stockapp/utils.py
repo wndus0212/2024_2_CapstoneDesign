@@ -493,6 +493,19 @@ def get_moving_average(stock_id, start, end, period, interval):
     ma_df = df[['MA_3', 'MA_5']].dropna()
     return ma_df
 
+def get_bollinger_band(stock_id, start, end, period, interval):
+    data = yf.Ticker(stock_id)
+    df =get_stock_history(stock_id, start, end, period, interval)
+
+    # 'Close' 값으로 볼린저 밴드 계산
+    window = 20  # 이동평균 기간
+    df['Moving Average'] = df['Close'].rolling(window=window).mean()
+    df['Std Dev'] = df['Close'].rolling(window=window).std()
+    df['Upper Band'] = df['Moving Average'] + (df['Std Dev'] * 2)
+    df['Lower Band'] = df['Moving Average'] - (df['Std Dev'] * 2)
+    df = df.dropna()
+    return df
+
 def get_search_term():
     stocks = pd.read_csv(search_term_file_path)
     return stocks

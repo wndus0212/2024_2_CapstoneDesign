@@ -40,6 +40,7 @@
                         :is="getChartComponent" 
                         :history="selectedIndicator === 'volume' || selectedIndicator === 'price' ? history : undefined" 
                         :movingAveragedata="selectedIndicator === 'movingAverage' ? movingAveragedata : undefined" 
+                        :bollingerBandData="selectedIndicator === 'bollingerBand' ? bollingerBandData : undefined"
                         />
 
                     </div>
@@ -102,6 +103,7 @@ import SelectBox from "@/components/SelectBox.vue"; // SelectBox 컴포넌트 �
 import VolumeChart from "@/components/StockDetail/Charts/VolumeChart.vue"; 
 import PriceChart from "@/components/StockDetail/Charts/PriceChart.vue"; 
 import MovingAverageChart from "@/components/StockDetail/Charts/MovingAverageChart.vue"; 
+import BollingerBandChart from "@/components/StockDetail/Charts/BollingerBandChart.vue";
 
 export default {
     components: {
@@ -114,7 +116,8 @@ export default {
         SelectBox, // SelectBox 컴포넌트 등록
         VolumeChart, // 거래량 차트 컴포넌트
         PriceChart, // 주가 차트 컴포넌트
-        MovingAverageChart
+        MovingAverageChart,
+        BollingerBandChart
     },
     props: {
         stockCode: {
@@ -129,6 +132,7 @@ export default {
             stock: "",
             history: [],
             movingAveragedata: [],
+            bollingerBandData:[],
             info: null, // 초기값을 null로 설정
             isLoading: false,
             selectedPeriod: "1mo", // 기본값
@@ -151,7 +155,8 @@ export default {
             indicatorOptions: [
                 { label: '거래량', value: 'volume' },
                 { label: '주가', value: 'price' },
-                { label: '이동평균선', value: 'movingAverage' }
+                { label: '이동평균선', value: 'movingAverage' },
+                { label: '볼린저 밴드', value: 'bollingerBand' }
             ],
         };
     },
@@ -160,10 +165,12 @@ export default {
         selectedPeriod() {
             this.fetchStockHistory();
             this.fetchMovingAverage();
+            this.fetchBollingerBand();
         },
         selectedInterval() {
             this.fetchStockHistory();
             this.fetchMovingAverage();
+            this.fetchBollingerBand();
         }
     },
     computed: {
@@ -175,6 +182,8 @@ export default {
                 return "PriceChart"; // 주가 차트를 보여줌
             } else if (this.selectedIndicator === "movingAverage") {
                 return "MovingAverageChart"; // 이동평균선 차트를 보여줌
+            } else if (this.selectedIndicator === "bollingerBand") {
+                return "BollingerBandChart"; // 이동평균선 차트를 보여줌
             }
             return null;
         }
@@ -223,6 +232,26 @@ export default {
             } catch (error) {
                 console.error("이동평균 데이터를 가져오는 데 실패했습니다:", error);
                 this.movingAveragedata = []; // 실패 시 빈 배열로 처리
+            } finally {
+                this.isLoading = false; // 로딩 종료
+            }
+        },
+        async fetchBollingerBand() {
+            this.isLoading = true; // 로딩 시작
+            try {
+                const response = await axios.get(
+                    `http://127.0.0.1:8000/stock/chart/bollinger_band/${this.stockCode}/`,
+                    {
+                        params: {
+                            period: this.selectedPeriod,
+                            interval: this.selectedInterval,
+                        },
+                    }
+                );
+                this.bollingerBandData = response.data?.output || []; // 데이터가 없으면 빈 배열로 처리
+            } catch (error) {
+                console.error("이동평균 데이터를 가져오는 데 실패했습니다:", error);
+                this.bollingerBandData = []; // 실패 시 빈 배열로 처리
             } finally {
                 this.isLoading = false; // 로딩 종료
             }

@@ -80,7 +80,7 @@ export default {
       if (this.isLoggedIn) {
         this.logout();
       } else {
-        this.login();
+        this.$router.push("/login");
       }
     },
     login() {

@@ -37,9 +37,6 @@
           },
           yaxis: {
             opposite: true,  // 반대쪽에 위치
-            title: {
-              text: '주가'
-            },
             labels: {
               formatter: function (value) {
                 value.toFixed(0);

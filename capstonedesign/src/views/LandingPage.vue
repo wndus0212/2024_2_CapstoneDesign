@@ -79,7 +79,6 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #74ebd5, #acb6e5);
   font-family: 'Arial', sans-serif;
 }
 
@@ -89,6 +88,7 @@ export default {
   border-radius: 12px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
   text-align: center;
+  width: 500px;
 }
 
 .title {

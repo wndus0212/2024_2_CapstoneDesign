@@ -130,6 +130,23 @@ def moving_avarage(request, stock_id):
         print(f"Error in movingaverage: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
 
+def bollinger_band(request, stock_id):
+    try:
+        start = request.GET.get('start')
+        end = request.GET.get('end')
+        period = request.GET.get('period')
+        interval = request.GET.get('interval')
+        data=get_bollinger_band(stock_id, start, end, period, interval)
+        if data.empty:  # 데이터가 비어 있는 경우
+            return JsonResponse({"error": "No data found for the sectors"}, status=404)
+        
+        # 정상 응답 반환
+        data_json = data.to_dict(orient="records")
+        return JsonResponse({"output": data_json}, safe=False)
+    except Exception as e:
+        print(f"Error in bollingerband: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+    
 def financial_state(request, Id, Option):
     try:
         # 재무 데이터 가져오기
