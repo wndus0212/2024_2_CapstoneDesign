@@ -22,10 +22,6 @@ export default {
       type: Array,
       required: true
     },
-    chartname: {
-      type: String,
-      required: true
-    }
   },
   data() {
     return {
@@ -48,7 +44,7 @@ export default {
           position: 'bottom',
         },
         title: {
-          text: this.chartname,
+          text: "SPDR",
         },
         xaxis: {
           type: 'datetime',
@@ -82,6 +78,7 @@ export default {
               y: entry.Close, // 종가
             })),
           }));
+          console.log("Series Data:", this.series);
         } else {
           console.error("Error: history 데이터가 비어있습니다.", newHistory);
           this.series = [];

@@ -12,5 +12,6 @@ export default {
     .boxTitle{
         font-size: 24px;
         font-weight: 600;
+        margin-bottom: 20px;
     }
 </style>

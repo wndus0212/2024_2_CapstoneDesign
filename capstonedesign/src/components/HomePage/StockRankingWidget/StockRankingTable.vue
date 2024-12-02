@@ -1,7 +1,9 @@
 <template>
     <div style="display: flex;">
       <div class="scrollContainer" :style="{ width: width, height: height }">
-        <div v-if="loading" class="loading">로딩 중...</div>
+        <div v-if="loading" class="loading">
+          <LoadingComponent/>
+        </div>
         <div v-else class="table-wrapper">
           <table class="StockTable">
             <thead>
@@ -15,9 +17,9 @@
             <tbody>
               <tr v-for="stock in stocks" :key="stock.symbols" @click="navigateTo(stock.symbols, stock.names)">
                 <td>{{ stock.names }}</td>
-                <td>{{ stock.prices }}</td>
-                <td>{{ stock.volume }}</td>
-                <td>{{ (stock.market_caps / 100000000).toFixed(2) }}</td>
+                <td>{{ stock.prices.toLocaleString() }}</td>
+                <td>{{ stock.volume.toLocaleString() }}</td>
+                <td>{{ (stock.market_caps / 100000000).toFixed(2).toLocaleString() }}</td>
               </tr>
             </tbody>
           </table>
@@ -28,8 +30,12 @@
   
   <script>
   import axios from 'axios';
-  
+  import LoadingComponent from '@/components/LoadingComponent.vue';
+
   export default {
+    components:{
+      LoadingComponent
+    },
     props: {
       width: {
         type: String,
@@ -118,7 +124,6 @@
     width: 100%;
     border-collapse: collapse;
     font-size: 20px;
-    border: none;
   }
   
   .StockTable th {
@@ -131,18 +136,15 @@
     top: 0;
     z-index: 10;
     background-color: white;
-    border: none;
   }
   
   .StockTable tbody tr {
     height: 100px;
-    border: none;
   }
   
   .StockTable td, .StockTable th {
     padding: 8px;
     text-align: left;
-    border: none;
   }
 </style>
   

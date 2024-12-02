@@ -23,12 +23,12 @@ export default {
 <style scoped>
 .SmallButton {
   border: 1px solid rgb(37, 200, 255);
-  border-radius: 3px;
+  border-radius: 15px;
   background: white;
   margin-top: 8px;
   height: 30px;
   font-size: 20px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
 }

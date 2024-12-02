@@ -4,28 +4,19 @@
       섹터 지수
     </BoxTitle>
 
-    <!-- 주가지수 선택 -->
-    <SelectBox 
-      :options="SelectIndex" 
-      v-model="selectedIndex" 
-      width="200px" 
-      @change="updateChartData" />
-
     <!-- 버튼 컨테이너 -->
-    <div v-if="selectedIndex === 'SPDR'" style="display: flex; gap: 10px; margin-top: 10px;">
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
       <!-- 기간 선택 -->
       <SelectBox 
         :options="SelectPeriod" 
         v-model="selectedPeriod" 
-        width="150px" 
-        @change="updateChartData" />
+        width="150px" />
 
       <!-- 간격 선택 -->
       <SelectBox 
         :options="SelectInterval" 
         v-model="selectedInterval" 
-        width="150px" 
-        @change="updateChartData" />
+        width="150px" />
     </div>
 
     <!-- 로딩 중 표시 -->
@@ -36,8 +27,7 @@
     <!-- 차트 표시 -->
     <div v-if="!loading && chartData" style="display: flex; justify-content: space-between; flex-wrap: wrap; margin-top: 20px;">
       <RealTimeChart 
-        :history="chartData" 
-        :chartname="selectedIndex === 'SPDR' ? 'SPDR' : 'KOSPI'" />
+        :history="chartData" />
     </div>
 
     <div v-if="!loading && !chartData" style="text-align: center; color: gray; margin-top: 20px;">
@@ -68,16 +58,11 @@ export default {
       selectedInterval: '1d', // 기본 선택 간격
       chartData: null, // 차트 데이터
       loading: false, // 로딩 상태
-      SelectIndex: [
-        { label: 'SPDR', value: 'SPDR' },
-        { label: 'KOSPI', value: 'KOSPI' }
-      ],
       SelectPeriod: [
         { label: '1개월', value: '1mo' },
         { label: '6개월', value: '6mo' },
         { label: '1년', value: '1y' },
         { label: '5년', value: '5y' },
-        { label: '전체', value: 'max' }
       ],
       SelectInterval: [
         { label: '일봉', value: '1d' },
@@ -87,17 +72,6 @@ export default {
     };
   },
   watch: {
-    selectedIndex(newIndex) {
-      // KOSPI 선택 시 period와 interval을 자동 설정
-      if (newIndex === 'KOSPI') {
-        this.selectedPeriod = '5d'; // 기본 기간 설정
-        this.selectedInterval = '1h'; // 기본 간격 설정
-      } else {
-        this.selectedPeriod = '1mo'; // 기본 기간 설정
-        this.selectedInterval = '1d'; // 기본 간격 설정
-      }
-      this.updateChartData();
-    },
     selectedPeriod() {
       this.updateChartData();
     },
@@ -109,33 +83,26 @@ export default {
     this.updateChartData(); // 초기 데이터 로드
   },
   methods: {
-    updateChartData() {
-      if (!this.selectedIndex) {
-        console.warn('Invalid selectedIndex:', this.selectedIndex);
-        this.chartData = null;
-        return;
-      }
-
+    async updateChartData() {
       this.loading = true; // 로딩 상태 활성화
       this.chartData = null; // 이전 데이터 초기화
 
       const params = {
-        period: this.selectedIndex === 'KOSPI' ? undefined : this.selectedPeriod,
-        interval: this.selectedIndex === 'KOSPI' ? undefined : this.selectedInterval
+        period: this.selectedPeriod,
+        interval: this.selectedInterval,
       };
 
-      axios
-        .get(`https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/index/sector/${this.selectedIndex}/`, { params })
-        .then((response) => {
-          this.chartData = response.data['output'] || null;
-        })
-        .catch((error) => {
-          console.error('차트 데이터를 가져오는 데 실패했습니다:', error);
-          this.chartData = null;
-        })
-        .finally(() => {
-          this.loading = false; // 로딩 상태 비활성화
-        });
+
+      try {
+        const response = await axios.get(`http://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/index/sector/SPDR/`, { params });
+        this.chartData = response.data['output'] || null;
+      } catch (error) {
+        console.error('차트 데이터를 가져오는 데 실패했습니다:', error);
+        this.chartData = null;
+      } finally {
+        this.loading = false; // 로딩 상태 비활성화
+      }
+
     }
   }
 };

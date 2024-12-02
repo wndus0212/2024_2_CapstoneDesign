@@ -1,6 +1,12 @@
 # stockapp/views.py
 from django.http import JsonResponse
 from .utils import *
+from .models import *
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import now
+import json
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
 def stock_data(request):
     symbol = "005930"  # 삼성전자 종목 코드
@@ -62,14 +68,14 @@ def index(request, option, indexname):
         data_json = data.to_dict(orient="records")
         return JsonResponse({"output": data_json}, safe=False)
     except Exception as e:
-        print(f"Error in sector_weight: {e}")
+        print(f"Error in index: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
     
 
-def sector_weight(request, period):
+def stock_diff(request, stock_id):
     try:
         # 섹터 데이터 가져오기
-        data = get_sector_weight(period)
+        data = get_stock_diff(stock_id)
         if data.empty:  # 데이터가 비어 있는 경우
             return JsonResponse({"error": "No data found for the sectors"}, status=404)
         
@@ -77,7 +83,68 @@ def sector_weight(request, period):
         data_json = data.to_dict(orient="records")
         return JsonResponse({"output": data_json}, safe=False)
     except Exception as e:
-        print(f"Error in sector_weight: {e}")
+        print(f"Error in diff: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+    
+def sector_diff(request):
+    try:
+        # 섹터 데이터 가져오기
+        data = get_sector_diff(request)
+        if data.empty:  # 데이터가 비어 있는 경우
+            return JsonResponse({"error": "No data found for the sectors"}, status=404)
+        
+        # 정상 응답 반환
+        data_json = data.to_dict(orient="records")
+        return JsonResponse({"output": data_json}, safe=False)
+    except Exception as e:
+        print(f"Error in diff: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+
+def sector_stock_list(request, sector):
+    try:
+        data=get_sector_stock_list(sector)
+        if data.empty:  # 데이터가 비어 있는 경우
+            return JsonResponse({"error": "No data found for the sectors"}, status=404)
+        
+        # 정상 응답 반환
+        data_json = data.to_dict(orient="records")
+        return JsonResponse({"output": data_json}, safe=False)
+    except Exception as e:
+        print(f"Error in diff: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+
+def moving_avarage(request, stock_id):
+    try:
+        start = request.GET.get('start')
+        end = request.GET.get('end')
+        period = request.GET.get('period')
+        interval = request.GET.get('interval')
+        data=get_moving_average(stock_id, start, end, period, interval)
+        if data.empty:  # 데이터가 비어 있는 경우
+            return JsonResponse({"error": "No data found for the sectors"}, status=404)
+        
+        # 정상 응답 반환
+        data_json = data.to_dict(orient="records")
+        return JsonResponse({"output": data_json}, safe=False)
+    except Exception as e:
+        print(f"Error in movingaverage: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+
+def bollinger_band(request, stock_id):
+    try:
+        start = request.GET.get('start')
+        end = request.GET.get('end')
+        period = request.GET.get('period')
+        interval = request.GET.get('interval')
+        data=get_bollinger_band(stock_id, start, end, period, interval)
+        if data.empty:  # 데이터가 비어 있는 경우
+            return JsonResponse({"error": "No data found for the sectors"}, status=404)
+        
+        # 정상 응답 반환
+        data_json = data.to_dict(orient="records")
+        return JsonResponse({"output": data_json}, safe=False)
+    except Exception as e:
+        print(f"Error in bollingerband: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
     
 def financial_state(request, Id, Option):
@@ -116,3 +183,85 @@ def search_term(request):
     except Exception as e:
         print(f"Error in financial_state: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+    
+def kor_bonds(name, start, end, request):
+    try:
+        data=get_kor_bond(name, start, end)
+        if data is None or data.empty:  
+            return JsonResponse({"error": "No data found for the financial statement"}, status=404)
+        
+        # NaN 값을 처리하거나 제거할 필요가 있을 경우 (예시: NaN을 0으로 대체)
+        data = data.fillna(0)  # NaN을 0으로 대체 (원하는 방법으로 처리 가능)
+        
+        # DataFrame을 JSON으로 변환
+        result = data.to_dict(orient="records")  # 각 행을 딕셔너리 형태로 변환
+        
+        return JsonResponse({"output": result}, safe=False)  # JSON으로 반환
+    except Exception as e:
+        print(f"Error in financial_state: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+
+def us_bonds(name, period, request):
+    try:
+        data=get_us_bond(name, period)
+        if data is None or data.empty:  
+            return JsonResponse({"error": "No data found for the financial statement"}, status=404)
+        
+        # NaN 값을 처리하거나 제거할 필요가 있을 경우 (예시: NaN을 0으로 대체)
+        data = data.fillna(0)  # NaN을 0으로 대체 (원하는 방법으로 처리 가능)
+        
+        # DataFrame을 JSON으로 변환
+        result = data.to_dict(orient="records")  # 각 행을 딕셔너리 형태로 변환
+        
+        return JsonResponse({"output": result}, safe=False)  # JSON으로 반환
+    except Exception as e:
+        print(f"Error in financial_state: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)
+    
+def create_test_data(request):
+    # 테스트 데이터 생성
+    test_data = Users.objects.create(
+        user_id=1234, 
+        google_id = "test",
+        email ="test",
+        name = "test",)
+    return JsonResponse({"message": "Test data created successfully!"})
+
+@csrf_exempt
+def save_user(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            credential = data.get("credential")
+            if not credential:
+                return JsonResponse({"error": "Credential is missing"}, status=400)
+
+            # ID 토큰 검증
+            idinfo = id_token.verify_oauth2_token(
+                credential,
+                requests.Request(),
+                "411762794275-vpjchb1sc9dgpu2ar25tkbb60u82o52o.apps.googleusercontent.com",
+            )
+
+            # 사용자 정보 추출
+            google_id = idinfo["sub"]
+            email = idinfo["email"]
+            name = idinfo.get("name", "")
+            profile_picture = idinfo.get("picture", "")
+
+            user, created = Users.objects.update_or_create(
+                google_id=google_id,
+                defaults={
+                    "email": email,
+                    "name": name,
+                    "profile_picture": profile_picture,
+                    "created_at": now(),
+                },
+            )
+
+            return JsonResponse({"message": "User saved successfully"}, status=200)
+        except ValueError as e:
+            return JsonResponse({"error": "Invalid token", "details": str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"error": "Invalid request method"}, status=400)

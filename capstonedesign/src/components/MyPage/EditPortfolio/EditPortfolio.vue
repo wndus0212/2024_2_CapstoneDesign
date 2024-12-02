@@ -11,7 +11,7 @@
           </div>
 
           <div style="width: 100%; display: flex; justify-content: center; margin-top: 20px;">
-            <AddAssets/>
+            <StockAddWidget/>
           </div>
 
           <div style="display: flex; gap: 20px; margin-left: 50px; margin-top: 50px;">
@@ -29,15 +29,16 @@
   import PortfolioPieChart from '../PortfolioPieChart.vue';
   import SmallButton from '@/components/SmallButton.vue';
   import myPortfolioChart from './myPortfolioTable.vue';
-  import AddAssets from './AddAssets.vue';
-  
+  //import AddAssets from './AddAssets.vue';
+  import StockAddWidget from './StockAddWidget.vue';
   export default {
     components:{
       BoxTitle,
       PortfolioPieChart,
       SmallButton,
       myPortfolioChart,
-      AddAssets
+      StockAddWidget
+      //AddAssets
     },
     methods: {
       closeModal() {
@@ -68,6 +69,8 @@
     z-index: 1001;
     display: flex;
     justify-content: center;
+    height: 90%;
+    overflow: scroll;
   }
   </style>
   

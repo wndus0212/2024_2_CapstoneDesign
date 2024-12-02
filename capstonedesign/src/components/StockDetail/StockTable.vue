@@ -15,9 +15,9 @@
           <tbody>
             <tr v-for="stock in stocks" :key="stock.symbols" @click="navigateTo(stock.symbols, stock.names)">
               <td>{{ stock.names }}</td>
-              <td>{{ stock.prices }}</td>
-              <td>{{ stock.volume }}</td>
-              <td>{{ (stock.market_caps / 100000000).toFixed(2) }}</td>
+              <td>{{ formatPrice(stock.prices) }}</td>
+              <td>{{ stock.volume.toLocaleString() }}</td>
+              <td>{{ formatPrice((stock.market_caps / 100000000).toFixed(2)) }}</td>
             </tr>
           </tbody>
         </table>
@@ -68,29 +68,29 @@ export default {
   methods: {
     fetchStockRank() {
       this.loading = true; // 로딩 시작
-      let market='';
-      let sort='';
-      if(this.selectedOption1=='KOR'){
-        market="list/"
-      }else{
-        market="list_global/"
+      let market = '';
+      let sort = '';
+      
+      if(this.selectedOption1 === 'KOR'){
+        market = "list/";
+      } else {
+        market = "list_global/";
       }
 
-      if(this.selectedOption2=='Stock'){
-        market=market+this.selectedOption3
-        console.log(market);
-      }else{
-        if(this.selectedOption1=='KOR'){
-          market=market+"KOR_ETF";
-        }else{
-          market=market+"GLB_ETF";
+      if(this.selectedOption2 === 'Stock'){
+        market = market + this.selectedOption3;
+      } else {
+        if(this.selectedOption1 === 'KOR'){
+          market = market + "KOR_ETF";
+        } else {
+          market = market + "GLB_ETF";
         }
       }
 
-      sort=this.selectedOption4
-    
-      const url = `https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/${market}/${sort}/`;
-      console.log(url);
+
+      sort = this.selectedOption4;
+      
+      const url = `http://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/${market}/${sort}/`;
       axios
         .get(url)
         .then(response => {
@@ -104,17 +104,31 @@ export default {
           this.loading = false; // 로딩 종료
         });
     },
+    
+    // 가격 단위 표시 함수
+    formatPrice(value) {
+      if (this.selectedOption1 === 'KOR') {
+        return value.toLocaleString() + ' 원'; // 한국 원화
+      } else {
+        return value.toLocaleString() + ' $'; // 글로벌 달러
+      }
+    },
+    
     sortStocksByMarketCap() {
       this.stocks.sort((a, b) => parseFloat(b.Marcap) - parseFloat(a.Marcap));
     },
+    
     navigateTo(stockCode, stockName) {
+      // selectedOption1에 따른 unit 값을 설정
+      const unit = this.selectedOption1 === 'KOR' ? '원' : '$';
+      console.log(unit)
       this.$router.push({
         path: `/detail/${stockCode}`,
         query: {
           name: stockName,
+          unit: unit 
         }
       });
-      console.log("Stock Name:", stockName);
     }
   },
   mounted() {
@@ -133,7 +147,6 @@ export default {
   height: 100%;
   display: flex;
   background-color: white;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .table-wrapper {
@@ -169,17 +182,46 @@ export default {
   top: 0;
   z-index: 10;
   background-color: white;
-  border: none;
 }
 
 .StockTable tbody tr {
   height: 100px;
-  border: none;
 }
 
 .StockTable td, .StockTable th {
   padding: 8px;
   text-align: left;
   border: none;
+
 }
+
+.StockTable tbody tr {
+  height: 100px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.StockTable tbody tr:hover {
+  background-color: #f0f8ff; /* 호버 시 배경색 변경 */
+  transform: translateY(-2px); /* 살짝 위로 이동하는 효과 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 추가 */
+}
+
+.table-wrapper::-webkit-scrollbar {
+  width: 12px; /* 세로 스크롤바의 너비 */
+  height: 12px; /* 가로 스크롤바의 높이 */
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 스크롤 트랙(배경) 색상 */
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #888; /* 스크롤 핸들 색상 */
+  border-radius: 4px; /* 핸들 모서리 둥글게 */
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 핸들에 마우스 오버 시 색상 */
+}
+
 </style>

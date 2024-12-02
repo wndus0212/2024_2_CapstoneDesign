@@ -9,14 +9,20 @@ import json
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 import os
+from datetime import datetime, timedelta
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-etf_file_path = os.path.join(BASE_DIR, 'data', 'Top_100_ETF_list.csv')
-sp500_file_path=os.path.join(BASE_DIR, 'data', 'sp500_sector.csv')
+etf_file_path = os.path.join(BASE_DIR, 'data', 'Top_100_ETF.csv')
+sp500_file_path=os.path.join(BASE_DIR, 'data', 'sp500.csv')
+kosdaq = os.path.join(BASE_DIR, 'data\stock_list', 'kosdaq_150_with_industries.csv')
+kospi = os.path.join(BASE_DIR, 'data\stock_list', 'kospi_200_with_industries.csv')
+sp500 = os.path.join(BASE_DIR, 'data\stock_list', 'sp500_with_industries.csv')
 search_term_file_path = os.path.join(BASE_DIR, 'data', 'search_term.csv')
+sectors_list = os.path.join(BASE_DIR, 'data', 'sectors_with_korean_names.csv')
 # API 키와 Secret 키 입력
 client_id = "PSekA1zSBGgE4mJCmCgT06UTivilW4ZmLCim"
 client_key = "PfTX7zfZ26lV2OtzRGXYcB1g5/zSiq6FSwtfunbFqkLiM+Y4ljrd6NOiAurW2IvC4q5Xbmtx3FPOnUEfnn91lZ/+o9FL20G90440ALEZ2ozKUfw/RbREh8OXwg0G8LvCfm22OaIzVJBJeMi8kZNBhs+tw4CipqsuV+v6EWgi1Lv6gyDyUEE="
+koreabank_key='E5WOQZL3DAUIKF1YS69Q'
 
 # 토큰 발급
 def get_access_token():
@@ -98,40 +104,6 @@ def get_market_cap(symbol):
     except Exception as e:
         print(f"Error fetching market cap for {symbol}: {e}")
         return None
-    
-def get_marcap_diff(symbol, period):
-    try:
-        stock_data = yf.Ticker(symbol)
-        stock_info = stock_data.info
-        price = stock_info.get('currentPrice', None)
-        market_cap = stock_info.get('marketCap', None)
-        shares_outstanding = stock_info.get('sharesOutstanding', None)
-
-        # 과거 주가 데이터 가져오기
-        history = stock_data.history(period='ytd')  # 1년 데이터
-        if history.empty or not shares_outstanding:
-            return price, market_cap, None, None, None
-
-        # 하루 전, 1달 전, 1년 전의 종가 가져오기
-        if period=='1d':
-            past_close = history['Close'].iloc[-2] if len(history) > 1 else None
-        elif period=='1mo':
-            past_close = history['Close'].shift(20).iloc[-1] if len(history) > 20 else None
-        else:
-            past_close = history['Close'].iloc[0] if len(history) > 0 else None
-
-        # 시가총액 변화량 계산
-        change = (market_cap - (past_close * shares_outstanding)) if past_close else None
-        
-
-        # 퍼센트로 변화량 계산
-        change_percent = (change / (past_close * shares_outstanding)) * 100 if change else None
-    
-        return price, market_cap, change_percent
-    except Exception as e:
-        print(f"Error fetching data for {symbol}: {e}")
-        return None, None, None
-    
 
 def get_stock_list(market, sort):
     try:
@@ -328,35 +300,20 @@ def get_stock_history(Id, start=None, end=None, period=0, interval='1d'):
 
 def get_index(option, indexname, start, end, period, interval):
     if option == 'sector':
-        if indexname == 'SPDR':
-            sectors = [
-                {'ticker': 'XLY', 'name': 'Consumer Discretionary'},
-                {'ticker': 'XLC', 'name': 'Communication Services'},
-                {'ticker': 'XLF', 'name': 'Financials'},
-                {'ticker': 'XLI', 'name': 'Industrials'},
-                {'ticker': 'XLE', 'name': 'Energy'},
-                {'ticker': 'XLB', 'name': 'Materials'},
-                {'ticker': 'XLV', 'name': 'Health Care'},
-                {'ticker': 'XLP', 'name': 'Consumer Staples'},
-                {'ticker': 'XLK', 'name': 'Technology'},
-                {'ticker': 'XLRE', 'name': 'Real Estate'},
-                {'ticker': 'XLU', 'name': 'Utilities'}
-            ]
-        else:
-            sectors = [
-                {'ticker': 'KOSPI200SECTOR-0.KS', 'name': 'KOSPI 200 Communication Services'},
-                {'ticker': 'KOSPI200SECTOR-1.KS', 'name': 'KOSPI 200 Constructions'},
-                {'ticker': 'KOSPI200SECTOR-2.KS', 'name': 'KOSPI 200 Heavy Industries'},
-                {'ticker': 'KOSPI200SECTOR-3.KS', 'name': 'KOSPI 200 Steels & Materials'},
-                {'ticker': 'KOSPI200SECTOR-4.KS', 'name': 'KOSPI 200 Energy & Chemicals'},
-                {'ticker': 'KOSPI200SECTOR-5.KS', 'name': 'KOSPI 200 IT'},
-                {'ticker': 'KOSPI200SECTOR-6.KS', 'name': 'KOSPI 200 Financials'},
-                {'ticker': 'KOSPI200SECTOR-7.KS', 'name': 'KOSPI 200 Consumer Staples'},
-                {'ticker': 'KOSPI200SECTOR-8.KS', 'name': 'KOSPI 200 Consumer Discretionary'},
-                {'ticker': 'KOSPI200SECTOR-9.KS', 'name': 'KOSPI 200 Industrials'},
-                {'ticker': 'KOSPI200SECTOR-10.KS', 'name': 'KOSPI 200 Health Care'}
-            ]
-
+        sectors = [
+            {'ticker': 'XLY', 'name': 'Consumer Discretionary'},
+            {'ticker': 'XLC', 'name': 'Communication Services'},
+            {'ticker': 'XLF', 'name': 'Financials'},
+            {'ticker': 'XLI', 'name': 'Industrials'},
+            {'ticker': 'XLE', 'name': 'Energy'},
+            {'ticker': 'XLB', 'name': 'Materials'},
+            {'ticker': 'XLV', 'name': 'Health Care'},
+            {'ticker': 'XLP', 'name': 'Consumer Staples'},
+            {'ticker': 'XLK', 'name': 'Technology'},
+            {'ticker': 'XLRE', 'name': 'Real Estate'},
+            {'ticker': 'XLU', 'name': 'Utilities'}
+        ]  
+        
         sector_data = []
         # 각 섹터별 데이터 가져오기
         for sector in sectors:
@@ -383,49 +340,135 @@ def get_index(option, indexname, start, end, period, interval):
         # 데이터프레임으로 변환
         if sector_data:
             df = pd.DataFrame(sector_data)
-            print(df)
             return df
     
         else:
             return None  # 데이터를 못 구한 경우 None 반환
     else:
         df = get_stock_history(indexname, start, end, period, interval)
+        
         if df is not None and not df.empty:
             return df
         else:
             print(f"No data found for {indexname}")
             return None  # 데이터가 없으면 None 반환
 
-def get_sector_weight():
-    sectors=['technology',
-            'financial-services',
-            'consumer-cyclical',
-            'healthcare',
-            'communication-services',
-            'industrials',
-            'consumer-defensive',
-            'energy',
-            'real-estate',
-            'basic-materials',
-            'utilities']
+def get_stock_diff(symbol):
+    try:
+        stock_data = yf.Ticker(symbol)
+        stock_info = stock_data.info
+        price = stock_info.get('currentPrice', None)
+        name=stock_info.get('name', None)
+        # 과거 주가 데이터 가져오기
+        history = stock_data.history(period='ytd')  # 1년 데이터
+        if stock_info['quoteType']=='Stock':
+            price=stock_info['currentPrice']
+        else:
+            price=history['Close'].iloc[-1] if len(history)>1 else None
 
-    market_weight=[]
+        d_close = history['Close'].iloc[-2] if len(history) > 1 else None
+        m_close = history['Close'].shift(20).iloc[-1] if len(history) > 20 else None
+        y_close = history['Close'].iloc[0] if len(history) > 0 else None
 
-    for sector in sectors:
-        market_weight.append(yf.Sector(sector).overview['market_weight'])
+        # 시가총액 변화량 계산
+        d_change = price - d_close  if d_close else 0
+        m_change = price - m_close if m_close else 0
+        y_change = price - y_close if y_close else 0
 
-    data = {
-        market_weight:'sectors',
-        market_weight:'market_weight'
-    }
+        # 퍼센트로 변화량 계산
+        d_change_percent = (d_change / (d_close)) * 100 if d_change else 0
+        m_change_percent = (m_change / (m_close)) * 100 if m_change else 0
+        y_change_percent = (y_change / (y_close )) * 100 if y_change else 0
 
-    df = pd.DataFrame(data)
+        data = {
+            'Symbol': [symbol],
+            'Name': [name],
+            'Current Price': [price],
+            '1 Day Change': [d_change],
+            '1 Day Change per': [d_change_percent],
+            '1 Month Change': [m_change],
+            '1 Month Change per': [m_change_percent],
+            '1 Year Change': [y_change],
+            '1 Year Change per': [y_change_percent]
+        }
 
-    # 결과를 JSON 형태로 변환
-    stocks_json = df.to_json(orient='records', force_ascii=False)
+        df = pd.DataFrame(data)
+        return df
+    except Exception as e:
+        print(f"Error fetching data for {symbol}: {e}")
+        return None, None, None
+    
+def get_sector_diff(request):
+    sectors = pd.read_csv(sectors_list)  # 섹터 목록 CSV 파일 읽기
+    sector_changes = []
 
-    # JsonResponse로 반환
-    return JsonResponse(json.loads(stocks_json), safe=False)
+    for _, sector in sectors.iterrows():  # 각 섹터에 대해 반복
+        symbol = sector['ticker']
+        name_ko = sector['name_ko']
+        name = sector['name']
+
+        # get_stock_diff 함수 호출하여 변화량 데이터를 가져오기
+        stock_diff_df = get_stock_diff(symbol)
+
+        if stock_diff_df is not None:  # 데이터가 있는 경우
+            # 이름과 한글 이름을 데이터프레임에 추가
+            stock_diff_df['name'] = name
+            stock_diff_df['name_ko'] = name_ko
+            
+            sector_changes.append(stock_diff_df)
+
+    # 모든 섹터에 대해 가져온 데이터프레임을 하나로 결합
+    if sector_changes:
+        combined_df = pd.concat(sector_changes, ignore_index=True)
+        
+        # 하루 변화량 기준으로 정렬
+        combined_df = combined_df.sort_values(by='1 Day Change per', ascending=False)
+
+        return combined_df
+    else:
+        return None
+
+def get_sector_stock_list(sector):
+    # KOSPI 데이터 읽기
+    kospi_list = pd.read_csv(kospi, dtype={'Symbol': str})
+    kospi_list['Symbol'] +='.KS'
+    kospi_sector_stocks = kospi_list[kospi_list['Sector'] == sector].head(5)
+    kospi_sector_stocks['Market'] = 'KOSPI'  # KOSPI 시장 추가
+
+    # KOSDAQ 데이터 읽기
+    kosdaq_list = pd.read_csv(kosdaq, dtype={'Symbol': str})
+    kosdaq_list['Symbol'] +='.KQ'
+    kosdaq_sector_stocks = kosdaq_list[kosdaq_list['Sector'] == sector].head(5)
+    kosdaq_sector_stocks['Market'] = 'KOSDAQ'  # KOSDAQ 시장 추가
+
+    # S&P500 데이터 읽기
+    sp500_list = pd.read_csv(sp500, dtype={'Symbol': str})
+    sp500_sector_stocks = sp500_list[sp500_list['Sector'] == sector].head(5)
+    sp500_sector_stocks['Market'] = 'S&P500'  # S&P500 시장 추가
+
+    # 세 데이터프레임 합치기
+    combined_df = pd.concat([kospi_sector_stocks, kosdaq_sector_stocks, sp500_sector_stocks], ignore_index=True)
+
+    stock_data = []
+    for _, stock in combined_df.iterrows():
+        ticker = yf.Ticker(stock['Symbol'])
+        try:
+            # 시가총액 추출
+            market_cap = ticker.info.get('marketCap', 0)
+
+            stock_data.append({
+                'Name': stock['Name'],
+                'Symbol': stock['Symbol'],
+                'Market': stock['Market'],
+                'MarketCap': market_cap,
+            })
+        except Exception as e:
+            print(f"Error fetching data for {stock['Symbol']}: {e}")
+    
+    # 데이터프레임 생성
+    final_df = pd.DataFrame(stock_data)
+
+    return final_df
 
 
 def get_financial_statement(Id, Option):
@@ -443,6 +486,59 @@ def get_financial_statement(Id, Option):
     
     return financial_state[:-1]
 
+def get_moving_average(stock_id, start, end, period, interval):
+    df = get_stock_history(stock_id, start, end, period, interval)
+    df['MA_3'] = df['Close'].rolling(window=3).mean()
+    df['MA_5'] = df['Close'].rolling(window=5).mean()
+    ma_df = df[['MA_3', 'MA_5']].dropna()
+    return ma_df
+
+def get_bollinger_band(stock_id, start, end, period, interval):
+    data = yf.Ticker(stock_id)
+    df =get_stock_history(stock_id, start, end, period, interval)
+
+    # 'Close' 값으로 볼린저 밴드 계산
+    window = 20  # 이동평균 기간
+    df['Moving Average'] = df['Close'].rolling(window=window).mean()
+    df['Std Dev'] = df['Close'].rolling(window=window).std()
+    df['Upper Band'] = df['Moving Average'] + (df['Std Dev'] * 2)
+    df['Lower Band'] = df['Moving Average'] - (df['Std Dev'] * 2)
+    df = df.dropna()
+    return df
+
 def get_search_term():
     stocks = pd.read_csv(search_term_file_path)
     return stocks
+
+def get_kor_bond(name, start, end):
+    koreabank_key='E5WOQZL3DAUIKF1YS69Q'
+    url = 'https://ecos.bok.or.kr/api/StatisticSearch/' + koreabank_key \
+            + '/json/kr/1/100/817Y002/D/'+start+'/'+end+'/010210000'
+    response = requests.get(url)
+    result = response.json()
+    list_total_count=(int)(result['StatisticSearch']['list_total_count'])
+    list_count=(int)(list_total_count/100) + 1
+
+
+    rows=[]
+    for i in range(0,list_count):
+        starttmp = str(i * 100 + 1)
+        endtmp = str((i + 1) * 100)
+        
+        url = 'https://ecos.bok.or.kr/api/StatisticSearch/' + koreabank_key + '/json/kr/' \
+                + starttmp + '/' + endtmp + '/817Y002/D/20060101/20230315/010210000'
+        response = requests.get(url)
+        result = response.json()
+        rows = rows + result['StatisticSearch']['row']
+        
+    df10y=pd.DataFrame(rows)
+
+    df10y=df10y[['ITEM_NAME1','TIME','DATA_VALUE']]
+    df10y['date']=pd.to_datetime((df10y['TIME'].str[:4] + '-' + df10y['TIME'].str[4:6] + '-' + df10y['TIME'].str[6:8]))
+    df10y=df10y.astype({'DATA_VALUE':'float'})
+    df10y=df10y.drop_duplicates()
+    print(df10y)
+
+def get_us_bond(name, periond):
+    df = get_stock_history(name, period=periond )
+    return df
