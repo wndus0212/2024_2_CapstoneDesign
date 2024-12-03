@@ -90,7 +90,7 @@ export default {
 
       sort = this.selectedOption4;
       
-      const url = `http://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/${market}/${sort}/`;
+      const url = `http://127.0.0.1:8000/stock/${market}/${sort}/`;
       axios
         .get(url)
         .then(response => {
