@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+from corsheaders.defaults import default_headers
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -38,10 +38,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',    
+    'rest_framework',
+    'rest_framework_simplejwt',    
     'stockapp',
     'corsheaders'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+ACTIVATE_JWT = True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -56,6 +65,9 @@ MIDDLEWARE = [
     
 ]
 
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'ALLOWALL'
 ROOT_URLCONF = 'capstoneBackend.urls'
 
 TEMPLATES = [
@@ -118,9 +130,9 @@ USE_I18N = True
 
 USE_TZ = True
 
-SECURE_CROSS_ORIGIN_OPENER_POLICY = None
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+# Django settings.py
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+SECURE_CROSS_ORIGIN_EMBEDDER_POLICY = 'require-corp'
 
 STATIC_URL = 'static/'
 
@@ -130,10 +142,15 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
-
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "Authorization",  # 추가
+    "Content-Type",   # 기본적으로 포함되어 있음
+    "type",           # 문제의 원인 헤더 추가
+]
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': 'cache_file',  # 캐시 파일을 저장할 위치 지정
     }
 }
+
