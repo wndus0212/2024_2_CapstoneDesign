@@ -1,13 +1,11 @@
 import pandas as pd
 import backtrader as bt
-import re
+import numpy as np
 from data_loader import load_data_from_db
 from strategies import FixedAllocationStrategy
+from data_extraction import calculate_mdd, calculate_sharpe_ratio
 import csv
 import time
-from data_extraction import calculate_mdd
-
-from data_loader import load_data_from_db
 
 def run_backtest(initial_cash=1000000, allocation=None, start_date=None, end_date=None,
                  portfolio_name="Default Portfolio"):
@@ -23,14 +21,42 @@ def run_backtest(initial_cash=1000000, allocation=None, start_date=None, end_dat
     # 전략 추가
     cerebro.addstrategy(FixedAllocationStrategy, allocation=allocation, portfolio_name=portfolio_name)
 
+    # 포트폴리오 가치 추적
+    class PortfolioValueTracker(bt.Analyzer):
+        def __init__(self):
+            self.values = []
+
+        def next(self):
+            self.values.append(self.strategy.broker.getvalue())
+
+    # 분석기 추가
+    cerebro.addanalyzer(PortfolioValueTracker, _name="portfolio_tracker")
+
     # 백테스트 실행
     print(f"초기 투자 금액: {cerebro.broker.get_cash():,.0f}원")
     strategies = cerebro.run()
     print(f"최종 투자 금액: {cerebro.broker.get_value():,.0f}원")
 
+    # 분석기로부터 포트폴리오 가치 추출
+    portfolio_tracker = strategies[0].analyzers.portfolio_tracker
+    portfolio_values = portfolio_tracker.values
+
+    # MDD 및 Sharpe Ratio 계산
+    mdd = calculate_mdd(portfolio_values)
+    portfolio_returns = np.diff(portfolio_values) / portfolio_values[:-1]
+    sharpe_ratio = calculate_sharpe_ratio(portfolio_returns)
+
+    # 결과 출력
+    print(f"MDD: {mdd:.2%}")
+    print(f"Sharpe Ratio: {sharpe_ratio:.2f}")
+
     # 리밸런싱 로그 반환
     strategy = strategies[0]
-    return strategy.rebalance_log
+    return {
+        "rebalance_log": strategy.rebalance_log,
+        "mdd": mdd,
+        "sharpe_ratio": sharpe_ratio
+    }
 
 
 def run_multiple_backtests(csv_folder, initial_cash, allocation, portfolio_name,

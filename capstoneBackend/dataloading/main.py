@@ -4,7 +4,7 @@ from backtest_runner import run_backtest, run_multiple_backtests
 run_backtest(
     initial_cash=1000000,
     allocation={"AAPL": 0.5, "MSFT": 0.3, "JPM": 0.2},
-    start_date="2020-01-01",
+    start_date="2021-01-01",
     end_date="2022-12-31",
     portfolio_name="Tech & Finance Portfolio"
 )
