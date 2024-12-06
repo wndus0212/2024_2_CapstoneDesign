@@ -54,3 +54,16 @@ class Users(models.Model):
     class Meta:
         managed = False
         db_table = 'Users'
+
+class StockHistory(models.Model):
+    ticker = models.CharField(max_length=20)
+    date = models.DateField()
+    open = models.FloatField()
+    high = models.FloatField()
+    low = models.FloatField()
+    close = models.FloatField()
+    volume = models.IntegerField()
+
+    class Meta:
+        unique_together = ('ticker', 'date')
+        ordering = ['date']
