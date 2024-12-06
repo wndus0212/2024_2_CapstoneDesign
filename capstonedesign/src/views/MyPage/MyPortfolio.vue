@@ -2,9 +2,6 @@
     <div class="innerPageWrapper">
         <Box width="1000px">
             <SelectBox :options="selectPortfolio" v-model="selectedPortfolio"/>
-            <div class="investmentPropensity">
-                위험 중립형
-            </div>
             <div style="display: flex; gap: 12px;">
                 <div class="totalAmount">
                     10,000,000
