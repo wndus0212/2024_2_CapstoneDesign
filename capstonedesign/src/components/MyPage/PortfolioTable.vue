@@ -22,10 +22,11 @@ export default {};
 <style scoped>
 .portfolioScrollContainer {
     padding: 20px;
-    border: 1px solid black;
+
+    border-radius: 15px;
     min-width: 500px;
     width: 850px;
-    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
     height: 300px;
     display: flex;  
 }

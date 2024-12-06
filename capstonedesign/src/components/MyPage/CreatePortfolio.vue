@@ -1,56 +1,82 @@
 <template>
-    <div class="questionBlock">
-        <div class="question">
-            새 포트폴리오 이름
+    <div>
+        <div class="questionBlock" v-for="(question, index) in questions" :key="index">
+            <div class="question">
+                {{ question }}
+            </div>
+            <input type="text" class="answer" />
         </div>
-        <input type="text" class="answer">
-    </div>
-    <div class="questionBlock">
-        <div class="question">
-            투자 시 고려하는 수익과 위험 밸런스
-        </div>
-        <input type="text" class="answer">
-    </div>
-    <div class="questionBlock">
-        <div class="question">
-            예상 투자 기간
-        </div>
-        <input type="text" class="answer">
-    </div>
-    <div class="questionBlock">
-        <div class="question">
-            감수 가능한 손실
-        </div>
-        <input type="text" class="answer">
-    </div>
-    <div class="questionBlock">
-        <div class="question">
-            기대 수익
-        </div>
-        <input type="text" class="answer">
-    </div>
 
-    <SmallButton text="저장"></SmallButton>
+        <SmallButton text="생성하기" @click="openModal" />
+        
+        <GPTCreatedPortfolio v-if="isModalOpen" @close="closeModal" />
+    </div>
 </template>
+
 <script>
 import SmallButton from '../SmallButton.vue';
-export default {
-    components:{
-        SmallButton
-    }
-}
-</script>
-<style>
-    .question{
-        font-size: 22px;
-        margin-bottom: 10px;
-    }
+import GPTCreatedPortfolio from './GPTCreatedPortfolio.vue';
 
-    .answer{
-        height: 30px;
-        width: 200px
+export default {
+    components: {
+        SmallButton,
+        GPTCreatedPortfolio
+    },
+    data() {
+        return {
+            questions: [
+                "새 포트폴리오 이름",
+                "투자 시 고려하는 수익과 위험 밸런스",
+                "예상 투자 기간",
+                "감수 가능한 손실",
+                "기대 수익"
+            ],
+            isModalOpen: false // 모달 상태 관리
+        };
+    },
+    methods: {
+        openModal() {
+            this.isModalOpen = true; // 모달 열기
+        },
+        closeModal() {
+            this.isModalOpen = false; // 모달 닫기
+        }
     }
-    .questionBlock{
-        margin-bottom: 20px
-    }
+};
+</script>
+
+<style scoped>
+.question {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: 600;
+}
+
+.answer {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgb(240, 240, 250);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.answer:focus {
+    border-color: #37a0f4;
+    box-shadow: 0 0 8px rgba(55, 160, 244, 0.4);
+    background-color: #fff;
+    outline: none;
+}
+
+.answer:hover {
+    border-color: #bbb;
+}
+
+.questionBlock {
+    margin-bottom: 20px;
+}
 </style>
