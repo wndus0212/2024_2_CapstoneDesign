@@ -35,13 +35,18 @@ export default {
 </script>
 
 <style scoped>
+.select-box{
+    
+    margin-right:10px;
+}
+
 .select-box select {
     width: 100%;
     padding: 8px;
     font-size: 16px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    background-color: #fff;
+    border-radius: 10px;
+    border: none;
+    background-color: rgb(240, 240, 250);
     margin-bottom: 20px;
 }
 </style>

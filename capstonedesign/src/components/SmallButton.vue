@@ -1,7 +1,7 @@
 <template>
-  <button :class="['SmallButton', { 'active': active }]">
+  <button :class="['SmallButton', { 'active': active }]" @click="$emit('click')">
     {{ text }}
-  </button>  
+  </button>
 </template>
 
 <script>
@@ -17,30 +17,42 @@ export default {
       default: false
     }
   }
-}
+};
 </script>
 
 <style scoped>
 .SmallButton {
-  border: 1px solid rgb(37, 200, 255);
-  border-radius: 3px;
-  background: white;
-  margin-top: 8px;
-  height: 30px;
-  font-size: 20px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  display: inline-block;
+  border: none;
+  border-radius: 12px; /* 둥근 모서리 */
+  background-color: #6dbdff;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  transition: all 0.3s ease; /* 부드러운 애니메이션 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
+/* 호버 효과 */
 .SmallButton:hover {
-  background-color: rgb(37, 200, 255);
-  color: white;
+  transform: translateY(-2px); /* 위로 살짝 이동 */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* 더 강조된 그림자 */
 }
 
+/* 클릭 효과 */
+.SmallButton:active {
+  transform: translateY(2px); /* 살짝 아래로 눌린 효과 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 클릭 시 그림자 줄임 */
+}
+
+/* 활성 상태 (active) */
 .SmallButton.active {
-  background-color: rgb(37, 200, 255);
   color: white;
-  border-color: rgb(37, 200, 255);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* 강조된 그림자 */
 }
 </style>

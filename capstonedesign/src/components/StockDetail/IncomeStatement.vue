@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="financialbox">
     <apexchart 
       :options="chartOptions" 
       :series="series" 
@@ -8,7 +8,7 @@
     />
     
     <ToggleButton
-      label="손익 계산서"
+      label="손익 계산서 자세히"
       :isVisible="toggle"
       @toggle="toggleIncomeStatement"
     />
@@ -55,17 +55,18 @@ export default {
           width: 500,
           type: "bar",
         },
+        dataLabels: {
+          enabled: false
+        },
         stroke: {
           width: [3, 1],
         },
         yaxis: {
           labels: {
-            formatter: function (val) {
-              return val.toFixed(0);
-            },
-          },
-          title: {
-            text: "Price",
+            formatter: function (value) {
+                value.toFixed(0);
+                return value.toLocaleString(); // 1000 단위마다 쉼표 추가
+              }
           },
         },
         xaxis: {
@@ -188,5 +189,11 @@ export default {
   padding: 8px;
   text-align: left;
   border: none;
+}
+
+.financialbox{
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 10px
 }
 </style>

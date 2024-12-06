@@ -1,35 +1,115 @@
 <template>
-    <containerBox>
-      <BoxTitle>
-        주식 순위
-      </BoxTitle>
-      <ButtonContainer>
-        <SmallButton text="많이 상승한 순위"/>
-        <SmallButton text="많이 하락한 순위"/>
-        <SmallButton text="거래량 많은 순위"/>
-        <SmallButton text="인기 많은 순위"/>
-      </ButtonContainer>
-      <StockRankingTable width="1000px" height="500px"/>
-    </containerBox>
+  <div>
+    <div>
+      <Box width="1400px">
+        <BoxTitle>
+          주식 목록 보기
+        </BoxTitle>
+        <div>
+          <div>
+            분류
+          </div>
+          <ButtonContainer>
+            <SelectBox :options="selectOption1" v-model="selectedOption1" width="200px"/>
+            <SelectBox :options="selectOption2" v-model="selectedOption2" width="200px"/>
+            <SelectBox v-if="selectedOption2 !== 'ETF'" :options="filteredSelectOption3" v-model="selectedOption3" width="200px"/>
+          </ButtonContainer>
+        </div>
+        
+        <ButtonContainer>
+          <div>
+            <div>
+              정렬 기준
+            </div>
+            <SelectBox :options="selectOption4" v-model="selectedOption4" width="200px"/>
+          </div>
+        </ButtonContainer>
+        <StockTable :selectedOption1="selectedOption1"
+          :selectedOption2="selectedOption2"
+          :selectedOption3="selectedOption3"
+          :selectedOption4="selectedOption4">
+        </StockTable>
+      </Box>
+    </div>
+    
+    </div>
 </template>
+
 <script>
-import containerBox from '@/components/Box.vue'
-import BoxTitle from '@/components/BoxTitle.vue';
-import SmallButton from '@/components/SmallButton.vue';
+import SelectBox from '@/components/SelectBox.vue';
 import ButtonContainer from '@/components/ButtonContainer.vue';
-import StockRankingTable from './StockRankingTable.vue';
+import StockTable from '@/components/StockDetail/StockTable.vue';
+import Box from '@/components/Box.vue';
+import BoxTitle from '@/components/BoxTitle.vue';
 
 export default {
-    name:'StockRankingWidget',
-    components:{
-        containerBox,
-        BoxTitle,
-        SmallButton,
-        ButtonContainer,
-        StockRankingTable
+  name: 'DetailPage',
+  components: {
+    ButtonContainer,
+    StockTable,
+    SelectBox,
+    Box,
+    BoxTitle
+  },
+  data() {
+    return {
+      selectOption1: [
+        { label: '국내', value: 'KOR' },
+        { label: '해외', value: 'GLB' }
+      ],
+      selectOption2: [
+        { label: '주식', value: 'Stock' },
+        { label: 'ETF', value: 'ETF' }
+      ],
+      selectOption3: {
+        KOR: [
+          { label: '전체', value: 'KRX' },
+          { label: 'KOSPI', value: 'KOSPI' },
+          { label: 'KOSDAQ', value: 'KOSDAQ' },
+          { label: 'KONEX', value: 'KONEX' }
+        ],
+        GLB: [
+          { label: 'NYSE', value: 'NYSE' },
+          { label: 'NASDAQ', value: 'NASDAQ' },
+          { label: 'S&P500', value: 'SP500' }
+        ]
+      },
+      selectOption4: [
+        { label: '시가총액', value: 'market_caps' },
+        { label: '주가', value: 'prices'},
+        {label: '거래량', value: 'volume'}
+      ],
+      selectedOption1: 'KOR',
+      selectedOption2: 'Stock',
+      selectedOption3: 'KRX', // 이 값은 첫 번째 값에 맞게 초기화
+      selectedOption4: 'market_caps',
+
+      searchData: [],
+    };
+  },
+  computed: {
+    // selectedOption1에 따라 selectOption3를 필터링
+    filteredSelectOption3() {
+      console.log(this.selectOption3[this.selectedOption1])
+      return this.selectOption3[this.selectedOption1] || [];
+      
     }
+  },
+  watch: {
+    // selectedOption1이 변경되면 selectedOption3도 초기화
+    selectedOption1(newValue) {
+      console.log(newValue)
+      console.log(this.selectOption3[newValue][0].value, this.selectOption3[this.selectedOption1]);
+      
+      this.selectedOption3 = this.selectOption3[newValue][0].value;
+    }
+  },
 }
 </script>
-<style>
-    
+
+<style scoped>
+.Container{
+    min-width: 1280px;
+    padding-top: 20px;
+}
 </style>

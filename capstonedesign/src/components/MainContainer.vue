@@ -1,6 +1,9 @@
 <template>
     <div class="mainContainer">
-        <slot></slot>
+        <div>
+            <slot></slot>
+        </div>
+        
     </div>
 </template>
 <script>

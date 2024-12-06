@@ -41,7 +41,7 @@
 <script>
 import axios from 'axios';
 import TopNav from '../components/Top/Top.vue'
-import SearchBar from '@/components/DetailPage/Search.vue';
+import SearchBar from '@/components/Top/Search.vue';
 import SmallButton from '@/components/SmallButton.vue';
 import ButtonContainer from '@/components/ButtonContainer.vue';
 import StockTable from '@/components/StockDetail/StockTable.vue';
@@ -122,7 +122,7 @@ export default {
   methods: {
     fetchStockData() {
       // API 호출
-      axios.get("https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/search_term/").then((response) => {
+      axios.get("http://127.0.0.1:8000/stock/search_term/").then((response) => {
         this.searchData = response.data["output"]; // 전체 데이터를 SearchBar로 전달
         console.log(this.searchData)
       });

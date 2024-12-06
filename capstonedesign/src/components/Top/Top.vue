@@ -1,79 +1,194 @@
 <template>
-    
-    <nav class="TopNav">
-      <ul>
-        <li>
-            <TopNavButton @click="goToHome">
-                <p>홈</p>
-            </TopNavButton>
-        </li>
-        <li>
-            <TopNavButton @click="goToDetail">
-                <p>종목 검색</p>
-            </TopNavButton>
-        </li>
-        <li>
-            <TopNavButton @click="goToMyPage">
-                <p>마이페이지</p>
-            </TopNavButton>
-        </li>
-      </ul>
-    </nav>
-  </template>
+  <nav class="TopNav">
+    <ul>
+      <li>
+        <TopNavButton @click="goToHome">
+          <p>홈</p>
+        </TopNavButton>
+      </li>
+      <li style="display: flex; flex-direction: column; justify-content: center;">
+        <Search :searchData="searchData" />
+      </li>
+      <li>
+        <TopNavButton @click="goToMyPage">
+          <p>마이페이지</p>
+        </TopNavButton>
+      </li>
+    </ul>
+  </nav>
   
-  <script>
-  import TopNavButton from './TopNavButton.vue'
+  <!-- 로그인/로그아웃 버튼 -->
+  <div class="auth-button" @click="toggleLoginStatus">
+    <button class="login-logout-button">{{ isLoggedIn ? "로그아웃" : "로그인" }}</button>
+  </div>
+</template>
 
-  export default {
-    name: 'TopNav',
-    components: {
-        TopNavButton,
+<script>
+import axios from "axios";
+import TopNavButton from "./TopNavButton.vue";
+import Search from "./Search.vue";
+
+export default {
+  name: "TopNav",
+  components: {
+    TopNavButton,
+    Search,
+  },
+  data() {
+    return {
+      searchData: [],
+      isLoggedIn: false,
+    };
+  },
+  mounted() {
+    this.checkLoginStatus(); // 페이지 로드 시 로그인 상태 체크
+    this.fetchStockData(); // 주식 데이터 로드
+  },
+  methods: {
+    // 로그인 상태 확인 함수
+    checkLoginStatus() {
+      const token = localStorage.getItem("token");
+      console.log("token:", token);
+      const headers={
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `${token}`,
+      }
+      if (token) {
+        // 서버에 토큰 유효성 확인 요청 
+        axios.post("http://127.0.0.1:8000/stock/api/token/verify/", {}, {headers})
+        .then((response) => {
+          if (response.data.valid) {
+            console.log('로그인 성공');
+            this.isLoggedIn = true;
+            this.$forceUpdate();
+          } else {
+            this.removeToken();
+            console.log('토큰이 유효하지 않습니다.');
+            this.$forceUpdate();
+          }
+        })
+        .catch((error) => {
+          this.removeToken();
+          console.log("토큰 검증 실패", error.response);  // 에러 응답 출력
+          this.$forceUpdate();
+        });
+
+      } else {
+        this.isLoggedIn = false;
+        console.log('로그인 실패')
+        this.$forceUpdate();
+      }
     },
-    methods:{
-      goToHome() {
-        this.$router.push('/');
-      },
-      goToDetail() {
-        this.$router.push('/Detail');
-      },
-      goToMyPage() {
-        this.$router.push('/Mypage');
-      },
+    
+    // 토큰 삭제 함수
+    removeToken() {
+      localStorage.removeItem("token"); 
+      this.isLoggedIn = false;
+    },
+
+    // 홈으로 이동
+    goToHome() {
+      this.$router.push("/"); 
+    },
+
+    // 마이페이지로 이동 (로그인된 경우에만)
+    goToMyPage() {
+      if (this.isLoggedIn) {
+        this.$router.push("/Mypage");
+      } else {
+        alert("로그인이 필요합니다.");
+        this.$router.push("/login"); // 로그인 페이지로 리디렉션
+      }
+    },
+
+    // 로그인/로그아웃 토글 함수
+    toggleLoginStatus() {
+      if (this.isLoggedIn) {
+        this.logout(); // 로그인 상태일 때 로그아웃
+      } else {
+        this.$router.push("/login"); // 로그인 페이지로 이동
+      }
+    },
+
+    // 로그아웃 처리
+    logout() {
+      this.removeToken(); // 토큰 삭제
+      this.$router.push("/"); // 로그인 페이지로 리디렉션
+    },
+
+    // 주식 데이터 불러오기
+    fetchStockData() {
+      axios.get("http://127.0.0.1:8000/stock/search_term/").then((response) => {
+        this.searchData = response.data["output"];
+      });
+    },
+  },
+  watch: {
+    // 로그인 상태 변경 시 콘솔에 로그 출력
+    isLoggedIn(newValue) {
+      if (newValue) {
+        console.log("로그인 상태");
+      } else {
+        console.log("로그아웃 상태");
+      }
     }
-  };
-  </script>
-  
-  <style scoped>
-  .TopNav {
-    padding: 0px 20px;
-    margin: 0px;
-    display: flex;
-    gap:  20px;
-    height: 100px;
-    position: fixed; 
-    top: 0; 
-    width: 100%; 
-    z-index: 1000; 
-    border-bottom: 1px solid lightgray;
-    background-color: white;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   }
-  .TopNav ul {
-    list-style: none;
-    display: flex;
-    gap: 40px;
-    margin: 0;
-    padding: 0;
-  }
-  .TopNav ul li {
-    display: inline;
-  }
-  .TopNav ul li a {
-    color: white;
-    text-decoration: none;
-  }
-  .TopNav ul li a:hover {
-    text-decoration: underline;
-  }
-  </style>
-  
+};
+</script>
+
+<style scoped>
+.TopNav {
+  padding: 0px 20px;
+  margin: 0px;
+  display: flex;
+  gap: 40px;
+  height: 100px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  border-bottom: 1px solid lightgray;
+  background-color: white;
+  justify-content: center;
+}
+
+.TopNav ul {
+  list-style: none;
+  display: flex;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+}
+
+.TopNav ul li {
+  display: inline;
+}
+
+.auth-button {
+  position: fixed;
+  right: 5%;
+  top: 2%;
+  z-index: 1001;
+}
+
+.login-logout-button {
+  background-color: #6dbdff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.login-logout-button:hover {
+  background-color: #6dbdff;
+  transform: scale(1.05);
+}
+
+.login-logout-button:active {
+  transform: scale(0.98);
+}
+</style>

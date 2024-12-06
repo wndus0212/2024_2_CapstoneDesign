@@ -30,6 +30,6 @@ export default {
     margin: 10px;
     text-align: left;
     background-color: white;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    
 }
 </style>
