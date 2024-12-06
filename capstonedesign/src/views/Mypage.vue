@@ -34,7 +34,7 @@
     methods: {
       createTestData() {
         // Django 서버로 POST 요청을 보냄
-        axios.post('http://127.0.0.1:8000/create-test-data/')
+        axios.post('https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/create-test-data/')
           .then(response => {
             console.log(response.data.message);  // "Test data created successfully!" 출력
             alert('테스트 데이터가 생성되었습니다.');

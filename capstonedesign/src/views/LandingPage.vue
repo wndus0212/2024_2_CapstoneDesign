@@ -47,7 +47,7 @@ export default {
 
 
       // 서버로 사용자 인증 정보를 전송하여 토큰을 받음
-      fetch("http://127.0.0.1:8000/stock/api/users", {
+      fetch("https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

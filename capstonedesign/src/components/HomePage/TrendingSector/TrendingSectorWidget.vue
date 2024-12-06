@@ -75,7 +75,7 @@ export default {
     fetchAllDiffData() {
       this.isLoading = true; // 로딩 시작
       axios
-        .get("http://127.0.0.1:8000/stock/sector_diff/")
+        .get("https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/sector_diff/")
         .then((response) => {
           this.sector_diffs = response.data["output"];
           console.log("sectordiff", this.sector_diffs);
