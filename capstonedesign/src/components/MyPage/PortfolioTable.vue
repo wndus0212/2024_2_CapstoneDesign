@@ -6,7 +6,8 @@
                     <!-- 추가 데이터 -->
                     <tr v-for="i in 5" :key="i">
                         <td class="portfolioName">포트폴리오 {{ i }}</td>
-                        <td class="tendency">위험 중립형</td>
+                        <td>100,000,000</td>
+                        <td>+0.5%</td>
                         <td class="check"><input type="checkbox"></td>
                     </tr>
                 </tbody>
