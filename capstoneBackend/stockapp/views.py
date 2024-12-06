@@ -4,9 +4,25 @@ from .utils import *
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
+from django.conf import settings
 import json
+import jwt  
+import uuid
+from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import status
+from rest_framework_simplejwt.exceptions import TokenError
 from google.oauth2 import id_token
 from google.auth.transport import requests
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from datetime import datetime, timezone
+
+google_api_id="411762794275-vpjchb1sc9dgpu2ar25tkbb60u82o52o.apps.googleusercontent.com"
 
 def stock_data(request):
     symbol = "005930"  # 삼성전자 종목 코드
@@ -240,28 +256,50 @@ def save_user(request):
             idinfo = id_token.verify_oauth2_token(
                 credential,
                 requests.Request(),
-                "411762794275-vpjchb1sc9dgpu2ar25tkbb60u82o52o.apps.googleusercontent.com",
+                "700784575917-c4vrf3c2gf7auollkkonsgrao3sr6191.apps.googleusercontent.com",
             )
-
             # 사용자 정보 추출
             google_id = idinfo["sub"]
             email = idinfo["email"]
             name = idinfo.get("name", "")
             profile_picture = idinfo.get("picture", "")
 
+            # 사용자 데이터베이스 업데이트 또는 생성
             user, created = Users.objects.update_or_create(
                 google_id=google_id,
                 defaults={
                     "email": email,
                     "name": name,
                     "profile_picture": profile_picture,
-                    "created_at": now(),
+                    "created_at": datetime.now(),
                 },
             )
 
-            return JsonResponse({"message": "User saved successfully"}, status=200)
+            # JWT 토큰 생성
+            token = jwt.encode(
+                {"user_id": user.user_id, "exp": datetime.now(timezone.utc) + timedelta(hours=1),"jti": str(uuid.uuid4()), "token_type": "access", }, 
+                settings.SECRET_KEY, 
+                algorithm='HS256'
+            )
+
+            # 토큰을 응답으로 반환
+            return JsonResponse({"token": token}, status=200)
         except ValueError as e:
             return JsonResponse({"error": "Invalid token", "details": str(e)}, status=400)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     return JsonResponse({"error": "Invalid request method"}, status=400)
+
+@api_view(['POST'])
+def verify_token(request):
+    token = request.headers.get('Authorization', '')  # 'Bearer ' 제거
+    if not token:
+        return Response({"detail": "Authorization token is missing"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Access Token 검증
+        decoded = AccessToken(token)
+        return Response({'valid': True, 'decoded': decoded.payload}, status=status.HTTP_200_OK)
+    except TokenError as e:
+        # 토큰이 유효하지 않거나 만료된 경우
+        return Response({'valid': False, 'detail': str(e)}, status=status.HTTP_401_UNAUTHORIZED)

@@ -20,5 +20,6 @@ urlpatterns = [
     path('search_term/', views.search_term, name='search_term'),
 
     path('create_test_data/', views.create_test_data, name='create_test_data'),
-    path('api/users', save_user, name='save_user'),
+    path('api/users', views.save_user, name='save_user'),
+    path('api/token/verify/', views.verify_token, name='verify_token')
 ]
