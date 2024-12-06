@@ -233,15 +233,6 @@ def us_bonds(name, period, request):
     except Exception as e:
         print(f"Error in financial_state: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
-    
-def create_test_data(request):
-    # 테스트 데이터 생성
-    test_data = Users.objects.create(
-        user_id=1234, 
-        google_id = "test",
-        email ="test",
-        name = "test",)
-    return JsonResponse({"message": "Test data created successfully!"})
 
 @csrf_exempt
 def save_user(request):
