@@ -1,27 +1,54 @@
 import pandas as pd
 import backtrader as bt
 import numpy as np
-from data_loader import load_data_from_db
-from strategies import FixedAllocationStrategy
-from data_extraction import calculate_mdd, calculate_sharpe_ratio
-import csv
-import time
+import os
+import sys
+import django
 
-def run_backtest(initial_cash=1000000, allocation=None, start_date=None, end_date=None,
-                 portfolio_name="Default Portfolio"):
+# Django 프로젝트 루트를 PYTHONPATH에 추가
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+sys.path.append(PROJECT_ROOT)
+
+# Django 설정 로드
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "capstoneBackend.settings")
+django.setup()
+
+# 필요한 모델 임포트
+from stockapp.models import Portfolio_Stocks, Backtests
+from dataloading.data_loader import load_data_from_db
+from dataloading.strategies import FixedAllocationStrategy
+from dataloading.data_extraction import calculate_mdd, calculate_sharpe_ratio
+
+
+def get_portfolio_allocation(portfolio_id):
     """
-    단일 백테스트 실행 함수. 데이터베이스를 사용.
+    포트폴리오 ID를 기반으로 할당 데이터를 가져옵니다.
     """
+    allocations = Portfolio_Stocks.objects.filter(portfolio_id=portfolio_id)
+    if not allocations.exists():
+        raise ValueError(f"No allocation data found for portfolio ID {portfolio_id}")
+
+    return {item.stock_symbol: item.allocation for item in allocations}
+
+
+def run_backtest(portfolio_id, start_date, end_date, initial_cash=1000000):
+    """
+    포트폴리오 ID를 기반으로 백테스트를 실행합니다.
+    """
+    # 포트폴리오 할당 데이터 가져오기
+    allocation = get_portfolio_allocation(portfolio_id)
+
+    # Backtrader 설정
     cerebro = bt.Cerebro()
     cerebro.broker.set_cash(initial_cash)
 
-    # 데이터베이스에서 데이터 로드
+    # 데이터 로드
     load_data_from_db(cerebro, allocation, start_date=start_date, end_date=end_date)
 
     # 전략 추가
-    cerebro.addstrategy(FixedAllocationStrategy, allocation=allocation, portfolio_name=portfolio_name)
+    cerebro.addstrategy(FixedAllocationStrategy, allocation=allocation)
 
-    # 포트폴리오 가치 추적
+    # 분석기 추가
     class PortfolioValueTracker(bt.Analyzer):
         def __init__(self):
             self.values = []
@@ -29,33 +56,35 @@ def run_backtest(initial_cash=1000000, allocation=None, start_date=None, end_dat
         def next(self):
             self.values.append(self.strategy.broker.getvalue())
 
-    # 분석기 추가
     cerebro.addanalyzer(PortfolioValueTracker, _name="portfolio_tracker")
 
     # 백테스트 실행
-    print(f"초기 투자 금액: {cerebro.broker.get_cash():,.0f}원")
     strategies = cerebro.run()
-    print(f"최종 투자 금액: {cerebro.broker.get_value():,.0f}원")
 
-    # 분석기로부터 포트폴리오 가치 추출
+    # 결과 처리
     portfolio_tracker = strategies[0].analyzers.portfolio_tracker
     portfolio_values = portfolio_tracker.values
-
-    # MDD 및 Sharpe Ratio 계산
+    total_return = (portfolio_values[-1] - initial_cash) / initial_cash
     mdd = calculate_mdd(portfolio_values)
-    portfolio_returns = np.diff(portfolio_values) / portfolio_values[:-1]
-    sharpe_ratio = calculate_sharpe_ratio(portfolio_returns)
+    sharpe_ratio = calculate_sharpe_ratio(np.diff(portfolio_values) / portfolio_values[:-1])
 
-    # 결과 출력
-    print(f"MDD: {mdd:.2%}")
-    print(f"Sharpe Ratio: {sharpe_ratio:.2f}")
+    # 결과 데이터베이스 저장
+    backtest_entry = Backtests.objects.create(
+        portfolio_id=portfolio_id,
+        start_date=start_date,
+        end_date=end_date,
+        total_return=total_return,
+        max_drawdown=mdd,
+        sharpe_ratio=sharpe_ratio,
+        rebalance_values=str(portfolio_values),  # JSON 직렬화 필요 시 사용
+        initial_amount=initial_cash,
+    )
 
-    # 리밸런싱 로그 반환
-    strategy = strategies[0]
     return {
-        "rebalance_log": strategy.rebalance_log,
-        "mdd": mdd,
-        "sharpe_ratio": sharpe_ratio
+        "portfolio_id": portfolio_id,
+        "total_return": total_return,
+        "max_drawdown": mdd,
+        "sharpe_ratio": sharpe_ratio,
     }
 
 

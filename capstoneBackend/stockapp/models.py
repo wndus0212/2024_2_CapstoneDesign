@@ -16,13 +16,16 @@ class Backtests(models.Model):
     total_return = models.FloatField(blank=True, null=True)
     annualized_return = models.FloatField(blank=True, null=True)
     max_drawdown = models.FloatField(blank=True, null=True)
+    sharpe_ratio = models.FloatField(blank=True, null=True)
+    rebalance_values = models.TextField(blank=True, null=True)
+    initial_amount = models.FloatField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Backtests'
 
 
-class PortfolioStocks(models.Model):
+class Portfolio_Stocks(models.Model):
     portfolio = models.ForeignKey('Portfolios', models.DO_NOTHING)
     stock_symbol = models.TextField()
     allocation = models.FloatField()
