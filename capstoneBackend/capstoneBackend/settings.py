@@ -44,14 +44,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',    
+    'rest_framework.authtoken',
     'stockapp',
+    'portfolio',
     'corsheaders'
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    ]
 }
 
 ACTIVATE_JWT = True

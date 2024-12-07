@@ -8,39 +8,7 @@
 from django.db import models
 
 
-class Backtests(models.Model):
-    backtest_id = models.AutoField(primary_key=True, blank=True)
-    portfolio = models.ForeignKey('Portfolios', models.DO_NOTHING)
-    start_date = models.TextField()
-    end_date = models.TextField()
-    total_return = models.FloatField(blank=True, null=True)
-    annualized_return = models.FloatField(blank=True, null=True)
-    max_drawdown = models.FloatField(blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'Backtests'
-
-
-class PortfolioStocks(models.Model):
-    portfolio = models.ForeignKey('Portfolios', models.DO_NOTHING)
-    stock_symbol = models.TextField()
-    allocation = models.FloatField()
-
-    class Meta:
-        managed = False
-        db_table = 'Portfolio_Stocks'
-
-
-class Portfolios(models.Model):
-    portfolio_id = models.AutoField(primary_key=True, blank=True)
-    user = models.ForeignKey('Users', models.DO_NOTHING)
-    name = models.TextField()
-    created_at = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'Portfolios'
 
 
 class Users(models.Model):
@@ -49,8 +17,8 @@ class Users(models.Model):
     email = models.TextField(unique=True)
     name = models.TextField(blank=True, null=True)
     profile_picture = models.TextField(blank=True, null=True)
-    created_at = models.TextField(blank=True, null=True)
+    created_at = models.DateField(auto_now_add=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Users'
