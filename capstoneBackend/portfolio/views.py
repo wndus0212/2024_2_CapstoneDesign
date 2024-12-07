@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Portfolios
+from .models import *
 from .serializers import PortfolioSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -26,9 +26,16 @@ class PortfolioList(APIView):
             )
 
 class PortfolioStockList(APIView):
-    def get(self, request):
-        portfolios = Portfolios.objects.all()
-        serializer = PortfolioSerializer(portfolios, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, portfolio_id):
+        try:
+            # 특정 portfolio_id에 해당하는 PortfolioStock 가져오기
+            stocks = PortfolioStocks.objects.filter(portfolio_id=portfolio_id)
+            stock_data = [{
+                'symbol': stock.stock_symbol,
+                'allocation': stock.allocation
+            } for stock in stocks]
+            return Response(stock_data, status=status.HTTP_200_OK)
+        except PortfolioStocks.DoesNotExist:
+            return Response({'error': 'Portfolio not found'}, status=status.HTTP_404_NOT_FOUND)
 
 

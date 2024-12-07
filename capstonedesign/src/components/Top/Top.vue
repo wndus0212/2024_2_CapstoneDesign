@@ -52,11 +52,11 @@ export default {
       const headers={
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `${token}`,
+        Authorization: `Bearer ${token}`,
       }
       if (token) {
         // 서버에 토큰 유효성 확인 요청 
-        axios.post("http://127.0.0.1:8000/stock/api/token/verify/", {}, {headers})
+        axios.post("http://127.0.0.1:8000/user/api/token/verify/", {}, {headers})
         .then((response) => {
           if (response.data.valid) {
             console.log('로그인 성공');
@@ -69,11 +69,16 @@ export default {
           }
         })
         .catch((error) => {
+          if (error.response) {
+            console.log("서버 응답 에러", error.response.data); // 서버가 반환한 에러 메시지 출력
+          } else if (error.request) {
+            console.log("요청 에러", error.request); // 요청 자체에 문제가 있을 경우 출력
+          } else {
+            console.log("알 수 없는 에러", error.message); // 기타 에러
+          }
           this.removeToken();
-          console.log("토큰 검증 실패", error.response);  // 에러 응답 출력
           this.$forceUpdate();
         });
-
       } else {
         this.isLoggedIn = false;
         console.log('로그인 실패')

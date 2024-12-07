@@ -6,26 +6,15 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
 from django.conf import settings
 import json
-import jwt  
-import uuid
-from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework import status
-from rest_framework_simplejwt.exceptions import TokenError
-from google.oauth2 import id_token
-from google.auth.transport import requests
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from datetime import datetime, timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import serializers
-
+from rest_framework_simplejwt.tokens import RefreshToken
 
 google_api_id="411762794275-vpjchb1sc9dgpu2ar25tkbb60u82o52o.apps.googleusercontent.com"
 
@@ -239,72 +228,3 @@ def us_bonds(name, period, request):
         print(f"Error in financial_state: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
     
-def create_test_data(request):
-    # 테스트 데이터 생성
-    test_data = Users.objects.create(
-        user_id=1234, 
-        google_id = "test",
-        email ="test",
-        name = "test",)
-    return JsonResponse({"message": "Test data created successfully!"})
-
-@csrf_exempt
-def save_user(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            credential = data.get("credential")
-            if not credential:
-                return JsonResponse({"error": "Credential is missing"}, status=400)
-
-            # ID 토큰 검증
-            idinfo = id_token.verify_oauth2_token(
-                credential,
-                requests.Request(),
-                "700784575917-c4vrf3c2gf7auollkkonsgrao3sr6191.apps.googleusercontent.com",
-            )
-            # 사용자 정보 추출
-            google_id = idinfo["sub"]
-            email = idinfo["email"]
-            name = idinfo.get("name", "")
-            profile_picture = idinfo.get("picture", "")
-
-            # 사용자 데이터베이스 업데이트 또는 생성
-            user, created = Users.objects.update_or_create(
-                google_id=google_id,
-                defaults={
-                    "email": email,
-                    "name": name,
-                    "profile_picture": profile_picture,
-                    "created_at": datetime.now(),
-                },
-            )
-
-            # JWT 토큰 생성
-            token = jwt.encode(
-                {"user_id": user.user_id, "exp": datetime.now(timezone.utc) + timedelta(hours=1),"jti": str(uuid.uuid4()), "token_type": "access", }, 
-                settings.SECRET_KEY, 
-                algorithm='HS256'
-            )
-
-            # 토큰을 응답으로 반환
-            return JsonResponse({"token": token}, status=200)
-        except ValueError as e:
-            return JsonResponse({"error": "Invalid token", "details": str(e)}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-    return JsonResponse({"error": "Invalid request method"}, status=400)
-
-@api_view(['POST'])
-def verify_token(request):
-    token = request.headers.get('Authorization', '')  # 'Bearer ' 제거
-    if not token:
-        return Response({"detail": "Authorization token is missing"}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        # Access Token 검증
-        decoded = AccessToken(token)
-        return Response({'valid': True, 'decoded': decoded.payload}, status=status.HTTP_200_OK)
-    except TokenError as e:
-        # 토큰이 유효하지 않거나 만료된 경우
-        return Response({'valid': False, 'detail': str(e)}, status=status.HTTP_401_UNAUTHORIZED)

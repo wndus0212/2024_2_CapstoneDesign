@@ -1,53 +1,68 @@
 <template>
-    <div>
-      <apexchart 
-        type="donut" 
-        :options="chartOptions" 
-        :series="series" 
-        :width="450"
-        :height="400"
-      />
-    </div>
-  </template>
-  
-  <script>
-  import VueApexCharts from 'vue3-apexcharts';
-  
-  export default {
-    components: {
-      apexchart: VueApexCharts // Typo 수정
+  <div>
+    <apexchart 
+      type="donut" 
+      :options="chartOptions" 
+      :series="series" 
+      :width="450"
+      :height="400"
+    />
+  </div>
+</template>
+
+<script>
+import VueApexCharts from 'vue3-apexcharts';
+
+export default {
+  components: {
+    apexchart: VueApexCharts
+  },
+  props: {
+    stocks: {
+      type: Array,
+      required: true,
     },
-    data() {
-      return {
-        // series를 배열 형태로 수정
-        series: [44, 55, 13, 43, 22], // Donut chart는 단순 배열 형태로 설정
-        chartOptions: { // chartOptions 정의
-          chart: {
-            type: 'donut', // Donut 차트 타입 설정
-            width: 380
-          },
-          labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'], // labels 정의
-          responsive: [{
+  },
+  data() {
+    return {
+      series: [], // 주식 비율 데이터
+      chartOptions: { // Donut 차트 옵션
+        chart: {
+          type: 'donut',
+        },
+        labels: [], // 종목 이름
+        responsive: [
+          {
             breakpoint: 480,
             options: {
               chart: {
-                width: 200
+                width: 200,
               },
               legend: {
-                position: 'bottom'
-              }
-            }
-          }],
-          legend: {
-            position: 'top' // 범례 위치 설정
-          }
-        }
-      };
-    }
-  };
-  </script>
-  
-  <style scoped>
-  /* 필요에 따라 스타일 추가 */
-  </style>
-  
+                position: 'bottom',
+              },
+            },
+          },
+        ],
+        legend: {
+          position: 'top', // 범례 위치
+        },
+      },
+    };
+  },
+  watch: {
+    stocks: {
+      immediate: true,
+      handler(newStocks) {
+        // stocks 데이터를 기반으로 series와 labels를 생성
+        this.series = newStocks.map(stock => stock.allocation); // 주식 수량
+        this.chartOptions.labels = newStocks.map(stock => stock.symbol); // 주식 이름
+      },
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* 필요에 따라 스타일 추가 */
+</style>

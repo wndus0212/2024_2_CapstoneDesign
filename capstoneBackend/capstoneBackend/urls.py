@@ -25,4 +25,5 @@ urlpatterns = [
     path('', RedirectView.as_view(url='/stock/data/')),
     path('api/', include('stockapp.urls')),
     path('portfolio/', include('portfolio.urls')),
+    path('user/', include('userapp.urls')),
 ]

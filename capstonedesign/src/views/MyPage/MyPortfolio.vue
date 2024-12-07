@@ -21,13 +21,12 @@
             </div>
             
             <div style="display: flex;">
-                <PortfolioPieChart/>
+                <PortfolioPieChart :stocks="portfolioStocks"/>
             </div>
             <SmallButton text="수정" @click="openModal"/>
             <EditPortfolio v-if="showModal" @close="closeModal">
             </EditPortfolio>
             <box class="AIFeedBack"></box>
-
             <SubTitle>
                 백테스트
             </SubTitle>
@@ -44,17 +43,14 @@
             </div>
             <PortfolioBackTestChart/>
             
-
             <SubTitle>
                 몬테카를로 분석
             </SubTitle>
             <PortfolioMontecarlo/>
         </Box>
-        
-        
     </div>
-    
 </template>
+
 <script>
 import axios from 'axios';
 import PortfolioChart from '@/components/MyPage/PortfolioChart.vue';
@@ -68,7 +64,7 @@ import EditPortfolio from '@/components/MyPage/EditPortfolio/EditPortfolio.vue';
 import SelectBox from '@/components/SelectBox.vue';
 
 export default {
-    components:{
+    components: {
         PortfolioChart,
         PortfolioPieChart,
         SmallButton,
@@ -77,50 +73,75 @@ export default {
         PortfolioMontecarlo,
         SubTitle,
         EditPortfolio,
-        SelectBox
+        SelectBox,
     },
     data() {
         return {
             showModal: false,
-            selectPortfolio:[
-            ],
+            selectPortfolio: [],
             selectedPortfolio: '',
 
-            selectCharacteristic:[
-                {label: '지표', value: '1'}
+            selectCharacteristic: [
+                { label: '지표', value: '1' }
             ],
-            selectedCharacteristic: ''
+            selectedCharacteristic: '',
+            portfolioStocks: [],
         };
-    },mounted() {
+    },
+    mounted() {
         const token = localStorage.getItem("token");
         // API 호출하여 포트폴리오 목록을 가져옴
         axios.get('http://127.0.0.1:8000/portfolio/portfolios/', {
             headers: {
-                'Authorization': `Token ${token}`,
+                'Authorization': `Bearer ${token}`,
             },
         })
         .then(response => {
             this.selectPortfolio = response.data.map(portfolio => ({
-                    label: portfolio.name,
-                    value: portfolio.portfolio_id
-                }));
+                label: portfolio.name,
+                value: portfolio.portfolio_id,
+            }));
             console.log(response.data);
+            // 포트폴리오 목록이 로드된 후, 첫 번째 포트폴리오의 ID로 포트폴리오 종목 불러오기
+            if (this.selectPortfolio.length > 0) {
+                this.selectedPortfolio = this.selectPortfolio[0].value;
+                this.fetchPortfolioStocks(this.selectedPortfolio); // 처음 실행
+            }
         })
         .catch(error => {
             console.error(error);
         });
-
     },
-    methods:{
+    methods: {
         openModal() {
             this.showModal = true;
         },
         closeModal() {
             this.showModal = false;
-        }
+        },
+        fetchPortfolioStocks(newPortfolioId) {
+            if (!newPortfolioId) {
+                this.portfolioStocks = [];
+                return;
+            }
+
+            const token = localStorage.getItem("token");
+            axios.get(`http://127.0.0.1:8000/portfolio/portfolios/stock_list/${newPortfolioId}/`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+            .then(response => {
+                this.portfolioStocks = response.data; // 포트폴리오 종목 데이터 저장
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        },
     }
-}
+};
 </script>
+
 <style>
     .innerPageWrapper{
         text-align: left;

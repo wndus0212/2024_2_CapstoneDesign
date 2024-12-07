@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',    
     'rest_framework.authtoken',
     'stockapp',
+    'userapp',
     'portfolio',
     'corsheaders'
 ]
@@ -161,3 +162,15 @@ CACHES = {
     }
 }
 
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:3000",  # React, Vue 등 프론트엔드 주소
+]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'Authorization',
+]
+
+AUTH_USER_MODEL = "userapp.Users"
+REST_FRAMEWORK_SIMPLEJWT = {
+    'USER_ID_FIELD': 'id',  # 'user_id'를 USER_ID_FIELD로 설정
+}
