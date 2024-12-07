@@ -6,12 +6,12 @@
             포트폴리오 수정
           </BoxTitle>
           <div style="display: flex;">
-            <PortfolioPieChart/>
-            <myPortfolioChart/>
+            <PortfolioAddPieChart :stocks="portfolioStocks"/>
+            <myPortfolioChart :addedStock="addedStock"/>
           </div>
 
           <div style="width: 100%; display: flex; justify-content: center; margin-top: 20px;">
-            <StockAddWidget/>
+            <StockAddWidget :addedStock="addedStock"/>
           </div>
 
           <div style="display: flex; gap: 20px; margin-left: 50px; margin-top: 50px;">
@@ -25,8 +25,9 @@
   </template>
   
   <script>
+  import axios from 'axios';
   import BoxTitle from '@/components/BoxTitle.vue';
-  import PortfolioPieChart from '../PortfolioPieChart.vue';
+  import PortfolioAddPieChart from './PortfolioAddPieChart.vue';
   import SmallButton from '@/components/SmallButton.vue';
   import myPortfolioChart from './myPortfolioTable.vue';
   //import AddAssets from './AddAssets.vue';
@@ -34,16 +35,51 @@
   export default {
     components:{
       BoxTitle,
-      PortfolioPieChart,
+      PortfolioAddPieChart,
       SmallButton,
       myPortfolioChart,
       StockAddWidget
       //AddAssets
     },
+    props:{
+      portfolioId:{
+        type: Number,
+        required: true,
+      },
+    },
+    data(){
+      return {
+          portfolioStocks: [],
+          addedStock:[],
+      }
+    },
+    mounted() {
+        // API 호출하여 포트폴리오 목록을 가져옴
+        this.fetchPortfolioStocks(this.portfolioId)
+    },
     methods: {
       closeModal() {
         this.$emit('close'); // 부모 컴포넌트로 'close' 이벤트 전달
-      }
+      },
+      fetchPortfolioStocks(newPortfolioId) {
+            if (!newPortfolioId) {
+                this.portfolioStocks = [];
+                return;
+            }
+
+            const token = localStorage.getItem("token");
+            axios.get(`http://127.0.0.1:8000/portfolio/portfolios/stock_list/${newPortfolioId}/`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+            .then(response => {
+                this.portfolioStocks = response.data; // 포트폴리오 종목 데이터 저장
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        },
     }
   };
   </script>

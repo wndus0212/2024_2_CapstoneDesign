@@ -24,7 +24,7 @@
                 <PortfolioPieChart :stocks="portfolioStocks"/>
             </div>
             <SmallButton text="수정" @click="openModal"/>
-            <EditPortfolio v-if="showModal" @close="closeModal">
+            <EditPortfolio v-if="showModal" @close="closeModal" :portfolioId= "selectedPortfolio">
             </EditPortfolio>
             <box class="AIFeedBack"></box>
             <SubTitle>

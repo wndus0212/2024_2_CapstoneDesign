@@ -33,7 +33,14 @@
               <td>{{ stock.prices }}</td>
               <td>{{ stock.volume }}</td>
               <td>{{ (stock.market_caps / 100000000).toFixed(2) }}</td>
-              <td><input type="number" min="0"></td>
+              <td>
+                <input 
+                  type="number" 
+                  min="0" 
+                  v-model="stock.quantity" 
+                  @input="updateStockQuantity(stock)" 
+                />
+              </td>
             </tr>
           </tbody>
         </table>
@@ -51,6 +58,10 @@ export default {
     //SpinBox
   },
   props: {
+    addedStock: {
+      type: Array,
+      required: true,
+    },
     width: {
       type: String,
       default: "1200px",
@@ -113,6 +124,9 @@ export default {
         },
       });
       console.log("Stock Name:", stockName);
+    },
+    updateStockQuantity(stock) {
+      this.$emit('update-stock-quantity', stock);  // 부모 컴포넌트에 데이터 전달
     },
   },
   mounted() {

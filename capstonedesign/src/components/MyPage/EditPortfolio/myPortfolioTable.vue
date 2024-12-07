@@ -12,6 +12,12 @@
 
 <script>
 export default {
+    props: {
+        data: {
+            type: String,
+            required: true,
+        },
+    },
 };
 </script>
 
