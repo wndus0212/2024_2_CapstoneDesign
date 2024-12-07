@@ -17,7 +17,7 @@ django.setup()
 from stockapp.models import Portfolio_Stocks, Backtests
 from dataloading.data_loader import load_data_from_db
 from dataloading.strategies import FixedAllocationStrategy
-from dataloading.data_extraction import calculate_mdd, calculate_sharpe_ratio
+from dataloading.data_extraction import calculate_mdd, calculate_sharpe_ratio, load_risk_free_rate
 
 
 def get_portfolio_allocation(portfolio_id):
@@ -57,28 +57,37 @@ def run_backtest(portfolio_id, start_date, end_date, initial_cash=1000000):
             self.values.append(self.strategy.broker.getvalue())
 
     cerebro.addanalyzer(PortfolioValueTracker, _name="portfolio_tracker")
-
+    risk_free_rate_series = load_risk_free_rate(start_date, end_date)
     # 백테스트 실행
     strategies = cerebro.run()
 
     # 결과 처리
     portfolio_tracker = strategies[0].analyzers.portfolio_tracker
-    portfolio_values = portfolio_tracker.values
+    portfolio_values = np.array(portfolio_tracker.values)
+    daily_returns = np.diff(portfolio_values) / portfolio_values[:-1]
+    risk_free_rates = risk_free_rate_series.reindex(
+        pd.date_range(start=start_date, end=end_date)[:len(daily_returns)],
+        method='pad'
+    ).fillna(0).values
+    sharpe_ratio = calculate_sharpe_ratio(daily_returns, risk_free_rates)
     total_return = (portfolio_values[-1] - initial_cash) / initial_cash
     mdd = calculate_mdd(portfolio_values)
-    sharpe_ratio = calculate_sharpe_ratio(np.diff(portfolio_values) / portfolio_values[:-1])
+    print(daily_returns,risk_free_rates)
 
     # 결과 데이터베이스 저장
-    backtest_entry = Backtests.objects.create(
-        portfolio_id=portfolio_id,
-        start_date=start_date,
-        end_date=end_date,
-        total_return=total_return,
-        max_drawdown=mdd,
-        sharpe_ratio=sharpe_ratio,
-        rebalance_values=str(portfolio_values),  # JSON 직렬화 필요 시 사용
-        initial_amount=initial_cash,
-    )
+    try:
+        backtest_entry = Backtests.objects.create(
+            portfolio_id=portfolio_id,
+            start_date=start_date,
+            end_date=end_date,
+            total_return=total_return,
+            max_drawdown=mdd,
+            sharpe_ratio=sharpe_ratio,
+            rebalance_values=str(portfolio_values),
+            initial_amount=initial_cash,
+        )
+    except Exception as e:
+        print(f"Error saving backtest: {e}")
 
     return {
         "portfolio_id": portfolio_id,
@@ -141,7 +150,7 @@ def run_multiple_backtests(portfolio_id, start_date, end_date, duration_days,
                     self.values.append(self.strategy.broker.getvalue())
 
             cerebro.addanalyzer(PortfolioValueTracker, _name="portfolio_tracker")
-
+            risk_free_rate_series = load_risk_free_rate(start_date, end_date)
             # 백테스트 실행
             strategies = cerebro.run()
             portfolio_tracker = strategies[0].analyzers.portfolio_tracker
@@ -150,7 +159,10 @@ def run_multiple_backtests(portfolio_id, start_date, end_date, duration_days,
             # 결과 계산
             total_return = (portfolio_values_list[-1] - initial_cash) / initial_cash
             mdd = calculate_mdd(portfolio_values_list)
-            sharpe_ratio = calculate_sharpe_ratio(np.diff(portfolio_values_list) / portfolio_values_list[:-1])
+            daily_returns = np.diff(portfolio_values_list) / portfolio_values_list[:-1]
+            dates = pd.date_range(start=random_start_date, end=random_end_date)[:len(daily_returns)]
+            risk_free_rates = risk_free_rate_series.reindex(dates, method='pad').values
+            sharpe_ratio = calculate_sharpe_ratio(daily_returns, risk_free_rates)
 
             # 결과 저장
             portfolio_values.append(portfolio_values_list[-1])

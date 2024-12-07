@@ -63,7 +63,6 @@ if __name__ == "__main__":
     print(f"Sharpe Ratio: {results['sharpe_ratios']}")
     print(f"MDD: {results['mdds']}")
 
-    # 필요한 경우 결과를 CSV로 저장
     import pandas as pd
     df = pd.DataFrame({
         "Final Portfolio Value": results["final_portfolio_values"],
