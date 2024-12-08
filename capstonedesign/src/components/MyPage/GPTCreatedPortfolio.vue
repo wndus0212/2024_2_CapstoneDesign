@@ -1,49 +1,27 @@
 <template>
-    <div class="modal-overlay" @click="closeModal">
-      <div class="modal-content" @click.stop>
-        <div>
-          <BoxTitle>
-            포트폴리오 수정
-          </BoxTitle>
-          <div style="display: flex;">
-            <PortfolioPieChart/>
-            <myPortfolioTable/>
-          </div>
+    <div>
+      <BoxTitle>
+        Chat GPT 생성 포트폴리오
+      </BoxTitle>
+      <Box>
 
-          <div style="width: 100%; display: flex; justify-content: center; margin-top: 20px;">
-            <StockAddWidget/>
-          </div>
+      </Box>
+      <SmallButton text="저장하기"></SmallButton>
 
-          <div style="display: flex; gap: 20px; margin-left: 50px; margin-top: 50px;">
-            <SmallButton text="수정하기"/>
-            <SmallButton text="닫기" @click="closeModal"/>
-          </div>
-        </div>
-        
-      </div>
     </div>
   </template>
   
   <script>
   import BoxTitle from '@/components/BoxTitle.vue';
-  import PortfolioPieChart from './PortfolioPieChart.vue';
   import SmallButton from '@/components/SmallButton.vue';
-  import myPortfolioTable from './EditPortfolio/myPortfolioTable.vue';
-  //import AddAssets from './AddAssets.vue';
-  import StockAddWidget from './EditPortfolio/StockAddWidget.vue';
+  import Box from '../Box.vue';
   export default {
     components:{
       BoxTitle,
-      PortfolioPieChart,
       SmallButton,
-      myPortfolioTable,
-      StockAddWidget
-      //AddAssets
+      Box
     },
     methods: {
-      closeModal() {
-        this.$emit('close'); // 부모 컴포넌트로 'close' 이벤트 전달
-      }
     }
   };
   </script>

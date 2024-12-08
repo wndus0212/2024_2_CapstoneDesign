@@ -228,3 +228,11 @@ def us_bonds(name, period, request):
         print(f"Error in financial_state: {e}")
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)
     
+def currency(request):
+    try:
+        data=get_currency();
+        result = data.to_dict(orient="records")
+        return JsonResponse({"output": result}, safe=False)
+    except Exception as e:
+        print(f"Error in currency: {e}")
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)

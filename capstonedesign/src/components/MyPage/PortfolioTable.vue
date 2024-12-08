@@ -4,7 +4,7 @@
             <table class="PortfolioTable">
                 <tbody>
                     <!-- 추가 데이터 -->
-                    <tr v-for="i in 5" :key="i">
+                    <tr v-for="portfolio in portfolioList" :key="i">
                         <td class="portfolioName">포트폴리오 {{ i }}</td>
                         <td>100,000,000</td>
                         <td>+0.5%</td>
@@ -17,7 +17,14 @@
 </template>
 
 <script>
-export default {};
+export default {
+    props:{
+        portfolioList:{
+            type:Array,
+            Required:true
+        }
+    }
+};
 </script>
 
 <style scoped>

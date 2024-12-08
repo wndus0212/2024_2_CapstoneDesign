@@ -2,7 +2,7 @@
     <div style="margin: 0px 60px; width: 200px;">
       <SmallButton @click="navigateTo('/MyPage/MyPortfolio')" class="menuButton" text="내 포트폴리오">
       </SmallButton>
-      <SmallButton @click="navigateTo('/MyPage/AddPortfolio')" class="menuButton" text="포트폴리오 관리">
+      <SmallButton @click="navigateTo('/MyPage/AddPortfolio')" class="menuButton" text="포트폴리오 생성">
       </SmallButton>
     </div>
   </template>

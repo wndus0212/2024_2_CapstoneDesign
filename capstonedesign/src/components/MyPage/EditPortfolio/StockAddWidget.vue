@@ -1,26 +1,28 @@
 <template>
   <div>
     <div>
-      <Box width="1400px">
+      <Box :width="'1400'">
         <ButtonContainer>
-          <SelectBox :options="selectOption1" v-model="selectedOption1" width="200px"/>
-          <SelectBox :options="selectOption2" v-model="selectedOption2" width="200px"/>
+          <SelectBox :options="selectOption1" v-model="selectedOption1" :width="'200px'"/>
+          <SelectBox :options="selectOption2" v-model="selectedOption2" :width="'200px'"/>
           <SelectBox v-if="selectedOption2 !== 'ETF'" :options="filteredSelectOption3" v-model="selectedOption3" width="200px"/>
         </ButtonContainer>
         <ButtonContainer>
-          <SelectBox :options="selectOption5" v-model="selectedOption5" width="200px"/>
-          <SelectBox :options="selectOption4" v-model="selectedOption4" width="200px"/>
+          <SelectBox :options="selectOption5" v-model="selectedOption5" :width="'200px'"/>
+          <SelectBox :options="selectOption4" v-model="selectedOption4" :width="'200px'"/>
         </ButtonContainer>
-        <StockAddTable :selectedOption1="selectedOption1"
+        <StockAddTable 
+          :selectedOption1="selectedOption1"
           :selectedOption2="selectedOption2"
           :selectedOption3="selectedOption3"
           :selectedOption4="selectedOption4"
-          :selectedOption5="selectedOption5">
-        </StockAddTable>
+          :selectedOption5="selectedOption5"
+          :addedStock="addedStock"
+          @addedstock="handleStockUpdate"
+        />
       </Box>
     </div>
-    
-    </div>
+  </div>
 </template>
 
 <script>
@@ -30,12 +32,20 @@ import StockAddTable from './StockAddTable.vue';
 import Box from '@/components/Box.vue';
 
 export default {
-  name: 'DetailPage',
+  name: 'StockAddWidget',
   components: {
     ButtonContainer,
     StockAddTable,
     SelectBox,
     Box
+  },
+  
+  props: {
+    addedStock: {
+      type: Array,
+      required: true,
+      default: () => [] // 기본값으로 빈 배열 설정
+    }
   },
   data() {
     return {
@@ -62,19 +72,17 @@ export default {
       },
       selectOption4: [
         { label: '시가총액', value: 'market_caps' },
-        { label: '주가', value: 'prices'},
-        {label: '거래량', value: 'volume'}
+        { label: '주가', value: 'prices' },
+        { label: '거래량', value: 'volume' }
       ],
       selectOption5: [
-        { label: '전체', value: '1' },
+        { label: '전체', value: '1' }
       ],
       selectedOption1: 'KOR',
       selectedOption2: 'Stock',
-      selectedOption3: 'KRX', // 이 값은 첫 번째 값에 맞게 초기화
+      selectedOption3: 'KRX', // 기본값 설정
       selectedOption4: 'market_caps',
-      selectedOption5: '1',
-
-      searchData: [],
+      selectedOption5: '1'
     };
   },
   computed: {
@@ -94,12 +102,22 @@ export default {
       this.selectedOption3 = this.selectOption3[newValue][0].value;
     }
   },
-}
+  mounted(){
+    console.log("stockaddwidget this.addedstock:",this.addedStock)
+  },
+  methods: {
+    handleStockUpdate(addedstock) {
+      // 부모로 이벤트 전달
+      console.log("addwidget:",addedstock)
+      this.$emit('addedstock', addedstock);
+    }
+  }
+};
 </script>
 
 <style scoped>
-.Container{
-    min-width: 1280px;
-    padding-top: 20px;
+.Container {
+  min-width: 1280px;
+  padding-top: 20px;
 }
 </style>

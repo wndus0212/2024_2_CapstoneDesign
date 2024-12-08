@@ -108,7 +108,7 @@ def get_market_cap(symbol):
 def get_stock_list(market, sort):
     try:
         # KRX 종목 리스트 가져오기
-        stocks = fdr.StockListing(market).head(100)
+        stocks = fdr.StockListing(market).head(50)
 
         # 심볼에 '.KS' 또는 '.KQ' 추가
         symbols = [
@@ -542,3 +542,8 @@ def get_kor_bond(name, start, end):
 def get_us_bond(name, periond):
     df = get_stock_history(name, period=periond )
     return df
+
+def get_currency():
+    usd_krw = yf.Ticker("USDKRW=X")
+    usd_krw_data = usd_krw.history(period="1d")
+    return usd_krw_data

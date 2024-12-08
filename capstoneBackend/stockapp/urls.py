@@ -17,4 +17,5 @@ urlpatterns = [
     path('sector_stock_list/<str:sector>/', views.sector_stock_list, name='sector_stock_list'),
     path('financial_state/<str:Option>/<str:Id>/',views.financial_state, name='financial_state'),
     path('search_term/', views.search_term, name='search_term'),
+    path('currency/', views.currency, name='currency'),
 ]

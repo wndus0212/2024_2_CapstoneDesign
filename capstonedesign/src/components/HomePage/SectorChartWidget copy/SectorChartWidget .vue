@@ -10,13 +10,13 @@
       <SelectBox 
         :options="SelectPeriod" 
         v-model="selectedPeriod" 
-        width="150px" />
+        :width="150" />
 
       <!-- 간격 선택 -->
       <SelectBox 
         :options="SelectInterval" 
         v-model="selectedInterval" 
-        width="150px" />
+        :width="150" />
     </div>
 
     <!-- 로딩 중 표시 -->

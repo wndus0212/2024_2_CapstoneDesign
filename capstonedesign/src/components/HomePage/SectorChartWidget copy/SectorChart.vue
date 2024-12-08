@@ -4,8 +4,8 @@
       type="line" 
       :options="chartOptions" 
       :series="series" 
-      width="600"
-      height="600"
+      :width="600"
+      :height="600"
     />
   </div>
 </template>

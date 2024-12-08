@@ -6,9 +6,6 @@
       <div style="display: flex; min-width: 1000px; margin-right: 250px;">
         <SideMenu/>
         <div style=" width: 100%;  display: flex; justify-content: center;">
-          <div>
-            <button @click="createTestData">테스트 데이터 생성</button>
-          </div>
           <RouterView></RouterView>
         </div>
         

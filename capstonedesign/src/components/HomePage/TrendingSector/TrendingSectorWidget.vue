@@ -1,5 +1,5 @@
 <template>
-  <Box width="1400px">
+  <Box :width="1400">
     <BoxTitle>
       지금 뜨는 섹터
     </BoxTitle>

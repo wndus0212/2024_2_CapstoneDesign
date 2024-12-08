@@ -9,7 +9,7 @@
       <SelectBox 
         :options="SelectPeriod" 
         v-model="selectedPeriod" 
-        width="150px" 
+        :width="150" 
         @change="updateChartData" />
     </div>
     

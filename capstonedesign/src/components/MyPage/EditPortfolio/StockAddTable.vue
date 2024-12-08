@@ -11,7 +11,7 @@
     </div>
 
     <!-- 스크롤 컨테이너 -->
-    <div class="scrollContainer" :style="{ width: width, height: height }">
+    <div class="scrollContainer">
       <div v-if="loading" class="loading">로딩 중...</div>
       <div v-else class="table-wrapper">
         <table class="StockTable">
@@ -37,7 +37,7 @@
                 <input 
                   type="number" 
                   min="0" 
-                  v-model="stock.quantity" 
+                  v-model="stock.allocation" 
                   @input="updateStockQuantity(stock)" 
                 />
               </td>
@@ -51,32 +51,45 @@
 
 <script>
 import axios from "axios";
-//import SpinBox from "@/components/SpinBoxComponent.vue";
 
 export default {
-  components:{
-    //SpinBox
-  },
   props: {
     addedStock: {
       type: Array,
       required: true,
+      
     },
-    width: {
-      type: String,
-      default: "1200px",
-    },
-    height: {
-      type: String,
-      default: "500px",
-    },
+    selectedOption1: String,
+    selectedOption2: String,
+    selectedOption3: String,
+    selectedOption4: String,
+    selectedOption5: String
   },
   data() {
     return {
-      stocks: [], // API에서 받은 데이터를 저장할 변수
-      loading: true, // 로딩 상태 추가
-      searchQuery: "", // 검색어 입력 상태
+      localAddedStock: [...this.addedStock], // prop 데이터를 로컬로 복사
+      stocks: [], // API에서 받아온 데이터
+      loading: true, // 로딩 상태
+      searchQuery: "", // 검색어 상태
     };
+  },
+  watch: {
+    // 부모 컴포넌트에서 prop이 변경되면 로컬 데이터도 동기화
+    addedStock(newVal) {
+      this.localAddedStock = [...newVal];
+    },
+    selectedOption1() {
+      this.fetchStockRank();
+    },
+    selectedOption2() {
+      this.fetchStockRank();
+    },
+    selectedOption3() {
+      this.fetchStockRank();
+    },
+    selectedOption4() {
+      this.fetchStockRank();
+    }
   },
   computed: {
     filteredStocks() {
@@ -84,7 +97,6 @@ export default {
         return this.stocks;
       }
       const query = this.searchQuery.toLowerCase();
-      // 종목 이름과 티커 모두 검색
       return this.stocks.filter(
         (stock) =>
           stock.names.toLowerCase().includes(query) || // 이름 검색
@@ -95,16 +107,35 @@ export default {
   methods: {
     fetchStockRank() {
       this.loading = true; // 로딩 시작
+      let market = '';
+      let sort = '';
+      
+      if(this.selectedOption1 === 'KOR'){
+        market = "list/";
+      } else {
+        market = "list_global/";
+      }
 
-      const url = `http://127.0.0.1:8000/stock/list/KOSPI/market_caps/`;
-      console.log(url);
+      if(this.selectedOption2 === 'Stock'){
+        market = market + this.selectedOption3;
+      } else {
+        if(this.selectedOption1 === 'KOR'){
+          market = market + "KOR_ETF";
+        } else {
+          market = market + "GLB_ETF";
+        }
+      }
+
+      sort = this.selectedOption4;
+      console.log(this.selectedOption4)
+      const url = `http://127.0.0.1:8000/stock/${market}/${sort}/`;
       axios
         .get(url)
-        .then((response) => {
+        .then(response => {
           this.stocks = response.data;
           this.sortStocksByMarketCap();
         })
-        .catch((error) => {
+        .catch(error => {
           console.error("데이터를 불러오는데 실패했습니다:", error);
         })
         .finally(() => {
@@ -116,21 +147,33 @@ export default {
         (a, b) => parseFloat(b.Marcap) - parseFloat(a.Marcap)
       );
     },
-    navigateTo(stockCode, stockName) {
-      this.$router.push({
-        path: `/detail/${stockCode}`,
-        query: {
-          name: stockName,
-        },
-      });
-      console.log("Stock Name:", stockName);
-    },
     updateStockQuantity(stock) {
-      this.$emit('update-stock-quantity', stock);  // 부모 컴포넌트에 데이터 전달
+      // allocation 값이 비어 있으면 0으로 설정
+      if (stock.allocation === "") {
+        stock.allocation = 0;
+      }
+      
+      // 기존 로컬 데이터 업데이트
+      const updatedStocks = this.localAddedStock.map((item) =>
+        item.symbols === stock.symbols
+          ? { ...item, allocation: stock.allocation }  // allocation 값도 함께 업데이트
+          : item
+      );
+
+      // 새로운 주식 추가
+      const isNewStock = !this.localAddedStock.some((item) => item.symbols === stock.symbols);
+      if (isNewStock) {
+        updatedStocks.push({ ...stock, allocation: stock.allocation }); // 새로운 주식과 allocation 값을 함께 추가
+      }
+      // 로컬 데이터 갱신
+      this.localAddedStock = updatedStocks;
+
+      // 부모 컴포넌트로 데이터 전달
+      this.$emit("addedstock", this.localAddedStock);
     },
   },
   mounted() {
-    this.fetchStockRank(); // 컴포넌트가 마운트될 때 데이터 요청
+    this.fetchStockRank();
   },
 };
 </script>

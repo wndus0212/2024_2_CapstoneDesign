@@ -1,6 +1,6 @@
 <template>
     <div class="innerPageWrapper">
-        <Box width="1000px">
+        <Box :width="'1000px'">
             <SelectBox :options="selectPortfolio" v-model="selectedPortfolio"/>
             <div style="display: flex; gap: 12px;">
                 <div class="totalAmount">
@@ -21,10 +21,10 @@
             </div>
             
             <div style="display: flex;">
-                <PortfolioPieChart :stocks="portfolioStocks"/>
+                <PortfolioPieChart :addedStock="portfolioStocks"/>
             </div>
             <SmallButton text="수정" @click="openModal"/>
-            <EditPortfolio v-if="showModal" @close="closeModal" :portfolioId= "selectedPortfolio">
+            <EditPortfolio v-if="showModal" @close="closeModal" :portfolioId= "Number(selectedPortfolio)">
             </EditPortfolio>
             <box class="AIFeedBack"></box>
             <SubTitle>
@@ -99,12 +99,12 @@ export default {
         .then(response => {
             this.selectPortfolio = response.data.map(portfolio => ({
                 label: portfolio.name,
-                value: portfolio.portfolio_id,
+                value: portfolio.portfolio_id.toString(),
             }));
             console.log(response.data);
             // 포트폴리오 목록이 로드된 후, 첫 번째 포트폴리오의 ID로 포트폴리오 종목 불러오기
             if (this.selectPortfolio.length > 0) {
-                this.selectedPortfolio = this.selectPortfolio[0].value;
+                this.selectedPortfolio = this.selectPortfolio[0].value.toString();
                 this.fetchPortfolioStocks(this.selectedPortfolio); // 처음 실행
             }
         })
