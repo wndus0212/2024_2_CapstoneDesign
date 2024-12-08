@@ -18,6 +18,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 openai_api_key = os.getenv('OPENAI_API_KEY')
+
+
 class PortfolioList(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
     
