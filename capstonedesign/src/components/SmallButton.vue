@@ -1,5 +1,5 @@
 <template>
-  <button :class="['SmallButton', { 'active': active }]" @click="$emit('click')">
+  <button :class="['SmallButton', { 'active': active }]" >
     {{ text }}
   </button>
 </template>

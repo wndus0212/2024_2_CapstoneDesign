@@ -25,14 +25,18 @@ SECRET_KEY = 'django-insecure-$qrg7h_=5=q6k117qq&i54mgz3cqcnx3*-nqye&59&efy#puu+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'localhost:8080']
 
 
-CSRF_TRUSTED_ORIGINS= ['http://localhost:8080/',
-                       'https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app',
-                       'http://127.0.0.1:8000']
+CSRF_TRUSTED_ORIGINS= [
+    'http://localhost',
+    'http://localhost:8080/',
+    'http://localhost:8080'
+    'https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app',
+    'http://127.0.0.1:8000'
+]
 
-
+CSRF_COOKIE_NAME = "csrftoken"
 # Application definition
 
 INSTALLED_APPS = [
@@ -164,6 +168,7 @@ CACHES = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",  # React, Vue 등 프론트엔드 주소
+    "https://localhost:8080"
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [

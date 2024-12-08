@@ -12,13 +12,12 @@ import yfinance as yf
 from .utils import *
 import openai
 from django.views import View
-from stockapp.utils import get_stock_list
+from stockapp.utils import get_stock_list,get_stock_list_global
 from dotenv import load_dotenv
 
 load_dotenv()
 
-openai_api_key = os.getenv('OPENAI_API_KEY')
-
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 class PortfolioList(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
@@ -125,7 +124,7 @@ def portfolio_sum(request, portfolio_id):
     return JsonResponse({"output": data_json})
 
 
-class InvestmentRecommendationView(View):
+class InvestmentRecommendationView(APIView):
     def post(self, request):
         # POST로 전달된 투자 조건 가져오기
         strategy = request.data.get("strategy")
@@ -135,23 +134,23 @@ class InvestmentRecommendationView(View):
         market = request.data.get("market")
         risk_tolerance = request.data.get("risk_tolerance")
         name = request.data.get("name")
-        # KOSPI 데이터 가져오기
-        stock_json = get_stock_list("KOSPI", "market_caps")
-        stock_json_usa = get_stock_list("S&P500", "market_caps")
 
-        stock_data = pd.DataFrame(stock_json.json())
+        stock_json_kospi = json.loads(get_stock_list("KOSPI", "market_caps").content)
+        stock_json_usa = json.loads(get_stock_list_global("NASDAQ", "market_caps").content)
 
         # OpenAI API 호출 및 투자 추천 받기
         recommendation = self.get_investment_recommendation(
-            strategy, duration, amount, goal, market, risk_tolerance, stock_data, stock_json_usa
+            strategy, duration, amount, goal, market, risk_tolerance, stock_json_kospi,stock_json_usa
         )
 
         # 결과 반환
         return JsonResponse({"recommendation": recommendation})
 
-    def get_investment_recommendation(self, strategy, duration, amount, goal, market, risk_tolerance, stock_data):
-        stock_summary = "\n".join([f"- {row['names']} ({row['symbols']}): {row['market_caps']}" for _, row in stock_data.iterrows()])
-
+    def get_investment_recommendation(self, strategy, duration, amount, goal, market, risk_tolerance, stock_data,stock_data_global):
+        print("global",stock_data_global[0]['names'])
+        stock_summary = "\n".join([f"- {row['names']} ({row['symbols']}): {row['market_caps']}" for row in stock_data])
+        stock_summary_global = "\n".join([f"- {row['names']} ({row['symbols']}): {row['market_caps']}" for row in stock_data_global])
+        print(openai.api_key)
         prompt = f"""
         주식 투자 추천 요청:
         - 투자 전략: {strategy}
@@ -163,7 +162,7 @@ class InvestmentRecommendationView(View):
 
         아래는 현재 시장 상황에 따라 참고 가능한 종목 리스트입니다:
         {stock_summary}
-
+        {stock_summary_global}
         위 조건과 종목 리스트를 참고하여 포트폴리오를 종목명, 티커, 섹터, 배분 비율(%), 배분 금액(KRW)으로 구성된 표 형태로 추천해 주세요.
         """
 

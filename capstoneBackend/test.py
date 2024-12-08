@@ -15,4 +15,5 @@ kospi = os.path.join(BASE_DIR, 'stockapp\data\stock_list', 'kospi_200_with_indus
 sp500 = os.path.join(BASE_DIR, 'stockapp\data\stock_list', 'sp500_with_industries.csv')
 nasdaq = os.path.join(BASE_DIR, 'stockapp\data\stock_list', 'nasdaq100_with_industries.csv')
 
-print(yf.Ticker('MSTF').info)
+
+print(fdr.StockListing("S&P500").head(50))
