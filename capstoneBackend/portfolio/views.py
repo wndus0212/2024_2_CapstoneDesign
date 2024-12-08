@@ -13,7 +13,11 @@ from .utils import *
 import openai
 from django.views import View
 from stockapp.utils import get_stock_list
-openai.api_key = "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"
+from dotenv import load_dotenv
+
+load_dotenv()
+
+openai_api_key = os.getenv('OPENAI_API_KEY')
 class PortfolioList(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
     
