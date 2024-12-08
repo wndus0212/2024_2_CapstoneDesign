@@ -1,12 +1,12 @@
 import sqlite3
 import pandas as pd
 import backtrader as bt
-
+import os
 def load_data_from_db(cerebro, allocation, start_date=None, end_date=None):
     """
     데이터베이스에서 데이터를 로드하여 Backtrader로 변환.
     """
-    conn = sqlite3.connect("../database.sqlite3")
+    conn = sqlite3.connect(os.path.join(os.path.dirname(__file__), '../database.sqlite3'))
 
     for ticker in allocation.keys():
         query = """
