@@ -16,8 +16,8 @@ from stockapp.utils import get_stock_list,get_stock_list_global
 from dotenv import load_dotenv
 
 load_dotenv()
-
-openai.api_key = os.getenv('OPENAI_API_KEY')
+key= os.getenv('OPENAI_API_KEY')
+#openai.api_key = os.getenv('OPENAI_API_KEY')
 
 class PortfolioList(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
@@ -142,7 +142,7 @@ class InvestmentRecommendationView(APIView):
         recommendation = self.get_investment_recommendation(
             strategy, duration, amount, goal, market, risk_tolerance, stock_json_kospi,stock_json_usa
         )
-
+        print(key)
         # 결과 반환
         return JsonResponse({"recommendation": recommendation})
 
@@ -163,7 +163,7 @@ class InvestmentRecommendationView(APIView):
         아래는 현재 시장 상황에 따라 참고 가능한 종목 리스트입니다:
         {stock_summary}
         {stock_summary_global}
-        위 조건과 종목 리스트를 참고하여 포트폴리오를 종목명, 티커, 섹터, 배분 비율(%), 배분 금액(KRW)으로 구성된 표 형태로 추천해 주세요.
+        위 조건과 국내, 해외 종목 리스트를 참고하여 포트폴리오를 종목명, 티커, 섹터, 배분 비율(%), 배분 금액(KRW)으로 구성된 표 형태로 추천해 주세요.
         """
 
         response = openai.ChatCompletion.create(
