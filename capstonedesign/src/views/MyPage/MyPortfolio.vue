@@ -30,18 +30,7 @@
             <SubTitle>
                 백테스트
             </SubTitle>
-            <div style="display: flex; gap: 20px;">
-                <div>
-                    <div>시작 날짜</div>
-                    <input type="date">
-                </div>
-
-                <div>
-                    <div>종료 날짜</div>
-                    <input type="date">
-                </div>
-            </div>
-            <PortfolioBackTestChart/>
+            <PortfolioBackTestChart :portfolioId= "Number(selectedPortfolio)"/>
             
             <SubTitle>
                 몬테카를로 분석

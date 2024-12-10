@@ -17,6 +17,56 @@ import time
 import shutil
 import numpy as np
 
+def get_stock_history_date(Id, start=None, end=None, period=0, interval='1d'):
+    ticker = yf.Ticker(Id)
+    try:
+        if period == 0:
+            # 특정 기간의 데이터를 가져오기
+            df = ticker.history(start=start, end=end, interval=interval, auto_adjust=False)
+        else:
+            # 최근 기간 데이터를 가져오기
+            df = ticker.history(period=period, interval=interval, auto_adjust=False)
+        
+        if df.empty:
+            print(f"No data found for stock {Id}")
+            return None
+        
+        # 필요한 컬럼만 선택
+        df = df.reset_index()
+        df['Date'] = pd.to_datetime(df['Date']).dt.tz_localize(None)
+        selected_columns = ['Date','Open', 'High', 'Low', 'Close', 'Volume']
+        if all(col in df.columns for col in selected_columns):
+            return df[selected_columns]
+        else:
+            print(f"Some required columns are missing in the data for stock {Id}.")
+            return None
+        
+    except Exception as e:
+        print(f"Error fetching data for {Id}: {e}")
+        return None
+
+
+def getStockList(portfolio_id):
+    # 특정 portfolio_id에 해당하는 PortfolioStock 가져오기
+    stocks = PortfolioStocks.objects.filter(portfolio_id=portfolio_id)
+    stock_data = []
+    for stock in stocks:
+        # 종목 가격을 가져옵니다
+        ticker = yf.Ticker(stock.stock_symbol)
+        
+        # 가격을 가져올 때, 오류가 발생할 경우 0으로 설정
+        try:
+            price = ticker.history(period="1d")['Close'].iloc[-1]
+        except Exception as e:
+            price = 0  # 가격을 가져오지 못할 경우 기본값 0 사용
+
+        # 종목 데이터 생성
+        stock_data.append({
+            'symbols': stock.stock_symbol,
+            'allocation': stock.allocation,
+        })
+    return stock_data
+    
 def get_portfolio_sum(portfolio_id):
     stocks = PortfolioStocks.objects.filter(portfolio_id=portfolio_id)
     total_sum=0
@@ -52,7 +102,7 @@ def run_backtest(csv_folder, initial_cash=1000000, allocation=None, start_date=N
     cerebro.broker.set_cash(initial_cash)
 
     # CSV 데이터 로드
-    load_data_from_csv(cerebro, csv_folder, allocation, start_date=start_date, end_date=end_date, temp_dir=temp_dir)
+    load_data_from_csv(cerebro, csv_folder, allocation, temp_dir=temp_dir)
 
     # 전략 추가
     cerebro.addstrategy(FixedAllocationStrategy, allocation=allocation, portfolio_name=portfolio_name)
@@ -60,6 +110,7 @@ def run_backtest(csv_folder, initial_cash=1000000, allocation=None, start_date=N
     # 백테스트 실행
     print(f"초기 투자 금액: {cerebro.broker.get_cash():,.0f}원")
     strategies = cerebro.run()  # 실행된 전략 객체 리스트 반환
+    print("strategies",strategies)
     print(f"최종 투자 금액: {cerebro.broker.get_value():,.0f}원")
 
     # 첫 번째 전략 인스턴스의 리밸런싱 로그 가져오기
@@ -213,7 +264,7 @@ def calculate_mdd(portfolio_values):
     mdd = drawdown.min()
     return mdd
 
-def load_data_from_csv(cerebro, path, allocation, start_date=None, end_date=None, temp_dir="temp_filtered_data"):
+def load_data_from_csv(cerebro, path, allocation, temp_dir="temp_filtered_data"):
     """
     CSV 데이터를 로드하고 Backtrader 데이터 피드로 변환하여 Cerebro에 추가합니다.
 
@@ -230,43 +281,35 @@ def load_data_from_csv(cerebro, path, allocation, start_date=None, end_date=None
 
     for filename in os.listdir(path):
         if filename.endswith(".csv"):
-            ticker = filename.split(".")[0]
+            ticker = filename[:-4]
             data_path = os.path.join(path, filename)
 
             # CSV 데이터 읽기
             df = pd.read_csv(data_path)
-            df['date'] = pd.to_datetime(df['date'])  # 날짜 변환
-
-            # 기간 필터링
-            if start_date:
-                df = df[df['date'] >= pd.to_datetime(start_date)]
-            if end_date:
-                df = df[df['date'] <= pd.to_datetime(end_date)]
-
-            # 필터링 후 데이터가 없는 경우 건너뜀
+            
+            # 데이터가 비어있는지 확인
             if df.empty:
-                print(f"기간 필터링 후 {ticker} 데이터가 없습니다.")
+                print(f"{ticker} 데이터가 비어있습니다.")
                 continue
 
-            # 필터링된 데이터를 임시 디렉토리에 저장
+            # 임시 디렉토리에 필터링 없이 데이터 저장
             filtered_csv_path = os.path.join(temp_dir, f"filtered_{ticker}.csv")
             df.to_csv(filtered_csv_path, index=False)
 
             # CSV 데이터 로더
             data = bt.feeds.GenericCSVData(
                 dataname=filtered_csv_path,
-                dtformat='%Y-%m-%d',
-                timeframe=bt.TimeFrame.Days,
+                dtformat='%Y-%m-%d',  # 날짜 형식 지정
+                timeframe=bt.TimeFrame.Days,  # 일 단위 데이터
                 compression=1,
-                headers=True,
-                openinterest=-1
+                headers=True,  # 첫 번째 행을 헤더로 사용
+                openinterest=-1  # 'openinterest' 열 없을 경우 -1로 설정
             )
 
             # Cerebro에 데이터 추가
             cerebro.adddata(data, name=ticker)
 
     print(f"데이터 로드가 완료되었습니다. 임시 디렉토리: {temp_dir}")
-
 
 def cleanup_temp_files(temp_dir):
     """
@@ -320,11 +363,15 @@ class FixedAllocationStrategy(bt.Strategy):
         for data in self.datas:
             ticker = data._name
             if ticker not in self.allocation:
+                print(ticker)
+                print("allocation:",self.allocation)
                 continue  # allocation에 포함되지 않은 종목은 건너뜀
 
             target_value = total_value * self.allocation.get(ticker, 0)
+            print("target value",target_value)
             current_position = self.getposition(data).size
             current_price = data.close[0]
+            print("current_price",current_price)
             target_position = target_value // current_price
 
             if current_position < target_position:
@@ -346,3 +393,14 @@ class FixedAllocationStrategy(bt.Strategy):
         print(f"리밸런싱 완료: {self.last_rebalance}")
         print(f"포트폴리오 이름: {self.params.portfolio_name}")
         print(f"포지션: {positions}")
+
+def calculate_allocation(stock_quantities):
+    """
+    주식과 개수 배열을 입력받아 할당 비율을 계산합니다.
+
+    stock_quantities: [("AAPL", 50), ("MSFT", 30), ("JPM", 20)]
+    return: {"AAPL": 0.5, "MSFT": 0.3, "JPM": 0.2}
+    """
+    total_quantity = sum(stock['allocation'] for stock in stock_quantities)  # allocation 값을 합산
+    allocation = {stock['symbols']: stock['allocation'] / total_quantity for stock in stock_quantities}  # 비율 계산
+    return allocation

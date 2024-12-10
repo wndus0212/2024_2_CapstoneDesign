@@ -16,4 +16,4 @@ sp500 = os.path.join(BASE_DIR, 'stockapp\data\stock_list', 'sp500_with_industrie
 nasdaq = os.path.join(BASE_DIR, 'stockapp\data\stock_list', 'nasdaq100_with_industries.csv')
 
 
-print(fdr.StockListing("S&P500").head(50))
+print(yf.Ticker("MSFT").history())

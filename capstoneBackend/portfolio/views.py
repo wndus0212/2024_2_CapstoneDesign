@@ -10,14 +10,17 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import NotFound
 import yfinance as yf
 from .utils import *
+from stockapp.utils import *
 import openai
 from django.views import View
 from stockapp.utils import get_stock_list,get_stock_list_global
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+history_list = os.path.join(BASE_DIR, 'data/history')
 load_dotenv()
 key= os.getenv('OPENAI_API_KEY')
-#openai.api_key = os.getenv('OPENAI_API_KEY')
 
 class PortfolioList(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
@@ -179,31 +182,45 @@ class InvestmentRecommendationView(APIView):
         return result
     
 
-def backtest():
-    run_backtest(
-        csv_folder=r"C:\Users\shs\Desktop\code\historys",
-        initial_cash=1000000,
-        allocation={"AAPL": 0.5, "MSFT": 0.3, "JPM": 0.2},
-        start_date="2020-01-01",
-        end_date="2022-12-31",
-        portfolio_name="Tech & Finance Portfolio"
-    )
+def backtest(request, portfolio_id):
+    portfolio = Portfolios.objects.filter(portfolio_id=portfolio_id).first()
+    name = portfolio.name
+    
+    stock_quantities=getStockList(portfolio_id)
+    allocation = calculate_allocation(stock_quantities)
+    print(allocation)
+    today = datetime.today()
 
-    csv_folder_path = r"C:\Users\shs\Desktop\code\historys"
-    custom_allocation = {"AAPL": 0.2, "MSFT": 0.3, "JPM": 0.2, "TSLA":0.3}
-    portfolio_name = "Fixed Duration Portfolio"
-    overall_start_date = "2020-01-01"
-    overall_end_date = "2022-12-31"
-    duration_days = 365
+    portfolio_folder = os.path.join(history_list, str(portfolio_id))
+    if not os.path.exists(portfolio_folder):
+        os.makedirs(portfolio_folder)\
+        
+    for symbol, allocation_ratio in allocation.items():  # allocation을 symbol, 비율로 순회
+        print(f"Fetching data for: {symbol}")
+        
+        # 주식 데이터 가져오기
+        data = get_stock_history_date(symbol, start=None, end=None, period='5y', interval='1d')
 
-    # 여러 백테스트 실행
-    results_df = run_multiple_backtests(
-        csv_folder=csv_folder_path,
-        initial_cash=1000000,
-        allocation=custom_allocation,
-        portfolio_name=portfolio_name,
-        start_date=overall_start_date,
-        end_date=overall_end_date,
-        duration_days=duration_days,
-        iterations=100
+        if data is not None and not data.empty:
+            file_path = os.path.join(portfolio_folder, f"{symbol}.csv")
+            data.to_csv(file_path, index=False)
+            print(f"Data for {symbol} saved to {file_path}")
+        else:
+            print(f"No data found for {symbol}")
+
+    results=run_backtest(
+        csv_folder=portfolio_folder,
+        initial_cash=100000000,
+        allocation=allocation,
+        portfolio_name=name
     )
+    if isinstance(results, list):
+        # 리스트를 DataFrame으로 변환
+        results_df = pd.DataFrame(results)
+
+        # DataFrame을 JSON으로 변환
+        data_json = results_df.to_dict(orient="records")
+    else:
+        print("Unexpected results format")
+    
+    return JsonResponse({"output": data_json})

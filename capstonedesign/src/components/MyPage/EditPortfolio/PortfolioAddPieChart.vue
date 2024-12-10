@@ -76,7 +76,7 @@ export default {
       try {
         // API 호출하여 환율 가져오기
         const response = await axios.get('http://127.0.0.1:8000/stock/currency/');
-        this.exchangeRate = response.data.output[1]['Close']; // 환율 적용
+        this.exchangeRate = response.data.output[0]['Close']; // 환율 적용
         this.updateChartData(); // 환율이 적용되었으므로 차트 데이터 업데이트
       } catch (error) {
         console.error("환율 가져오기 실패:", error);
