@@ -34,7 +34,7 @@ def get_top_stocks_from_market(market, limit=50):
         return pd.DataFrame()
 
 
-def save_stock_to_database(ticker, market_type="KS"):
+def save_stock_to_database(ticker, market_type):
     """
     주어진 티커와 시장 유형(KS: KOSPI, KQ: KOSDAQ)으로 데이터를 yfinance에서 가져와 데이터베이스에 저장
     ticker: 주식 코드
@@ -57,10 +57,13 @@ def save_stock_to_database(ticker, market_type="KS"):
         history.reset_index(inplace=True)
         history['Date'] = history['Date'].dt.date
 
+        # 전진 채우기로 누락된 값을 직전 값으로 채움
+        history.ffill(inplace=True)
+
         # 데이터베이스에 저장
         for _, row in history.iterrows():
             StockHistory.objects.get_or_create(
-                ticker=full_ticker,  # .KS 또는 .KQ가 포함된 티커
+                ticker=full_ticker,
                 date=row['Date'],
                 defaults={
                     'open': row['Open'],
@@ -86,10 +89,10 @@ if __name__ == "__main__":
     # 데이터베이스에 저장
     print("Saving stocks to the database...")
     for _, row in kospi_stocks.iterrows():
-        save_stock_to_database(row['Code'])  # 티커만 전달
+        save_stock_to_database(row['Code'], market_type="KS")  # KOSPI 종목
 
     for _, row in kosdaq_stocks.iterrows():
-        save_stock_to_database(row['Code'])  # 티커만 전달
+        save_stock_to_database(row['Code'], market_type="KQ")  # KOSDAQ 종목
 
     print("All stock data has been saved to the database.")
 

@@ -16,9 +16,9 @@ from dataloading.backtest_runner import run_backtest, run_multiple_backtests
 # 테스트 실행 (필요에 따라 파라미터 수정)
 if __name__ == "__main__":
     result = run_backtest(
-        portfolio_id=2,  # 포트폴리오 ID
-        start_date="2023-01-01",
-        end_date="2023-12-31",
+        portfolio_id=6,  # 포트폴리오 ID
+        start_date="2016-01-01",
+        end_date="2021-01-01",
         initial_cash=1000000
     )
     print(f"Backtest Result: {result}")
@@ -40,10 +40,10 @@ from dataloading.backtest_runner import run_multiple_backtests
 
 if __name__ == "__main__":
     # 입력 파라미터 설정
-    portfolio_id = 2  # 실행할 포트폴리오의 ID
+    portfolio_id = 6  # 실행할 포트폴리오의 ID
     start_date = "2010-01-01"  # 백테스트 시작 날짜
     end_date = "2022-12-31"  # 백테스트 종료 날짜
-    duration_days = 365  # 각 백테스트 기간 (일 단위)
+    duration_days = 365*5  # 각 백테스트 기간 (일 단위)
     initial_cash = 1000000  # 초기 투자 금액
     iterations = 100  # 백테스트 반복 횟수
 

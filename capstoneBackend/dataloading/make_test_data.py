@@ -19,8 +19,10 @@ def create_test_data():
     )
 
     # 포트폴리오에 할당 데이터 추가
-    Portfolio_Stocks.objects.create(portfolio_id=portfolio.portfolio_id, stock_symbol="AAPL", allocation=0.6)
-    Portfolio_Stocks.objects.create(portfolio_id=portfolio.portfolio_id, stock_symbol="TSLA", allocation=0.4)
+    Portfolio_Stocks.objects.create(portfolio_id=portfolio.portfolio_id, stock_symbol="005930.KS", allocation=0.4)
+    Portfolio_Stocks.objects.create(portfolio_id=portfolio.portfolio_id, stock_symbol="000660.KS", allocation=0.3)
+    Portfolio_Stocks.objects.create(portfolio_id=portfolio.portfolio_id, stock_symbol="068270.KS", allocation=0.2)
+    Portfolio_Stocks.objects.create(portfolio_id=portfolio.portfolio_id, stock_symbol="035720.KS", allocation=0.1)
 
     print(f"Created Portfolio ID: {portfolio.portfolio_id}")
 
