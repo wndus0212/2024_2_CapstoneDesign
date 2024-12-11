@@ -33,7 +33,7 @@ def get_portfolio_allocation(portfolio_id):
 
 def run_backtest(portfolio_id, start_date, end_date, initial_cash=1000000):
     """
-    포트폴리오 ID를 기반으로 백테스트를 실행합니다.
+    포트폴리오 ID를 기반으로 백테스트를 실행하며, 최종 Sharpe 비율을 계산합니다.
     """
     # 포트폴리오 할당 데이터 가져오기
     allocation = get_portfolio_allocation(portfolio_id)
@@ -58,6 +58,11 @@ def run_backtest(portfolio_id, start_date, end_date, initial_cash=1000000):
 
     cerebro.addanalyzer(PortfolioValueTracker, _name="portfolio_tracker")
     risk_free_rate_series = load_risk_free_rate(start_date, end_date)
+
+    # risk_free_rate_series의 인덱스를 datetime으로 변환
+    if not isinstance(risk_free_rate_series.index, pd.DatetimeIndex):
+        risk_free_rate_series.index = pd.to_datetime(risk_free_rate_series.index)
+
     # 백테스트 실행
     strategies = cerebro.run()
 
@@ -65,14 +70,21 @@ def run_backtest(portfolio_id, start_date, end_date, initial_cash=1000000):
     portfolio_tracker = strategies[0].analyzers.portfolio_tracker
     portfolio_values = np.array(portfolio_tracker.values)
     daily_returns = np.diff(portfolio_values) / portfolio_values[:-1]
-    risk_free_rates = risk_free_rate_series.reindex(
-        pd.date_range(start=start_date, end=end_date)[:len(daily_returns)],
-        method='pad'
-    ).fillna(0).values
+
+    # 무위험 수익률과 길이 조정
+    date_range = pd.date_range(start=start_date, end=end_date)[:len(daily_returns)]
+    risk_free_rates = risk_free_rate_series.reindex(date_range, method="pad").fillna(0).values
+
+    # 1차원 배열로 변환
+    if len(risk_free_rates.shape) > 1:
+        risk_free_rates = risk_free_rates.flatten()
+
+    # Sharpe 비율 계산
     sharpe_ratio = calculate_sharpe_ratio(daily_returns, risk_free_rates)
+
+    # 최대 낙폭(MDD) 및 총 수익률
     total_return = (portfolio_values[-1] - initial_cash) / initial_cash
     mdd = calculate_mdd(portfolio_values)
-    print(daily_returns,risk_free_rates)
 
     # 결과 데이터베이스 저장
     try:

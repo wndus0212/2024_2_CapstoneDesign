@@ -1,31 +1,29 @@
 import numpy as np
 import pandas as pd
 
+
 def load_risk_free_rate(start_date, end_date):
     """
-    미국 국채 수익률 데이터를 읽고 백테스트 기간에 맞게 필터링합니다.
+    미국 국채 수익률 데이터를 읽고 백테스트 기간에 맞게 필터링하여 단일 열 반환.
     """
     csv_path = "DGS10.csv"  # 실제 파일 경로
     df = pd.read_csv(csv_path, parse_dates=["DATE"])
-
-    # 열 이름 변경
     df = df.rename(columns={"DATE": "date", "DGS10": "rate"})
 
-    # 문제 값 처리: '.'을 NaN으로 변환
+    # '.' 처리 및 NaN 채우기
     df["rate"] = df["rate"].replace('.', None)
-    df["rate"] = pd.to_numeric(df["rate"], errors="coerce")  # 숫자로 변환
-
-    # NaN 값 대체: Forward Fill
+    df["rate"] = pd.to_numeric(df["rate"], errors="coerce")
     df["rate"].fillna(method="ffill", inplace=True)
 
-    # 백분율을 소수로 변환
-    df["rate"] = df["rate"] / 100
+    # 백분율 변환 및 일별 수익률로 변환
+    df["rate"] = (1 + df["rate"] / 100) ** (1/365) - 1
 
     # 날짜 필터링
     df = df[(df["date"] >= start_date) & (df["date"] <= end_date)]
-    print(f"Filtered data: {len(df)} rows")
 
+    # 단일 열로 반환
     return df.set_index("date")["rate"]
+
 
 
 def calculate_mdd(portfolio_values):

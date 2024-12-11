@@ -1,7 +1,7 @@
 import backtrader as bt
 class FixedAllocationStrategy(bt.Strategy):
     params = (
-        ('rebalance_months', 1),  # 리밸런싱 간격 (개월 수)
+        ('rebalance_months', 3),  # 리밸런싱 간격 (개월 수)
         ('portfolio_name', 'Default Portfolio')  # 포트폴리오 이름
     )
 
@@ -35,7 +35,7 @@ class FixedAllocationStrategy(bt.Strategy):
         """
         목표 비중에 맞춰 포트폴리오를 리밸런싱합니다.
         """
-        total_value = self.broker.get_value()
+        total_value = self.broker.get_value()+self.broker.get_cash()
         positions = {}  # 현재 포지션 정보 저장
 
         for data in self.datas:
@@ -46,7 +46,7 @@ class FixedAllocationStrategy(bt.Strategy):
             target_value = total_value * self.allocation.get(ticker, 0)
             current_position = self.getposition(data).size
             current_price = data.close[0]
-            target_position = target_value // current_price
+            target_position = target_value / current_price
 
             if current_position < target_position:
                 self.buy(data=data, size=target_position - current_position)
