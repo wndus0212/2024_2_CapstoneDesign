@@ -2,7 +2,9 @@ import os
 import sys
 import django
 import yfinance as yf
-from datetime import datetime, timedelta
+import pandas as pd
+from datetime import datetime
+import FinanceDataReader as fdr
 
 # Django 프로젝트 루트 경로 추가
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -18,58 +20,76 @@ django.setup()
 from stockapp.models import StockHistory
 
 
-def get_last_update_date(ticker):
+def get_top_stocks_from_market(market, limit=50):
     """
-    데이터베이스에서 주어진 티커의 마지막 업데이트 날짜를 가져옴
+    FinanceDataReader를 사용해 특정 시장에서 상위 N개의 종목을 가져옴
+    market: 'KOSPI' 또는 'KOSDAQ'
+    limit: 가져올 종목 수
     """
-    latest_record = StockHistory.objects.filter(ticker=ticker).order_by('-date').first()
-    return latest_record.date if latest_record else None
+    try:
+        stocks = fdr.StockListing(market).head(limit)
+        return stocks[['Code', 'Name']]  # 종목 코드와 이름 반환
+    except Exception as e:
+        print(f"Error fetching stock list from {market}: {e}")
+        return pd.DataFrame()
 
 
-def get_and_save_financial_data(stock_id):
+def save_stock_to_database(ticker, market_type="KS"):
     """
-    yfinance에서 데이터를 가져와 데이터베이스에 저장
-    stock_id: 주식 또는 채권의 티커
+    주어진 티커와 시장 유형(KS: KOSPI, KQ: KOSDAQ)으로 데이터를 yfinance에서 가져와 데이터베이스에 저장
+    ticker: 주식 코드
+    market_type: 'KS' (KOSPI) 또는 'KQ' (KOSDAQ)
     """
-    # 데이터 가져오기 시작 날짜 결정
-    last_update_date = get_last_update_date(stock_id)
-    start_date = (last_update_date + timedelta(days=1)) if last_update_date else None
+    try:
+        # 티커에 .KS 또는 .KQ 추가
+        full_ticker = f"{ticker}.{market_type}"
 
-    stock = yf.Ticker(stock_id)
-    stock_history = stock.history(interval='1d', start=start_date, auto_adjust=False)
+        # yfinance에서 데이터 가져오기
+        stock = yf.Ticker(full_ticker)
+        history = stock.history(period="max")  # 가능한 모든 데이터 가져오기
 
-    if stock_history.empty:
-        print(f"No new data for {stock_id}")
-        return
+        if history.empty:
+            print(f"No data found for {full_ticker}")
+            return
 
-    # 필요한 열만 선택
-    stock_history = stock_history[['Open', 'High', 'Low', 'Close', 'Volume']]
-    stock_history.reset_index(inplace=True)
-    stock_history['Date'] = stock_history['Date'].dt.date
+        # 필요한 열만 사용
+        history = history[['Open', 'High', 'Low', 'Close', 'Volume']]
+        history.reset_index(inplace=True)
+        history['Date'] = history['Date'].dt.date
 
-    for _, row in stock_history.iterrows():
         # 데이터베이스에 저장
-        StockHistory.objects.update_or_create(
-            ticker=stock_id,
-            date=row['Date'],
-            defaults={
-                'open': row['Open'],
-                'high': row['High'],
-                'low': row['Low'],
-                'close': row['Close'],
-                'volume': row['Volume'],
-            }
-        )
+        for _, row in history.iterrows():
+            StockHistory.objects.get_or_create(
+                ticker=full_ticker,  # .KS 또는 .KQ가 포함된 티커
+                date=row['Date'],
+                defaults={
+                    'open': row['Open'],
+                    'high': row['High'],
+                    'low': row['Low'],
+                    'close': row['Close'],
+                    'volume': row['Volume'],
+                }
+            )
 
-    print(f"Data for {stock_id} has been updated in the database.")
+        print(f"Data for {full_ticker} has been saved to the database without duplication.")
+
+    except Exception as e:
+        print(f"Error saving data for {ticker}: {e}")
 
 
 if __name__ == "__main__":
-    # 주식 및 채권 티커
-    tickers = ["AAPL", "GOOGL", "MSFT", "^TNX"]  # 기존 주식 + 채권
+    # KOSPI와 KOSDAQ 시장에서 상위 50개 종목 가져오기
+    print("Fetching top 50 stocks from KOSPI and KOSDAQ...")
+    kospi_stocks = get_top_stocks_from_market("KOSPI", limit=50)
+    kosdaq_stocks = get_top_stocks_from_market("KOSDAQ", limit=50)
 
-    # 데이터 가져오기
-    for ticker in tickers:
-        print(f"Fetching data for {ticker}...")
-        get_and_save_financial_data(ticker)
-        print(f"Data for {ticker} has been saved to the database.")
+    # 데이터베이스에 저장
+    print("Saving stocks to the database...")
+    for _, row in kospi_stocks.iterrows():
+        save_stock_to_database(row['Code'])  # 티커만 전달
+
+    for _, row in kosdaq_stocks.iterrows():
+        save_stock_to_database(row['Code'])  # 티커만 전달
+
+    print("All stock data has been saved to the database.")
+
