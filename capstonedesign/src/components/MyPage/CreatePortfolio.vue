@@ -109,7 +109,7 @@ export default {
 
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.post("https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/ai_portfolio/", payload, {
+        const response = await axios.post("https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/ai_portfolio/", payload, {
           headers: {
             'Authorization': `Bearer ${token}`,
           }
@@ -139,7 +139,7 @@ export default {
 
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.put("https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/ai_portfolio/", payload, {
+        const response = await axios.put("https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/ai_portfolio/", payload, {
           headers: {
             'Authorization': `Bearer ${token}`,
           }

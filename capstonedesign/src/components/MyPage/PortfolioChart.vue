@@ -87,7 +87,7 @@
         // 로딩 시작
         this.loading = true;
         console.log(this.portfolioId)
-        axios.get(`https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/history/${this.portfolioId}/`, {
+        axios.get(`https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/history/${this.portfolioId}/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

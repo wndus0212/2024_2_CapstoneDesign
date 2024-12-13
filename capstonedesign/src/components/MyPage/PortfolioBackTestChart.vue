@@ -105,7 +105,7 @@ export default {
       // 로딩 시작
       this.loading = true;
 
-      axios.get(`https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/backtest/${this.portfolioId}/${this.selectedPeriod}/`, {
+      axios.get(`https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/backtest/${this.portfolioId}/${this.selectedPeriod}/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -144,7 +144,7 @@ export default {
       }
 
       const token = localStorage.getItem("token");
-      axios.get(`https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/portfolios/stock_list/${newPortfolioId}/`, {
+      axios.get(`https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/portfolios/stock_list/${newPortfolioId}/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

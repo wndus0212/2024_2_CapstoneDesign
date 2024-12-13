@@ -128,7 +128,7 @@ export default {
 
       sort = this.selectedOption4;
       console.log(this.selectedOption4)
-      const url = `https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/stock/${market}/${sort}/`;
+      const url = `https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/${market}/${sort}/`;
       axios
         .get(url)
         .then(response => {

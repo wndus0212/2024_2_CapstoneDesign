@@ -33,6 +33,7 @@ CSRF_TRUSTED_ORIGINS= [
     'http://localhost:8080/',
     'http://localhost:8080'
     'https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app',
+    'https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/',
     'http://127.0.0.1:8000'
 ]
 

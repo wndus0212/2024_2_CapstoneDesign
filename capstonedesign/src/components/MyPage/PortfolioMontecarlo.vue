@@ -56,7 +56,7 @@ export default {
       this.loading = true;
 
       // 1. 몬테카를로 테스트 실행 (CSV 파일 생성)
-      axios.get(`https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/montecarlo/${this.portfolioId}/`, {
+      axios.get(`https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/montecarlo/${this.portfolioId}/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

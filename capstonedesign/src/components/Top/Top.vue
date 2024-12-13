@@ -56,7 +56,7 @@ export default {
       }
       if (token) {
         // 서버에 토큰 유효성 확인 요청 
-        axios.post("https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/user/api/token/verify/", {}, {headers})
+        axios.post("https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/user/api/token/verify/", {}, {headers})
         .then((response) => {
           if (response.data.valid) {
             console.log('로그인 성공');
@@ -124,7 +124,7 @@ export default {
 
     // 주식 데이터 불러오기
     fetchStockData() {
-      axios.get("https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/stock/search_term/").then((response) => {
+      axios.get("https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/search_term/").then((response) => {
         this.searchData = response.data["output"];
       });
     },

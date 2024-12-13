@@ -75,7 +75,7 @@ export default {
     async fetchCurrencyRate() {
       try {
         // API 호출하여 환율 가져오기
-        const response = await axios.get('https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/stock/currency/');
+        const response = await axios.get('https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/currency/');
         this.exchangeRate = response.data.output[0]['Close']; // 환율 적용
         this.updateChartData(); // 환율이 적용되었으므로 차트 데이터 업데이트
       } catch (error) {
