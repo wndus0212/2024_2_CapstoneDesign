@@ -62,7 +62,7 @@
         axios
           .get(url)
           .then(response => {
-            console.log(response)
+            console.log("response",response)
             this.stocks = response.data;
           })
           .catch(error => {
