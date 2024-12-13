@@ -169,7 +169,8 @@ CACHES = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",  # React, Vue 등 프론트엔드 주소
-    "https://localhost:8080"
+    "https://localhost:8080",
+    "port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app"
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
