@@ -19,7 +19,7 @@ import numpy as np
 from stockapp.utils import get_currency
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-file_path=os.path.join(base_dir, 'portfolio\data\exchange_rate', 'exchange_rate.csv')
+file_path=os.path.join(base_dir, 'portfolio/data/exchange_rate', 'exchange_rate.csv')
 exchange_rate = pd.read_csv(file_path)
 
 def get_stock_history_date(Id, start=None, end=None, period=0, interval='1d'):
