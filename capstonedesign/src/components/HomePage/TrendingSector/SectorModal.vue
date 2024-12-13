@@ -106,7 +106,7 @@ export default {
       const encodedSectorName = encodeURIComponent(this.sector.name);
       console.log(this.sector.name);
       axios
-        .get(`http://127.0.0.1:8000/stock/sector_stock_list/${encodedSectorName}/`)
+        .get(`https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/stock/sector_stock_list/${encodedSectorName}/`)
         .then((response) => {
           this.stock_list = response.data.output;
           console.log("sector_stock_list", this.stock_list);

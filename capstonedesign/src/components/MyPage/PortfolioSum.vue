@@ -33,7 +33,7 @@ export default {
 
         // 현재 포트폴리오 값 가져오기
         axios
-            .get(`http://127.0.0.1:8000/portfolio/history/${this.portfolioId}/`, {
+            .get(`https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/history/${this.portfolioId}/`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

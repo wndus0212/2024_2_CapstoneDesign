@@ -83,7 +83,7 @@ export default {
     fetchAllIndexData() {
       const requests = this.stockIndices.map(index => {
         // history 데이터 요청
-        const historyRequest = axios.get(`http://127.0.0.1:8000/stock/index/index/${index.value}/`, {
+        const historyRequest = axios.get(`https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/stock/index/index/${index.value}/`, {
           params: {
             period: this.selectedPeriod,
             interval: '1d',
@@ -101,7 +101,7 @@ export default {
         });
 
         // current 데이터 요청 (다른 API에서)
-        const diffRequest = axios.get(`http://127.0.0.1:8000/stock/stock_diff/${index.value}/`) // 예시 URL
+        const diffRequest = axios.get(`https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/stock/stock_diff/${index.value}/`) // 예시 URL
           .then(response => {
             if (!response.data) {
               console.log(response);

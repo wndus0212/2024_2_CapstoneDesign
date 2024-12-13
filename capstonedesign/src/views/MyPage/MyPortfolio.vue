@@ -82,7 +82,7 @@ export default {
     },
     mounted() {
         const token = localStorage.getItem("token");
-        axios.get('http://127.0.0.1:8000/portfolio/portfolios/', {
+        axios.get('https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/portfolios/', {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
@@ -119,7 +119,7 @@ export default {
             }
 
             const token = localStorage.getItem("token");
-            axios.get(`http://127.0.0.1:8000/portfolio/portfolios/stock_list/${newPortfolioId}/`, {
+            axios.get(`https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/portfolio/portfolios/stock_list/${newPortfolioId}/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

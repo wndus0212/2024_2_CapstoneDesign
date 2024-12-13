@@ -57,7 +57,7 @@
       fetchStockRank() {
         this.loading = true; // 로딩 시작
               
-        const url = `http://127.0.0.1:8000/stock/list/KOSPI/market_caps/`;
+        const url = `https://web-capstonedesignfront-m3vkxnzga0885b97.sel4.cloudtype.app/stock/list/KOSPI/market_caps/`;
         console.log(url);
         axios
           .get(url)
