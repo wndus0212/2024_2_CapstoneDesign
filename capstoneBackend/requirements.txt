@@ -56,3 +56,4 @@ yfinance==0.2.48
 zope.interface==7.1.1
 google-auth
 google-api-python-client
+rest_framework_simplejwt
