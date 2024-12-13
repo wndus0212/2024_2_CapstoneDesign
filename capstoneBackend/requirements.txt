@@ -54,6 +54,7 @@ wrapt==1.16.0
 xlrd==2.0.1
 yfinance==0.2.48
 zope.interface==7.1.1
+rest_framework_simplejwt==5.2.2
 google-auth
 google-api-python-client
-rest_framework_simplejwt
+
