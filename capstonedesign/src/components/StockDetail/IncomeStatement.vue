@@ -3,7 +3,7 @@
     <apexchart 
       :options="chartOptions" 
       :series="series" 
-      width="600" 
+      width="1100" 
       height="400" 
     />
     
@@ -18,7 +18,10 @@
         <thead>
           <tr>
             <th>항목</th>
-            <th v-for="(year, index) in years" :key="index">{{ year }}</th>
+            <th> 2021 </th>
+            <th> 2022 </th>
+            <th> 2023 </th>
+            <th> 2024 </th>
           </tr>
         </thead>
         <tbody>
@@ -120,9 +123,9 @@ export default {
       });
       console.log("revenue",revenue)
       return [
-        { name: "Revenue", data: revenue },
-        { name: "Operating Income", data: operatingIncome },
-        { name: "Net Income", data: netIncome },
+        { name: "매출", data: revenue },
+        { name: "영업이익", data: operatingIncome },
+        { name: "순이익", data: netIncome },
       ];
     },
     formattedData() {
@@ -130,6 +133,7 @@ export default {
       const result = {};
       this.years.forEach((year) => {
         const yearData = this.data[year];
+        console.log("year",yearData)
         for (const [key, value] of Object.entries(yearData)) {
           if (!result[key]) {
             result[key] = [];

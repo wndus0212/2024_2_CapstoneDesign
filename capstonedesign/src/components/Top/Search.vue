@@ -98,20 +98,20 @@ export default {
     },
     onEnter() {
       const lowerCaseInput = this.searchInput.toLowerCase();
-
       // 입력값이 심볼인지 이름인지 판별하고 대응되는 값 가져오기
       const matchedItem = this.searchData.find(item => {
         const isSymbolMatch = item.symbols.toLowerCase() === lowerCaseInput;
         const isNameMatch = item.names.toLowerCase() === lowerCaseInput;
+        console.log(isNameMatch)
+        console.log(isSymbolMatch)
         return isSymbolMatch || isNameMatch;
       });
-
+      console.log(matchedItem)
       if (matchedItem) {
         // 입력값이 심볼이면 이름을 가져오고, 이름이면 심볼을 가져옴
         const stockCode = matchedItem.symbols;
         const stockName = matchedItem.names;
 
-        // navigateTo 호출
         this.navigateTo(stockCode, stockName);
       } else {
         console.warn("검색어와 일치하는 항목이 없습니다.");
@@ -136,7 +136,7 @@ export default {
   width: 600px;
   border-radius: 10px;
   position: relative;
-  z-index: 15;
+  z-index: 1015;
 }
 
 .search-bar {
@@ -162,7 +162,7 @@ export default {
   list-style: none;
   margin: 0;
   padding: 0;
-  z-index: 15;
+  z-index: 1015;
   font-size: 20px;
   border-radius: 10px;
 }
@@ -190,7 +190,7 @@ export default {
   background: white;
   border: 1px solid #ccc;
   border-radius: 5px;
-  z-index: 10;
+  z-index: 1010;
 }
 
 .symbol {
@@ -205,6 +205,6 @@ export default {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.3);
-  z-index: 5;
+  z-index: 1005;
 }
 </style>

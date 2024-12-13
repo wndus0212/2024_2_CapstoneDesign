@@ -111,10 +111,19 @@ export default {
 }
 
 .sector-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 20px;
+  display: grid; /* Flex 대신 grid 사용 */
+  grid-template-columns: repeat(5, 1fr); /* 한 줄에 5개의 섹터 */
+  gap: 20px; /* 섹터 간의 간격 */
+  margin-top: 20px;
+}
+
+.sectorhover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sectorhover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .load-more {
@@ -123,11 +132,6 @@ export default {
   color: gray;
   cursor: pointer;
   margin-top: 20px;
-}
-
-.sectorhover :hover{
-  transform: translateY(-3px) ;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 

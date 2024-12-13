@@ -1,7 +1,7 @@
 <template>
     <div>
       <apexchart 
-        type="line" 
+        type="area" 
         :options="chartOptions" 
         :series="series" 
         :width="850"
@@ -11,17 +11,21 @@
   </template>
   
   <script>
+  import axios from 'axios';
   import VueApexCharts from 'vue3-apexcharts'
   export default {
     conponents:{
       apexchart:VueApexCharts
     },
-    data: function() {
+    props:{
+      portfolioId: {
+        type: Number,
+        required: true,
+      },
+    },
+    data() {
       return {
-        series: [{
-          name: "Desktops",
-          data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-        }],
+        series: [],
         chartOptions: {
             chart: {
                 type: 'area',
@@ -50,7 +54,7 @@
             yaxis: {
                 labels: {
                     formatter: function (val) {
-                    return (val / 1000000).toFixed(0);
+                    return (val);
                     },
                 },
                 title: {
@@ -59,11 +63,7 @@
             },
             tooltip: {
                 shared: false,
-                y: {
-                    formatter: function (val) {
-                    return (val / 1000000).toFixed(0)
-                    }
-                }
+
             },
             legend:{
                 show: true,
@@ -71,6 +71,50 @@
             }
         }
       };
+    },
+    mounted(){
+      this.fetchPortfolioHistory()
+    },
+    watch: {
+      portfolioId() {
+        this.fetchPortfolioHistory(); // addedStock이 업데이트되면 차트 데이터 업데이트
+      },
+    },
+    methods:{
+      fetchPortfolioHistory() {
+        const token = localStorage.getItem("token");
+
+        // 로딩 시작
+        this.loading = true;
+        console.log(this.portfolioId)
+        axios.get(`http://127.0.0.1:8000/portfolio/history/${this.portfolioId}/`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        })
+        .then(response => {
+          const data = response.data.output;
+          // portfolio_value를 y값으로, date를 x값으로 설정하여 series 데이터 생성
+          const seriesData = data.map(item => ({
+            x: item.Date,  // x는 밀리초 단위의 타임스탬프
+            y: Number(item.portfolio_value)
+          }));
+          console.log(seriesData)
+          // ApexCharts의 시리즈에 데이터 추가
+          this.series = [{
+            name: 'Portfolio Value',
+            data: seriesData
+          }];
+          console.log("chart",seriesData)
+        })
+        .catch(error => {
+          console.error(error);
+        })
+        .finally(() => {
+          // 로딩 종료
+          this.loading = false;
+        });
+      },
     }
   };
   </script>

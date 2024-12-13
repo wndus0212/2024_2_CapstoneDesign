@@ -398,7 +398,7 @@ def get_stock_diff(symbol):
         print(f"Error fetching data for {symbol}: {e}")
         return None, None, None
     
-def get_sector_diff(request):
+def get_sector_diff(request=None):
     sectors = pd.read_csv(sectors_list)  # 섹터 목록 CSV 파일 읽기
     sector_changes = []
 

@@ -42,7 +42,6 @@
                         :movingAveragedata="selectedIndicator === 'movingAverage' ? movingAveragedata : undefined" 
                         :bollingerBandData="selectedIndicator === 'bollingerBand' ? bollingerBandData : undefined"
                         />
-
                     </div>
                 </div>
 
@@ -50,32 +49,32 @@
                 <Box width="600px">
                     <div v-if="info" class="info-card">
                         <div class="info-item">
-                        <span class="info-title">섹터:</span>
-                        <span>{{ info.sector || '정보 없음' }}</span>
+                            <span class="info-title">섹터:</span>
+                            <span>{{ info.sector || '정보 없음' }}</span>
                         </div>
                         <div class="info-item">
-                        <span class="info-title">산업:</span>
-                        <span>{{ info.industry || '정보 없음' }}</span>
+                            <span class="info-title">산업:</span>
+                            <span>{{ info.industry || '정보 없음' }}</span>
                         </div>
                         <div class="info-item">
-                        <span class="info-title">현재 주가:</span>
-                        <span class="price">{{ info.currentPrice ? info.currentPrice.toLocaleString() : '정보 없음' }} {{ stockUnit }}</span>
+                            <span class="info-title">현재 주가:</span>
+                            <span class="price">{{ info.currentPrice ? info.currentPrice.toLocaleString() : '정보 없음' }} {{ stockUnit }}</span>
                         </div>
                         <div class="info-item">
-                        <span class="info-title">구매량:</span>
-                        <span>{{ info.volume ? info.volume.toLocaleString() : '정보 없음' }}</span>
+                            <span class="info-title">구매량:</span>
+                            <span>{{ info.volume ? info.volume.toLocaleString() : '정보 없음' }}</span>
                         </div>
                         <div class="info-item">
-                        <span class="info-title">시가총액:</span>
-                        <span>{{ info.marketCap ? (info.marketCap/ 100000000).toLocaleString() : '정보 없음' }} 억{{ stockUnit }}</span>
+                            <span class="info-title">시가총액:</span>
+                            <span>{{ info.marketCap ? (info.marketCap/ 100000000).toLocaleString() : '정보 없음' }} 억{{ stockUnit }}</span>
                         </div>
                         <div class="info-item">
-                        <span class="info-title">전일 종가:</span>
-                        <span>{{ info.previousClose ? info.previousClose.toLocaleString() : '정보 없음' }} {{ stockUnit }}</span>
+                            <span class="info-title">전일 종가:</span>
+                            <span>{{ info.previousClose ? info.previousClose.toLocaleString() : '정보 없음' }} {{ stockUnit }}</span>
                         </div>
                         <div class="info-item">
-                        <span class="info-title">Open:</span>
-                        <span>{{ info.open ? info.open.toLocaleString() : '정보 없음' }} {{ stockUnit }}</span>
+                            <span class="info-title">Open:</span>
+                            <span>{{ info.open ? info.open.toLocaleString() : '정보 없음' }} {{ stockUnit }}</span>
                         </div>
                     </div>
                 </Box>
@@ -190,12 +189,21 @@ export default {
     },
     async created() {
         this.stockName = this.$route.query.name || "알 수 없는 종목";
-        this.stockUnit = this.$route.query.unit || "알 수 없는 단위";
+        // stockCode에 따라 단위 설정
+        this.setStockUnit();
         await this.fetchStockHistory();
         await this.fetchStockInfo();
         await this.fetchMovingAverage();
     },
     methods: {
+        // stockCode에 따른 단위 설정
+        setStockUnit() {
+            if (this.stockCode.endsWith(".KQ") || this.stockCode.endsWith(".KS")) {
+                this.stockUnit = "원";
+            } else {
+                this.stockUnit = "달러";
+            }
+        },
         async fetchStockHistory() {
             this.isLoading = true; // 로딩 시작
             try {
@@ -250,7 +258,7 @@ export default {
                 );
                 this.bollingerBandData = response.data?.output || []; // 데이터가 없으면 빈 배열로 처리
             } catch (error) {
-                console.error("이동평균 데이터를 가져오는 데 실패했습니다:", error);
+                console.error("볼린저 밴드 데이터를 가져오는 데 실패했습니다:", error);
                 this.bollingerBandData = []; // 실패 시 빈 배열로 처리
             } finally {
                 this.isLoading = false; // 로딩 종료
@@ -273,7 +281,6 @@ export default {
     },
 };
 </script>
-
 
 <style scoped>
 .info-card {
@@ -304,6 +311,4 @@ export default {
 .info-item:last-child {
   border-bottom: none;
 }
-
-
 </style>

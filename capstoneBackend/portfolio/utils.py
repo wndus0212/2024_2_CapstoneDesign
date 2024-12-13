@@ -16,24 +16,36 @@ import csv
 import time
 import shutil
 import numpy as np
+from stockapp.utils import get_currency
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+file_path=os.path.join(base_dir, 'portfolio\data\exchange_rate', 'exchange_rate.csv')
+exchange_rate = pd.read_csv(file_path)
 
 def get_stock_history_date(Id, start=None, end=None, period=0, interval='1d'):
     ticker = yf.Ticker(Id)
     try:
-        if period == 0:
-            # 특정 기간의 데이터를 가져오기
-            df = ticker.history(start=start, end=end, interval=interval, auto_adjust=False)
-        else:
-            # 최근 기간 데이터를 가져오기
-            df = ticker.history(period=period, interval=interval, auto_adjust=False)
         
+        df = ticker.history(period=period, interval=interval, auto_adjust=False)
+        df = df.reset_index()
+        df['Date'] = pd.to_datetime(df['Date']).dt.date
+        df['Date'] = df['Date'].apply(lambda x: x.strftime('%Y-%m-%d'))
         if df.empty:
-            print(f"No data found for stock {Id}")
+            print(f"No data found for stock {Id}") 
             return None
         
+        if not (Id.endswith(".KQ") or Id.endswith(".KS")):
+            df = pd.merge(df, exchange_rate, on='Date', how='left')  # Date 기준으로 병합
+
+            # 환율 값이 없는 경우 보간 처리
+            df['exchange_rate'].fillna(method='ffill', inplace=True)
+
+            # 환율 적용하여 종가 수정
+            df['Close'] = df['Close'] * df['exchange_rate']
+            print(df['Close'])
+
         # 필요한 컬럼만 선택
-        df = df.reset_index()
-        df['Date'] = pd.to_datetime(df['Date']).dt.tz_localize(None)
+        
         selected_columns = ['Date','Open', 'High', 'Low', 'Close', 'Volume']
         if all(col in df.columns for col in selected_columns):
             return df[selected_columns]
@@ -79,30 +91,29 @@ def get_portfolio_sum(portfolio_id):
     # 각 종목에 대한 가격 정보를 가져오고 합산합니다
     for i, stock in enumerate(stocks):
         ticker = tickers.tickers[stock.stock_symbol]
-        price = ticker.history(period="1d")['Close'].iloc[-1]  # 최신 종가를 가져옵니다
+        price = ticker.history(period="1d")['Close']  # 최신 종가를 가져옵니다
+        if price.isna().iloc[-1]:
+            price = ticker.history(period="1d")['Open'].iloc[-1]
+        else:
+            price = price.iloc[-1]
+
+        if not (stock.stock_symbol.endswith(".KQ") or stock.stock_symbol.endswith(".KS")):
+            exchange_rate=get_currency()['Close']
+
+            price=price*exchange_rate
+       
         total_sum += price * allocations[i]
-    
+    print(total_sum)
     return total_sum
 
 def run_backtest(csv_folder, initial_cash=1000000, allocation=None, start_date=None, end_date=None,
                  portfolio_name="Default Portfolio", temp_dir="temp_filtered_data"):
-    """
-    단일 백테스트 실행 함수.
-
-    csv_folder: CSV 파일 경로
-    initial_cash: 초기 투자 금액
-    allocation: 투자 비율 딕셔너리 (예: {"AAPL": 0.4, "MSFT": 0.3})
-    start_date: 데이터 시작 날짜
-    end_date: 데이터 종료 날짜
-    portfolio_name: 포트폴리오 이름
-    temp_dir: 임시 디렉토리 경로
-    """
     # Cerebro 인스턴스 생성
     cerebro = bt.Cerebro()
     cerebro.broker.set_cash(initial_cash)
 
     # CSV 데이터 로드
-    load_data_from_csv(cerebro, csv_folder, allocation, temp_dir=temp_dir)
+    load_data_from_csv(cerebro, csv_folder, allocation, temp_dir=temp_dir, start_date=start_date, end_date=end_date)
 
     # 전략 추가
     cerebro.addstrategy(FixedAllocationStrategy, allocation=allocation, portfolio_name=portfolio_name)
@@ -110,7 +121,6 @@ def run_backtest(csv_folder, initial_cash=1000000, allocation=None, start_date=N
     # 백테스트 실행
     print(f"초기 투자 금액: {cerebro.broker.get_cash():,.0f}원")
     strategies = cerebro.run()  # 실행된 전략 객체 리스트 반환
-    print("strategies",strategies)
     print(f"최종 투자 금액: {cerebro.broker.get_value():,.0f}원")
 
     # 첫 번째 전략 인스턴스의 리밸런싱 로그 가져오기
@@ -126,27 +136,17 @@ def run_backtest(csv_folder, initial_cash=1000000, allocation=None, start_date=N
 
     # 리밸런싱 로그 저장
     sanitized_name = re.sub(r'[^\w\s-]', '', portfolio_name).replace(' ', '_')  # 안전한 파일명 생성
-    output_file = f"rebalance_log_{sanitized_name}.csv"
+    output_dir = "data/rebalancing"
+    os.makedirs(output_dir, exist_ok=True)  # 폴더가 없으면 생성
+    output_file = os.path.join(output_dir, f"rebalance_log_{sanitized_name}.csv")
     save_rebalance_log_to_csv(rebalance_log, output_file)
 
     print(f"리밸런싱 로그가 '{output_file}'에 저장되었습니다.")
-    return rebalance_log
+    return rebalance_log, mdd * 100
+
 
 def run_multiple_backtests(csv_folder, initial_cash, allocation, portfolio_name,
                            start_date, end_date, duration_days, iterations=100, temp_dir="temp_filtered_data"):
-    """
-    여러 번의 백테스트 실행 함수.
-
-    csv_folder: CSV 파일 경로
-    initial_cash: 초기 투자 금액
-    allocation: 투자 비율 딕셔너리
-    portfolio_name: 포트폴리오 이름
-    start_date: 전체 데이터의 시작 날짜 (YYYY-MM-DD)
-    end_date: 전체 데이터의 종료 날짜 (YYYY-MM-DD)
-    duration_days: 각 백테스트의 기간 (일 단위)
-    iterations: 백테스트 반복 횟수
-    temp_dir: 임시 디렉토리 경로
-    """
     # 실행 시간 측정 시작
     start_time = time.time()
     results = []  # 모든 백테스트 결과 저장
@@ -158,7 +158,7 @@ def run_multiple_backtests(csv_folder, initial_cash, allocation, portfolio_name,
         print(f"백테스트 {i + 1}/{iterations}: {random_start_date} ~ {random_end_date}")
         try:
             # 백테스트 실행
-            rebalance_results = run_backtest(
+            rebalance_results, mdd = run_backtest(
                 csv_folder,
                 initial_cash=initial_cash,
                 allocation=allocation,
@@ -167,7 +167,6 @@ def run_multiple_backtests(csv_folder, initial_cash, allocation, portfolio_name,
                 portfolio_name=f"{portfolio_name}_{i + 1}",
                 temp_dir=temp_dir
             )
-
             # 결과 요약
             final_cash = calculate_final_cash(rebalance_results)
             total_withdrawn = calculate_total_withdrawn(rebalance_results)
@@ -177,12 +176,11 @@ def run_multiple_backtests(csv_folder, initial_cash, allocation, portfolio_name,
                 "start_date": random_start_date,
                 "end_date": random_end_date,
                 "final_cash": final_cash,
-                "total_withdrawn": total_withdrawn,
+                "mdd": mdd,
             })
 
         except Exception as e:
             print(f"백테스트 {i + 1} 실패: {e}")
-
     # 실행 시간 측정 종료
     end_time = time.time()
     elapsed_time = end_time - start_time
@@ -194,7 +192,6 @@ def run_multiple_backtests(csv_folder, initial_cash, allocation, portfolio_name,
 
     # 실행 시간 출력
     print(f"전체 백테스트 실행 시간: {elapsed_time:.2f}초")
-
     return results_df
 
 def generate_fixed_date_range(start_date, end_date, duration_days):
@@ -208,8 +205,6 @@ def generate_fixed_date_range(start_date, end_date, duration_days):
     import random
     import datetime
 
-    start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
-    end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
 
     # 시작일은 종료일에서 고정 기간만큼의 여유를 둬야 함
     random_start = start_date + datetime.timedelta(
@@ -243,7 +238,7 @@ def calculate_final_cash(rebalance_results):
     리밸런싱 결과에서 최종 자산 금액을 계산합니다.
     """
     if rebalance_results:
-        return rebalance_results[-1].get("final_cash", 0)
+        return rebalance_results[-1].get("portfolio_value", 0)
     return 0
 
 
@@ -264,7 +259,7 @@ def calculate_mdd(portfolio_values):
     mdd = drawdown.min()
     return mdd
 
-def load_data_from_csv(cerebro, path, allocation, temp_dir="temp_filtered_data"):
+def load_data_from_csv(cerebro, path, allocation, start_date=None, end_date=None, temp_dir="temp_filtered_data"):
     """
     CSV 데이터를 로드하고 Backtrader 데이터 피드로 변환하여 Cerebro에 추가합니다.
 
@@ -281,18 +276,24 @@ def load_data_from_csv(cerebro, path, allocation, temp_dir="temp_filtered_data")
 
     for filename in os.listdir(path):
         if filename.endswith(".csv"):
-            ticker = filename[:-4]
+            ticker = filename.split(".")[0]  # 확장자 제거하여 ticker 추출
             data_path = os.path.join(path, filename)
 
             # CSV 데이터 읽기
             df = pd.read_csv(data_path)
-            
-            # 데이터가 비어있는지 확인
+
+            # 기간 필터링: start_date 또는 end_date가 None인 경우 필터링하지 않음
+            if start_date:
+                df = df[df['Date'] >=start_date]
+            if end_date:
+                df = df[df['Date'] <= end_date]
+
+            # 필터링 후 데이터가 없는 경우 건너뜀
             if df.empty:
-                print(f"{ticker} 데이터가 비어있습니다.")
+                print(f"기간 필터링 후 {ticker} 데이터가 없습니다.")
                 continue
 
-            # 임시 디렉토리에 필터링 없이 데이터 저장
+            # 필터링된 데이터를 임시 디렉토리에 저장
             filtered_csv_path = os.path.join(temp_dir, f"filtered_{ticker}.csv")
             df.to_csv(filtered_csv_path, index=False)
 
@@ -363,7 +364,6 @@ class FixedAllocationStrategy(bt.Strategy):
         for data in self.datas:
             ticker = data._name
             if ticker not in self.allocation:
-                print(ticker)
                 print("allocation:",self.allocation)
                 continue  # allocation에 포함되지 않은 종목은 건너뜀
 
@@ -404,3 +404,4 @@ def calculate_allocation(stock_quantities):
     total_quantity = sum(stock['allocation'] for stock in stock_quantities)  # allocation 값을 합산
     allocation = {stock['symbols']: stock['allocation'] / total_quantity for stock in stock_quantities}  # 비율 계산
     return allocation
+

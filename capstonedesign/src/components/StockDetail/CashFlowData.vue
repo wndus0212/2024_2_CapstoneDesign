@@ -3,7 +3,7 @@
     <apexchart 
       :options="chartOptions" 
       :series="series" 
-      width="600" 
+      width="1100" 
       height="400" 
     />
     
@@ -18,7 +18,10 @@
         <thead>
           <tr>
             <th>항목</th>
-            <th v-for="(year, index) in years" :key="index">{{ year }}</th>
+            <th> 2021 </th>
+            <th> 2022 </th>
+            <th> 2023 </th>
+            <th> 2024 </th>
           </tr>
         </thead>
         <tbody>
@@ -119,9 +122,10 @@ export default {
         FinancingCashFlow.push(yearData["Financing Cash Flow"] || 0);
       });
       return [
-        { name: "operatingCashFlow", data: operatingCashFlow },
-        { name: "InvestingCashFlow Income", data: InvestingCashFlow },
-        { name: "Net FinancingCashFlow", data: FinancingCashFlow },
+        { name: "영업활동현금흐름", data: operatingCashFlow },
+        { name: "투자활동현금흐름", data: InvestingCashFlow },
+        { name: "재무활동현금흐름", data: FinancingCashFlow },
+
       ];
     },
     formattedData() {

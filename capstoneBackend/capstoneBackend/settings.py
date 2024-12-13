@@ -143,7 +143,7 @@ USE_I18N = True
 USE_TZ = True
 
 # Django settings.py
-SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 SECURE_CROSS_ORIGIN_EMBEDDER_POLICY = 'require-corp'
 
 STATIC_URL = 'static/'

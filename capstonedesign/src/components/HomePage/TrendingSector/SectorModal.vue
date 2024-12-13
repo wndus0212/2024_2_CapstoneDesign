@@ -98,6 +98,7 @@ export default {
       this.$emit("close");
     },
     fetchStockList() {
+      this.stock_list=[]
       if (!this.sector || !this.sector.name) {
         console.error("sector 데이터가 올바르지 않습니다:", this.sector);
         return;

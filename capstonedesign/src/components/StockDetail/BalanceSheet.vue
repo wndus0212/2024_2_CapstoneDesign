@@ -3,7 +3,7 @@
     <apexchart 
       :options="chartOptions" 
       :series="series" 
-      width="600" 
+      width="1100"
       height="400" 
     />
     
@@ -18,7 +18,10 @@
         <thead>
           <tr>
             <th>항목</th>
-            <th v-for="(year, index) in years" :key="index">{{ year }}</th>
+            <th> 2021 </th>
+            <th> 2022 </th>
+            <th> 2023 </th>
+            <th> 2024 </th>
           </tr>
         </thead>
         <tbody>
@@ -66,7 +69,8 @@ export default {
             formatter: function (value) {
               value.toFixed(0);
               return value.toLocaleString(); // 1000 단위마다 쉼표 추가
-            }
+            },
+            
           },
         },
         xaxis: {
@@ -119,9 +123,10 @@ export default {
         equity.push(yearData["Common Stock Equity"] || 0);
       });
       return [
-        { name: "totalAssets", data: totalAssets },
-        { name: "liabilities", data: liabilities },
-        { name: "equity", data: equity },
+        { name: "총자산", data: totalAssets },
+        { name: "부채", data: liabilities },
+        { name: "자본", data: equity },
+
       ];
     },
     formattedData() {
