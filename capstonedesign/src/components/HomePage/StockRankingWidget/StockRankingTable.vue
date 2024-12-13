@@ -73,7 +73,11 @@
           });
       },
       sortStocksByMarketCap() {
-        this.stocks.sort((a, b) => parseFloat(b.Marcap) - parseFloat(a.Marcap));
+        if (Array.isArray(this.stocks)) {
+          this.stocks.sort((a, b) => a.price - b.price); // 예시: 가격순으로 정렬
+        } else {
+          console.log('this.stocks는 배열이 아닙니다:', this.stocks);
+        }
       },
       navigateTo(stockCode, stockName) {
         this.$router.push({
