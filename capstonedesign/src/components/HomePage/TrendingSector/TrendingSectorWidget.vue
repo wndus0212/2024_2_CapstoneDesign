@@ -78,7 +78,7 @@ export default {
         .get("https://port-0-capstonedesign-m3vkxnzga0885b97.sel4.cloudtype.app/stock/sector_diff/")
         .then((response) => {
           this.sector_diffs = response.data["output"];
-          console.log("sectordiff", this.sector_diffs);
+          console.log("sectordiff", response);
         })
         .catch((error) => {
           console.error("데이터 로드 중 오류:", error);
